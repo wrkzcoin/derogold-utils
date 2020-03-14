@@ -2,7 +2,7 @@
 
 module.exports = {
   mode: 'production',
-  entry: './index.js',
+  entry: './dist/index.js',
   output: {
     filename: 'TurtleCoinUtils.js',
     library: 'TurtleCoinUtils',

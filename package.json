@@ -1,22 +1,29 @@
 {
   "name": "turtlecoin-utils",
-  "version": "1.0.20",
+  "version": "2.0.0",
   "description": "A Node.js collection of utilities useful for TurtleCoin developers",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "config.json",
-    "index.d.ts",
-    "dist/TurtleCoinUtils.js",
-    "lib/*"
+    "dist/*",
+    "config.json"
   ],
   "engines": {
-    "node": ">=8"
+    "node": ">=10"
   },
   "scripts": {
-    "test": "standard && mocha tests/tests.js",
-    "build-docs": "jsdoc -c jsdoc.json",
-    "prepare": "webpack"
+    "build": "./node_modules/.bin/tsc",
+    "docs": "./node_modules/.bin/typedoc && touch docs/.nojekyll",
+    "docs-server": "./node_modules/.bin/http-server docs",
+    "host-docs": "npm run docs && npm run docs-server",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run docs",
+    "style": "./node_modules/.bin/tslint -c tslint.json --project .",
+    "fix-style": "./node_modules/.bin/tslint -c tslint.json --fix --project .",
+    "test": "npm run style && npm run build && npm run test-node && npm run test-js",
+    "mocha": "./node_modules/.bin/mocha",
+    "test-node": "npm run mocha",
+    "test-js": "env FORCE_JS=1 npm run mocha"
   },
   "keywords": [
     "TurtleCoin",
@@ -26,33 +33,36 @@
     "type": "git",
     "url": "git+https://github.com/turtlecoin/turtlecoin-utils.git"
   },
+  "homepage": "https://utils.turtlecoin.dev",
+  "bugs": {
+    "url": "https://github.com/turtlecoin/turtlecoin-utils/issues"
+  },
   "author": "Brandon Lehmann <brandonlehmann@gmail.com>",
   "contributors": [
     "zpalmtree <22151537+zpalmtree@users.noreply.github.com>"
   ],
   "license": "GPL-3.0",
-  "optionalDependencies": {
-    "turtlecoin-crypto": "^3.1.3"
-  },
   "dependencies": {
-    "crc": "^3.8.0",
+    "aes-js": "^3.1.2",
+    "big-integer": "^1.6.48",
+    "bytestream-helper": "^0.0.7",
     "get-random-values": "^1.2.0",
     "numeral": "^2.0.6",
     "secure-random-string": "^1.1.0",
-    "varint": "^5.0.0"
-  },
-  "standard": {
-    "ignore": [
-      "lib/turtlecoin-crypto/turtlecoin-crypto.js",
-      "lib/turtlecoin-crypto/turtlecoin-crypto-wasm.js",
-      "dist/*",
-      "docs/*"
-    ]
+    "turtlecoin-base58": "^0.0.5",
+    "turtlecoin-crypto": "^4.0.6",
+    "turtlecoin-mnemonics": "^0.0.5"
   },
   "devDependencies": {
+    "@types/aes-js": "^3.1.0",
+    "@types/node": "^13.7.1",
+    "@types/numeral": "0.0.26",
+    "http-server": "^0.12.1",
     "mocha": "^6.2.2",
-    "standard": "^12.0.1",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
+    "tslint": "^6.0.0",
+    "typedoc": "^0.16.10",
+    "typescript": "^3.7.5",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11"
   }
 }

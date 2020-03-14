@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node: ['8', '10', '11', '12', '13']
+        node: ['10', '11', '12', '13']
     name: ${{ matrix.os }} - Node ${{ matrix.node }} Test
     steps:
     - uses: actions/checkout@v1
@@ -21,11 +21,7 @@ jobs:
       with:
         node-version: ${{ matrix.node }}
         registry-url: 'https://registry.npmjs.org'
-    - name: Install Dependencies (skip c++ crypto module)
-      run: npm install --no-optional
-    - name: Execute Unit Tests (javascript crypto module)
-      run: npm test
-    - name: Install Dependencies (include c++ crypto module)
+    - name: Install Dependencies
       run: npm install
-    - name: Execute Unit Tests (c++ crypto module)
+    - name: Execute Unit Tests
       run: npm test

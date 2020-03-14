@@ -1,6 +1,6 @@
 ![image](https://user-images.githubusercontent.com/34389545/35821974-62e0e25c-0a70-11e8-87dd-2cfffeb6ed47.png)
 
-# TurtleCoin Javascript Utilities
+# TurtleCoin Utilities
 
 [![NPM](https://nodei.co/npm/turtlecoin-utils.png?downloads=true&stars=true)](https://nodei.co/npm/turtlecoin-utils/)
 
@@ -24,21 +24,27 @@ npm install turtlecoin-utils
 
 ## Initialization
 
-### JavaScript
-
-```javascript
-const TurtleCoinUtils = require('turtlecoin-utils').CryptoNote
-const coinUtils = new TurtleCoinUtils()
-```
-
 ### TypeScript
 
 ```typescript
-import { CryptoNote } from 'turtlecoin-utils'
+import {
+    Address, 
+    AddressPrefix, 
+    Block, 
+    BlockTemplate, 
+    CryptoNote, 
+    LevinPacket, 
+    Transaction
+} from 'turtlecoin-utils'
 const coinUtils = new CryptoNote()
 ```
 
-You can find TypeScript type definitions [here](index.d.ts)
+### Javascript
+
+```javascript
+const TurtleCoinUtils = require('turtlecoin-utils')
+const coinUtils = new TurtleCoinUtils.CryptoNote()
+```
 
 ### Browser Support
 
