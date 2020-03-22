@@ -14,8 +14,6 @@
   "scripts": {
     "build": "./node_modules/.bin/tsc",
     "docs": "./node_modules/.bin/typedoc && touch docs/.nojekyll",
-    "docs-server": "./node_modules/.bin/http-server docs",
-    "host-docs": "npm run docs && npm run docs-server",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run docs",
     "style": "./node_modules/.bin/tslint -c tslint.json --project .",
@@ -55,14 +53,13 @@
   },
   "devDependencies": {
     "@types/aes-js": "^3.1.0",
-    "@types/node": "^13.7.1",
+    "@types/node": "^13.9.2",
     "@types/numeral": "0.0.26",
-    "http-server": "^0.12.1",
-    "mocha": "^6.2.2",
-    "tslint": "^6.0.0",
-    "typedoc": "^0.16.10",
-    "typescript": "^3.7.5",
-    "webpack": "^4.41.6",
+    "mocha": "^7.1.1",
+    "tslint": "^6.1.0",
+    "typedoc": "^0.17.3",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11"
   }
 }
