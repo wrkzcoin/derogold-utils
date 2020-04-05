@@ -53,13 +53,13 @@
   },
   "devDependencies": {
     "@types/aes-js": "^3.1.0",
-    "@types/node": "^13.9.2",
+    "@types/node": "^13.11.0",
     "@types/numeral": "0.0.26",
     "mocha": "^7.1.1",
-    "tslint": "^6.1.0",
+    "tslint": "^6.1.1",
     "typedoc": "^0.17.3",
     "typescript": "^3.8.3",
-    "webpack": "^4.42.0",
+    "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   }
 }
