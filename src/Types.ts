@@ -31,6 +31,8 @@ export * from './Types/ITransaction';
 
 export * from './Types/MultisigInterfaces';
 
+export * from './Types/ICryptoNote';
+
 export {PortableStorage, StorageType} from './Types/PortableStorage';
 
 export {BigInteger};

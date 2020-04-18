@@ -6,7 +6,14 @@ import {Address} from './Address';
 import {AddressPrefix} from './AddressPrefix';
 import * as ConfigInterface from './Config';
 import {Common} from './Common';
-import {BigInteger, ED25519, TransactionInputs, TransactionOutputs, TurtleCoinCrypto, Interfaces} from './Types';
+import {
+    BigInteger,
+    ED25519,
+    TransactionInputs,
+    TransactionOutputs,
+    TurtleCoinCrypto,
+    Interfaces,
+    CryptoNoteInterfaces} from './Types';
 import {Transaction} from './Transaction';
 import * as Numeral from 'numeral';
 import Config = ConfigInterface.Interfaces.Config;
@@ -127,7 +134,7 @@ export class CryptoNote {
         privateViewKey: string,
         publicSpendKey: string,
         privateSpendKey: string,
-        outputIndex: number): Promise<string> {
+        outputIndex: number): Promise<CryptoNoteInterfaces.IKeyImage> {
         const derivation = await TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, privateViewKey);
 
         return this.generateKeyImagePrimitive(publicSpendKey, privateSpendKey, outputIndex, derivation);
@@ -146,12 +153,18 @@ export class CryptoNote {
         publicSpendKey: string,
         privateSpendKey: string,
         outputIndex: number,
-        derivation: string): Promise<string> {
+        derivation: string): Promise<CryptoNoteInterfaces.IKeyImage> {
         const publicEphemeral = await TurtleCoinCrypto.derivePublicKey(derivation, outputIndex, publicSpendKey);
 
         const privateEphemeral = await TurtleCoinCrypto.deriveSecretKey(derivation, outputIndex, privateSpendKey);
 
-        return TurtleCoinCrypto.generateKeyImage(publicEphemeral, privateEphemeral);
+        const keyImage = await TurtleCoinCrypto.generateKeyImage(publicEphemeral, privateEphemeral);
+
+        return {
+            publicEphemeral: publicEphemeral,
+            privateEphemeral: privateEphemeral,
+            keyImage: keyImage
+        }
     }
 
     /**

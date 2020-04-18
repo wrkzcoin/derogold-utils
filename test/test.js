@@ -503,14 +503,14 @@ describe('Transactions', function () {
     it('generate keyImage', () => {
       return cnUtil.generateKeyImage(txPublicKey, walletPrivateViewKey, walletPublicSpendKey, walletPrivateSpendKey, ourOutputIndex)
         .then(keyImage => {
-          assert(keyImage === expectedKeyImage)
+          assert(keyImage.keyImage === expectedKeyImage)
         })
     })
 
     it('generate keyImage primitive', () => {
       return cnUtil.generateKeyImagePrimitive(walletPublicSpendKey, walletPrivateSpendKey, ourOutputIndex, derivation)
         .then(keyImagePrimitive => {
-          assert(keyImagePrimitive === expectedKeyImage)
+          assert(keyImagePrimitive.keyImage === expectedKeyImage)
         })
     })
   })
