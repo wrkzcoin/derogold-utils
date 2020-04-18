@@ -413,7 +413,7 @@ describe('SubWallets', () => {
 })
 
 describe('Transactions', function () {
-  this.timeout(10000)
+  this.timeout(20000)
 
   describe('Create Transaction Outputs', () => {
     it('Amount: 1234567', () => {
