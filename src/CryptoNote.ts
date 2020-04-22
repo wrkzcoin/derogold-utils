@@ -560,7 +560,7 @@ export class CryptoNote {
             }
         }
 
-        const neededMoney = BigInteger.zero;
+        let neededMoney = BigInteger.zero;
         let integratedPaymentId: string | undefined;
 
         for (const output of outputs) {
@@ -571,7 +571,7 @@ export class CryptoNote {
                 throw new RangeError('Cannot create an output with an amount > ' +
                     (this.config.maximumOutputAmount || Config.maximumOutputAmount));
             }
-            neededMoney.add(output.amount);
+            neededMoney = neededMoney.add(output.amount);
             if (neededMoney.greater(UINT64_MAX)) {
                 throw new RangeError('Total output amount exceeds UINT64_MAX');
             }
@@ -592,13 +592,13 @@ export class CryptoNote {
                 'ID supplied to this method');
         }
 
-        const foundMoney = BigInteger.zero;
+        let foundMoney = BigInteger.zero;
 
         for (const input of inputs) {
             if (input.amount <= 0) {
                 throw new RangeError('Cannot spend outputs with an amount <= 0');
             }
-            foundMoney.add(input.amount);
+            foundMoney = foundMoney.add(input.amount);
             if (foundMoney.greater(UINT64_MAX)) {
                 throw new RangeError('Total input amount exceeds UINT64_MAX');
             }

@@ -34,11 +34,11 @@ export class Transaction {
      * Returns the total amount of the transaction inputs
      */
     public get amount(): number {
-        const amount = BigInteger.zero;
+        let amount = BigInteger.zero;
 
         for (const input of this.inputs) {
             if (input.type === TransactionInputs.InputType.KEY) {
-                amount.add((input as TransactionInputs.KeyInput).amount);
+                amount = amount.add((input as TransactionInputs.KeyInput).amount);
             }
         }
 
@@ -86,11 +86,11 @@ export class Transaction {
             return 0;
         }
 
-        const outputAmount = BigInteger.zero;
+        let outputAmount = BigInteger.zero;
 
         for (const output of this.outputs) {
             if (output.type === TransactionOutputs.OutputType.KEY) {
-                outputAmount.add((output as TransactionOutputs.KeyOutput).amount);
+                outputAmount = outputAmount.add((output as TransactionOutputs.KeyOutput).amount);
             }
         }
 
