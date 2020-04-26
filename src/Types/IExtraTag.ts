@@ -419,6 +419,10 @@ export namespace ExtraTag {
 
                             try {
                                 dataLength = reader.varint(true).toJSNumber();
+                                if (dataLength > reader.unreadBytes) {
+                                    reader.skip();
+                                    continue;
+                                }
                             } catch {
                                 reader.skip();
                                 continue;

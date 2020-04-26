@@ -573,6 +573,10 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
                     let nonceLength = 0;
                     try {
                         nonceLength = tmpReader.varint().toJSNumber();
+                        if (nonceLength > reader.unreadBytes) {
+                            reader.skip();
+                            continue;
+                        }
                     } catch {
                         reader.skip();
                         continue;
@@ -594,6 +598,10 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
                     let mmLength = 0;
                     try {
                         mmLength = tmpReader.varint().toJSNumber();
+                        if (mmLength > reader.unreadBytes) {
+                            reader.skip();
+                            continue;
+                        }
                     } catch {
                         reader.skip();
                         continue;
