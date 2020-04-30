@@ -407,8 +407,12 @@ export namespace ExtraTag {
                     case ExtraNonceTag.NonceTagType.PAYMENT_ID:
                         totalLength += SIZES.KEY;
                         if (!seen.paymentId && reader.unreadBytes >= totalLength) {
-                            tags.push(ExtraNonceTag.ExtraNoncePaymentId.from(reader.bytes(33)));
-                            seen.paymentId = true;
+                            try {
+                                tags.push(ExtraNonceTag.ExtraNoncePaymentId.from(reader.bytes(33)));
+                                seen.paymentId = true;
+                            } catch (e) {
+                                reader.skip();
+                            }
                         } else {
                             reader.skip();
                         }
@@ -431,8 +435,12 @@ export namespace ExtraTag {
                             totalLength += Common.varintLength(dataLength) + dataLength;
 
                             if (reader.unreadBytes >= totalLength) {
-                                tags.push(ExtraNonceTag.ExtraNonceData.from(reader.bytes(totalLength)));
-                                seen.data = true;
+                                try {
+                                    tags.push(ExtraNonceTag.ExtraNonceData.from(reader.bytes(totalLength)));
+                                    seen.data = true;
+                                } catch (e) {
+                                    reader.skip();
+                                }
                             }
                         } else {
                             reader.skip();
