@@ -27,8 +27,19 @@ export namespace ED25519 {
          * @param privateKey
          * @param entropy
          * @param iterations
+         * @param createEmpty
          */
-        constructor(publicKey?: string, privateKey?: string, entropy?: string, iterations?: number) {
+        constructor(
+            publicKey?: string,
+            privateKey?: string,
+            entropy?: string,
+            iterations?: number,
+            createEmpty: boolean = false
+        ) {
+            if (createEmpty) {
+                return;
+            }
+
             /* If no entropy was supplied, we'll go find our own */
             entropy = entropy || SecureRandomString({length: 256});
 
