@@ -1202,7 +1202,9 @@ describe('Blocks', function () {
     })
   })
 
-  describe('Hashing', () => {
+  describe('Hashing', function() {
+    this.timeout(20000)
+
     const blocks = [
       {
         block: '010000000000000000000000000000000000000000000000000000000000000000000046000000010a01ff000188f3b501029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd088071210142694232c5b04151d9e4c27d31ec7a68ea568b19488cfcb422659a07a0e44dd500',
