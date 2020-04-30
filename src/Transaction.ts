@@ -550,8 +550,12 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
         switch (tag) {
             case ExtraTag.ExtraTagType.PADDING:
                 if (!seen.padding) {
-                    tags.push(ExtraTag.ExtraPadding.from(reader.bytes(totalLength)));
-                    seen.padding = true;
+                    try {
+                        tags.push(ExtraTag.ExtraPadding.from(reader.bytes(totalLength)));
+                        seen.padding = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
                 } else {
                     reader.skip();
                 }
@@ -559,8 +563,12 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
             case ExtraTag.ExtraTagType.PUBKEY:
                 totalLength += 32;
                 if (!seen.publicKey && reader.unreadBytes >= totalLength) {
-                    tags.push(ExtraTag.ExtraPublicKey.from(reader.bytes(totalLength)));
-                    seen.publicKey = true;
+                    try {
+                        tags.push(ExtraTag.ExtraPublicKey.from(reader.bytes(totalLength)));
+                        seen.publicKey = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
                 } else {
                     reader.skip();
                 }
@@ -584,8 +592,12 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
 
                     totalLength += Common.varintLength(nonceLength) + nonceLength;
 
-                    tags.push(ExtraTag.ExtraNonce.from(reader.bytes(totalLength)));
-                    seen.nonce = true;
+                    try {
+                        tags.push(ExtraTag.ExtraNonce.from(reader.bytes(totalLength)));
+                        seen.nonce = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
                 } else {
                     reader.skip();
                 }
@@ -609,8 +621,12 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
 
                     totalLength += Common.varintLength(mmLength) + mmLength;
 
-                    tags.push(ExtraTag.ExtraMergedMining.from(reader.bytes(totalLength)));
-                    seen.mergedMining = true;
+                    try {
+                        tags.push(ExtraTag.ExtraMergedMining.from(reader.bytes(totalLength)));
+                        seen.mergedMining = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
                 } else {
                     reader.skip();
                 }
