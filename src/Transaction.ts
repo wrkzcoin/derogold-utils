@@ -343,7 +343,12 @@ export class Transaction {
     public outputs: TransactionOutputs.ITransactionOutput[] = [];
     public signatures: string[][] = [];
     public ignoredField: number = 0;
-    public transactionKeys: ED25519.KeyPair = new ED25519.KeyPair();
+    public transactionKeys: ED25519.KeyPair = new ED25519.KeyPair(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        true);
     protected m_unlockTime: BigInteger.BigInteger = BigInteger.zero;
     protected m_rawExtra: Buffer = Buffer.alloc(0);
     protected m_readonly: boolean = false;

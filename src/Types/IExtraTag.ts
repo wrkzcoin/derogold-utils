@@ -441,6 +441,8 @@ export namespace ExtraTag {
                                 } catch (e) {
                                     reader.skip();
                                 }
+                            } else {
+                                reader.skip();
                             }
                         } else {
                             reader.skip();
