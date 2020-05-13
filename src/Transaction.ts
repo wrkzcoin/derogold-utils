@@ -31,9 +31,9 @@ interface Cache {
 export class Transaction {
 
     /**
-     * Returns the total amount of the transaction inputs
+     * Returns the total amount of the inputs
      */
-    public get amount(): number {
+    private get inputAmount(): number {
         let amount = BigInteger.zero;
 
         for (const input of this.inputs) {
@@ -43,6 +43,45 @@ export class Transaction {
         }
 
         return amount.toJSNumber();
+    }
+
+    /**
+     * Returns the total amount of the outputs
+     */
+    private get outputAmount(): number {
+        let amount = BigInteger.zero;
+
+        for (const output of this.outputs) {
+            if (output.type === TransactionOutputs.OutputType.KEY) {
+                amount = amount.add((output as TransactionOutputs.KeyOutput).amount);
+            }
+        }
+
+        return amount.toJSNumber();
+    }
+
+    /**
+     * Returns whether this is a coinbase transaction or not
+     */
+    public get isCoinbase(): boolean {
+        for (const input of this.inputs) {
+            if (input.type === TransactionInputs.InputType.COINBASE) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns the total amount transferred in the transaction
+     */
+    public get amount(): number {
+        if (this.isCoinbase) {
+            return this.outputAmount;
+        }
+
+        return this.inputAmount;
     }
 
     /**
@@ -80,21 +119,7 @@ export class Transaction {
      * Returns the fee of the transaction
      */
     public get fee(): number {
-        const inputAmount = BigInteger(this.amount);
-
-        if (inputAmount === BigInteger.zero) {
-            return 0;
-        }
-
-        let outputAmount = BigInteger.zero;
-
-        for (const output of this.outputs) {
-            if (output.type === TransactionOutputs.OutputType.KEY) {
-                outputAmount = outputAmount.add((output as TransactionOutputs.KeyOutput).amount);
-            }
-        }
-
-        return inputAmount.subtract(outputAmount).toJSNumber();
+        return this.amount - this.outputAmount;
     }
 
     /**
