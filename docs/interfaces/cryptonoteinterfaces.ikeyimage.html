@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>InputKeys | TurtleCoin-Utils</title>
+	<title>IKeyImage | TurtleCoin-Utils</title>
 	<meta name="description" content="Documentation for TurtleCoin-Utils">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -52,31 +52,24 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/interfaces.html">Interfaces</a>
+					<a href="../modules/cryptonoteinterfaces.html">CryptoNoteInterfaces</a>
 				</li>
 				<li>
-					<a href="interfaces.inputkeys.html">InputKeys</a>
+					<a href="cryptonoteinterfaces.ikeyimage.html">IKeyImage</a>
 				</li>
 			</ul>
-			<h1>Interface InputKeys</h1>
+			<h1>Interface IKeyImage</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>The derived input transaction keys</p>
-					</div>
-				</div>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">InputKeys</span>
+						<span class="target">IKeyImage</span>
 					</li>
 				</ul>
 			</section>
@@ -87,9 +80,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="interfaces.inputkeys.html#derivedkey" class="tsd-kind-icon">derived<wbr>Key</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="interfaces.inputkeys.html#outputindex" class="tsd-kind-icon">output<wbr>Index</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="interfaces.inputkeys.html#publickey" class="tsd-kind-icon">public<wbr>Key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="cryptonoteinterfaces.ikeyimage.html#keyimage" class="tsd-kind-icon">key<wbr>Image</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="cryptonoteinterfaces.ikeyimage.html#privateephemeral" class="tsd-kind-icon">private<wbr>Ephemeral</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="cryptonoteinterfaces.ikeyimage.html#publicephemeral" class="tsd-kind-icon">public<wbr>Ephemeral</a></li>
 							</ul>
 						</section>
 					</div>
@@ -98,49 +91,34 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="derivedkey" class="tsd-anchor"></a>
-					<h3>derived<wbr>Key</h3>
-					<div class="tsd-signature tsd-kind-icon">derived<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="keyimage" class="tsd-anchor"></a>
+					<h3>key<wbr>Image</h3>
+					<div class="tsd-signature tsd-kind-icon">key<wbr>Image<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/215b9f6/src/Types/ITransaction.ts#L186">Types/ITransaction.ts:186</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/215b9f6/src/Types/ICryptoNote.ts#L7">Types/ICryptoNote.ts:7</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The key derivation</p>
-						</div>
-					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="outputindex" class="tsd-anchor"></a>
-					<h3>output<wbr>Index</h3>
-					<div class="tsd-signature tsd-kind-icon">output<wbr>Index<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="privateephemeral" class="tsd-anchor"></a>
+					<h3>private<wbr>Ephemeral</h3>
+					<div class="tsd-signature tsd-kind-icon">private<wbr>Ephemeral<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/215b9f6/src/Types/ITransaction.ts#L190">Types/ITransaction.ts:190</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/215b9f6/src/Types/ICryptoNote.ts#L9">Types/ICryptoNote.ts:9</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The output index</p>
-						</div>
-					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="publickey" class="tsd-anchor"></a>
-					<h3>public<wbr>Key</h3>
-					<div class="tsd-signature tsd-kind-icon">public<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="publicephemeral" class="tsd-anchor"></a>
+					<h3>public<wbr>Ephemeral</h3>
+					<div class="tsd-signature tsd-kind-icon">public<wbr>Ephemeral<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/215b9f6/src/Types/ITransaction.ts#L182">Types/ITransaction.ts:182</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/215b9f6/src/Types/ICryptoNote.ts#L8">Types/ICryptoNote.ts:8</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The derived public key</p>
-						</div>
-					</div>
 				</section>
 			</section>
 		</div>
@@ -150,7 +128,7 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-namespace">
+					<li class="current tsd-kind-namespace">
 						<a href="../modules/cryptonoteinterfaces.html">Crypto<wbr>Note<wbr>Interfaces</a>
 					</li>
 					<li class=" tsd-kind-namespace">
@@ -162,7 +140,7 @@
 					<li class=" tsd-kind-namespace">
 						<a href="../modules/extratag.html">Extra<wbr>Tag</a>
 					</li>
-					<li class="current tsd-kind-namespace">
+					<li class=" tsd-kind-namespace">
 						<a href="../modules/interfaces.html">Interfaces</a>
 					</li>
 					<li class=" tsd-kind-namespace">
@@ -178,54 +156,24 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="interfaces.config.html" class="tsd-kind-icon">Config</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="interfaces.daemonblocktemplateresponse.html" class="tsd-kind-icon">Daemon<wbr>Block<wbr>Template<wbr>Response</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="interfaces.generatedinput.html" class="tsd-kind-icon">Generated<wbr>Input</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="interfaces.generatedoutput.html" class="tsd-kind-icon">Generated<wbr>Output</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="interfaces.ipreparedtransaction.html" class="tsd-kind-icon">IPrepared<wbr>Transaction</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="interfaces.inputkeys.html" class="tsd-kind-icon">Input<wbr>Keys</a>
+						<a href="cryptonoteinterfaces.ikeyimage.html" class="tsd-kind-icon">IKey<wbr>Image</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="interfaces.inputkeys.html#derivedkey" class="tsd-kind-icon">derived<wbr>Key</a>
+								<a href="cryptonoteinterfaces.ikeyimage.html#keyimage" class="tsd-kind-icon">key<wbr>Image</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="interfaces.inputkeys.html#outputindex" class="tsd-kind-icon">output<wbr>Index</a>
+								<a href="cryptonoteinterfaces.ikeyimage.html#privateephemeral" class="tsd-kind-icon">private<wbr>Ephemeral</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="interfaces.inputkeys.html#publickey" class="tsd-kind-icon">public<wbr>Key</a>
+								<a href="cryptonoteinterfaces.ikeyimage.html#publicephemeral" class="tsd-kind-icon">public<wbr>Ephemeral</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="interfaces.output.html" class="tsd-kind-icon">Output</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="interfaces.preparedringsignature.html" class="tsd-kind-icon">Prepared<wbr>Ring<wbr>Signature</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="interfaces.preparedtransaction.html" class="tsd-kind-icon">Prepared<wbr>Transaction</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="interfaces.randomoutput.html" class="tsd-kind-icon">Random<wbr>Output</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="interfaces.transactionrecipient.html" class="tsd-kind-icon">Transaction<wbr>Recipient</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

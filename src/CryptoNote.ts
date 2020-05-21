@@ -6,7 +6,14 @@ import {Address} from './Address';
 import {AddressPrefix} from './AddressPrefix';
 import * as ConfigInterface from './Config';
 import {Common} from './Common';
-import {BigInteger, ED25519, TransactionInputs, TransactionOutputs, TurtleCoinCrypto, Interfaces} from './Types';
+import {
+    BigInteger,
+    ED25519,
+    TransactionInputs,
+    TransactionOutputs,
+    TurtleCoinCrypto,
+    Interfaces,
+    CryptoNoteInterfaces} from './Types';
 import {Transaction} from './Transaction';
 import * as Numeral from 'numeral';
 import Config = ConfigInterface.Interfaces.Config;
@@ -127,7 +134,7 @@ export class CryptoNote {
         privateViewKey: string,
         publicSpendKey: string,
         privateSpendKey: string,
-        outputIndex: number): Promise<string> {
+        outputIndex: number): Promise<CryptoNoteInterfaces.IKeyImage> {
         const derivation = await TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, privateViewKey);
 
         return this.generateKeyImagePrimitive(publicSpendKey, privateSpendKey, outputIndex, derivation);
@@ -146,12 +153,18 @@ export class CryptoNote {
         publicSpendKey: string,
         privateSpendKey: string,
         outputIndex: number,
-        derivation: string): Promise<string> {
+        derivation: string): Promise<CryptoNoteInterfaces.IKeyImage> {
         const publicEphemeral = await TurtleCoinCrypto.derivePublicKey(derivation, outputIndex, publicSpendKey);
 
         const privateEphemeral = await TurtleCoinCrypto.deriveSecretKey(derivation, outputIndex, privateSpendKey);
 
-        return TurtleCoinCrypto.generateKeyImage(publicEphemeral, privateEphemeral);
+        const keyImage = await TurtleCoinCrypto.generateKeyImage(publicEphemeral, privateEphemeral);
+
+        return {
+            publicEphemeral: publicEphemeral,
+            privateEphemeral: privateEphemeral,
+            keyImage: keyImage
+        }
     }
 
     /**
@@ -463,6 +476,7 @@ export class CryptoNote {
 
         for (let i = 0; i < prepared.inputs.length; i++) {
             const input = prepared.inputs[i];
+
             const srcKeys: string[] = [];
 
             if (!input.input.privateEphemeral) {
@@ -547,7 +561,7 @@ export class CryptoNote {
             }
         }
 
-        const neededMoney = BigInteger.zero;
+        let neededMoney = BigInteger.zero;
         let integratedPaymentId: string | undefined;
 
         for (const output of outputs) {
@@ -558,7 +572,7 @@ export class CryptoNote {
                 throw new RangeError('Cannot create an output with an amount > ' +
                     (this.config.maximumOutputAmount || Config.maximumOutputAmount));
             }
-            neededMoney.add(output.amount);
+            neededMoney = neededMoney.add(output.amount);
             if (neededMoney.greater(UINT64_MAX)) {
                 throw new RangeError('Total output amount exceeds UINT64_MAX');
             }
@@ -579,13 +593,13 @@ export class CryptoNote {
                 'ID supplied to this method');
         }
 
-        const foundMoney = BigInteger.zero;
+        let foundMoney = BigInteger.zero;
 
         for (const input of inputs) {
             if (input.amount <= 0) {
                 throw new RangeError('Cannot spend outputs with an amount <= 0');
             }
-            foundMoney.add(input.amount);
+            foundMoney = foundMoney.add(input.amount);
             if (foundMoney.greater(UINT64_MAX)) {
                 throw new RangeError('Total input amount exceeds UINT64_MAX');
             }
@@ -659,6 +673,8 @@ export class CryptoNote {
         for (const output of transactionOutputs.outputs) {
             tx.outputs.push(new TransactionOutputs.KeyOutput(output.amount, output.key));
         }
+
+        await tx.generateTxProofOfWork();
 
         if (tx.extra.length > (this.config.maximumExtraSize || Config.maximumExtraSize)) {
             throw new Error('Transaction extra exceeds the limit of [' +

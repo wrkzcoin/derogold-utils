@@ -8,6 +8,7 @@ export {Block} from './Block';
 export {BlockTemplate} from './BlockTemplate';
 export {Crypto} from 'turtlecoin-crypto';
 export {CryptoNote} from './CryptoNote';
+export {Interfaces} from './Types/ITransaction';
 export {LevinPacket, LevinProtocol} from './LevinPacket';
 export {LevinPayloads} from './Types/LevinPayloads';
 export {Multisig} from './Multisig';
@@ -19,9 +20,13 @@ export {Transaction} from './Transaction';
 import * as Types from './Types';
 
 /** @ignore */
-import KeyInput = Types.TransactionInputs.KeyInput;
+import TransactionOutputs = Types.TransactionOutputs;
 /** @ignore */
-import KeyOutput = Types.TransactionOutputs.KeyOutput;
+import TransactionInputs = Types.TransactionInputs;
+/** @ignore */
+import KeyInput = TransactionInputs.KeyInput;
+/** @ignore */
+import KeyOutput = TransactionOutputs.KeyOutput;
 /** @ignore */
 import KeyPair = Types.ED25519.KeyPair;
 /** @ignore */
@@ -33,4 +38,6 @@ export {
     KeyOutput,
     KeyPair,
     Keys,
+    TransactionInputs,
+    TransactionOutputs,
 };

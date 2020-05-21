@@ -31,18 +31,57 @@ interface Cache {
 export class Transaction {
 
     /**
-     * Returns the total amount of the transaction inputs
+     * Returns the total amount of the inputs
      */
-    public get amount(): number {
-        const amount = BigInteger.zero;
+    private get inputAmount(): number {
+        let amount = BigInteger.zero;
 
         for (const input of this.inputs) {
             if (input.type === TransactionInputs.InputType.KEY) {
-                amount.add((input as TransactionInputs.KeyInput).amount);
+                amount = amount.add((input as TransactionInputs.KeyInput).amount);
             }
         }
 
         return amount.toJSNumber();
+    }
+
+    /**
+     * Returns the total amount of the outputs
+     */
+    private get outputAmount(): number {
+        let amount = BigInteger.zero;
+
+        for (const output of this.outputs) {
+            if (output.type === TransactionOutputs.OutputType.KEY) {
+                amount = amount.add((output as TransactionOutputs.KeyOutput).amount);
+            }
+        }
+
+        return amount.toJSNumber();
+    }
+
+    /**
+     * Returns whether this is a coinbase transaction or not
+     */
+    public get isCoinbase(): boolean {
+        for (const input of this.inputs) {
+            if (input.type === TransactionInputs.InputType.COINBASE) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns the total amount transferred in the transaction
+     */
+    public get amount(): number {
+        if (this.isCoinbase) {
+            return this.outputAmount;
+        }
+
+        return this.inputAmount;
     }
 
     /**
@@ -80,21 +119,7 @@ export class Transaction {
      * Returns the fee of the transaction
      */
     public get fee(): number {
-        const inputAmount = BigInteger(this.amount);
-
-        if (inputAmount === BigInteger.zero) {
-            return 0;
-        }
-
-        const outputAmount = BigInteger.zero;
-
-        for (const output of this.outputs) {
-            if (output.type === TransactionOutputs.OutputType.KEY) {
-                outputAmount.add((output as TransactionOutputs.KeyOutput).amount);
-            }
-        }
-
-        return inputAmount.subtract(outputAmount).toJSNumber();
+        return this.amount - this.outputAmount;
     }
 
     /**
@@ -343,11 +368,16 @@ export class Transaction {
     public outputs: TransactionOutputs.ITransactionOutput[] = [];
     public signatures: string[][] = [];
     public ignoredField: number = 0;
-    public transactionKeys: ED25519.KeyPair = new ED25519.KeyPair();
+    public transactionKeys: ED25519.KeyPair = new ED25519.KeyPair(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        true);
     protected m_unlockTime: BigInteger.BigInteger = BigInteger.zero;
     protected m_rawExtra: Buffer = Buffer.alloc(0);
     protected m_readonly: boolean = false;
-    protected m_extra: ExtraTag.IExtraTag[] = [];
+    public m_extra: ExtraTag.IExtraTag[] = [];
     protected m_cached: Cache = {prefix: '', prefixHash: '', blob: '', hash: ''};
 
     /** @ignore */
@@ -454,6 +484,52 @@ export class Transaction {
         this.transactionKeys.publicKey = publicKey;
     }
 
+    public async generateTxProofOfWork() {
+        if (this.readonly) {
+            throw new Error('Transaction is read-only');
+        }
+
+        let nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(0));
+
+        let result: ExtraTag.IExtraTag[] = [];
+
+        for (const tag of this.m_extra) {
+            if (tag.tag !== nonceTag.tag) {
+                result.push(tag);
+            }
+        }
+
+        this.m_extra = result;
+        this.m_extra.push(nonceTag);
+
+        const prefix = this.prefix;
+
+        /* Find the pow nonce tag and nonce hole */
+        const tagOffset = prefix.indexOf("040000000000000000");
+
+        /* Then add 2 to skip the tag. */
+        const nonceOffset = tagOffset + 2;
+
+        /* Actual offset is half the nonce offset, since this is hex, but it
+         * will be deserialized into bytes taking up half the space */
+        const unserializedOffset = nonceOffset / 2;
+
+        const nonce = TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset);
+
+        nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(nonce));
+
+        result = [];
+
+        for (const tag of this.m_extra) {
+            if (tag.tag !== nonceTag.tag) {
+                result.push(tag);
+            }
+        }
+
+        this.m_extra = result;
+        this.m_extra.push(nonceTag);
+    }
+
     /**
      * Returns a buffer representation of the transaction object
      * @param [headerOnly] whether we should return just the prefix or not
@@ -550,8 +626,12 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
         switch (tag) {
             case ExtraTag.ExtraTagType.PADDING:
                 if (!seen.padding) {
-                    tags.push(ExtraTag.ExtraPadding.from(reader.bytes(totalLength)));
-                    seen.padding = true;
+                    try {
+                        tags.push(ExtraTag.ExtraPadding.from(reader.bytes(totalLength)));
+                        seen.padding = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
                 } else {
                     reader.skip();
                 }
@@ -559,8 +639,12 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
             case ExtraTag.ExtraTagType.PUBKEY:
                 totalLength += 32;
                 if (!seen.publicKey && reader.unreadBytes >= totalLength) {
-                    tags.push(ExtraTag.ExtraPublicKey.from(reader.bytes(totalLength)));
-                    seen.publicKey = true;
+                    try {
+                        tags.push(ExtraTag.ExtraPublicKey.from(reader.bytes(totalLength)));
+                        seen.publicKey = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
                 } else {
                     reader.skip();
                 }
@@ -573,6 +657,10 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
                     let nonceLength = 0;
                     try {
                         nonceLength = tmpReader.varint().toJSNumber();
+                        if (nonceLength > reader.unreadBytes) {
+                            reader.skip();
+                            continue;
+                        }
                     } catch {
                         reader.skip();
                         continue;
@@ -580,8 +668,12 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
 
                     totalLength += Common.varintLength(nonceLength) + nonceLength;
 
-                    tags.push(ExtraTag.ExtraNonce.from(reader.bytes(totalLength)));
-                    seen.nonce = true;
+                    try {
+                        tags.push(ExtraTag.ExtraNonce.from(reader.bytes(totalLength)));
+                        seen.nonce = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
                 } else {
                     reader.skip();
                 }
@@ -594,6 +686,10 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
                     let mmLength = 0;
                     try {
                         mmLength = tmpReader.varint().toJSNumber();
+                        if (mmLength > reader.unreadBytes) {
+                            reader.skip();
+                            continue;
+                        }
                     } catch {
                         reader.skip();
                         continue;
@@ -601,8 +697,12 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
 
                     totalLength += Common.varintLength(mmLength) + mmLength;
 
-                    tags.push(ExtraTag.ExtraMergedMining.from(reader.bytes(totalLength)));
-                    seen.mergedMining = true;
+                    try {
+                        tags.push(ExtraTag.ExtraMergedMining.from(reader.bytes(totalLength)));
+                        seen.mergedMining = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
                 } else {
                     reader.skip();
                 }

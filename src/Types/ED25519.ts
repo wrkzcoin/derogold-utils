@@ -27,11 +27,21 @@ export namespace ED25519 {
          * @param privateKey
          * @param entropy
          * @param iterations
+         * @param createEmpty
          */
-        constructor(publicKey?: string, privateKey?: string, entropy?: string, iterations?: number) {
-            if (!publicKey && !privateKey && !entropy && !iterations) {
+        constructor(
+            publicKey?: string,
+            privateKey?: string,
+            entropy?: string,
+            iterations?: number,
+            createEmpty: boolean = false
+        ) {
+            if (createEmpty) {
                 return;
             }
+
+            /* If no entropy was supplied, we'll go find our own */
+            entropy = entropy || SecureRandomString({length: 256});
 
             if (publicKey && TurtleCoinCrypto.checkKey(publicKey)) {
                 this.m_publicKey = publicKey;
@@ -42,9 +52,6 @@ export namespace ED25519 {
             }
 
             if (!publicKey && !privateKey) {
-                /* If no entropy was supplied, we'll go find our own */
-                entropy = entropy || SecureRandomString({length: 256});
-
                 this.privateKey = simpleKdf(
                     entropy + rand32(), iterations || Config.keccakIterations);
             }

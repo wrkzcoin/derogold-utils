@@ -413,7 +413,7 @@ describe('SubWallets', () => {
 })
 
 describe('Transactions', function () {
-  this.timeout(10000)
+  this.timeout(20000)
 
   describe('Create Transaction Outputs', () => {
     it('Amount: 1234567', () => {
@@ -503,14 +503,14 @@ describe('Transactions', function () {
     it('generate keyImage', () => {
       return cnUtil.generateKeyImage(txPublicKey, walletPrivateViewKey, walletPublicSpendKey, walletPrivateSpendKey, ourOutputIndex)
         .then(keyImage => {
-          assert(keyImage === expectedKeyImage)
+          assert(keyImage.keyImage === expectedKeyImage)
         })
     })
 
     it('generate keyImage primitive', () => {
       return cnUtil.generateKeyImagePrimitive(walletPublicSpendKey, walletPrivateSpendKey, ourOutputIndex, derivation)
         .then(keyImagePrimitive => {
-          assert(keyImagePrimitive === expectedKeyImage)
+          assert(keyImagePrimitive.keyImage === expectedKeyImage)
         })
     })
   })
@@ -1194,9 +1194,17 @@ describe('Blocks', function () {
 
       assert(testBlockTemplate.minerNonce === 1)
     })
+
+    it('handles block miner transaction with malformed TX_EXTRA data', () => {
+      const a = Block.from('030051f645cd8d0b1ac7adab144afb79cb4b75edaf4504c62f9c5f6ef1209cfda2a10100b287bcd10551f645cd8d0b1ac7adab144afb79cb4b75edaf4504c62f9c5f6ef1209cfda2a1956055d5010100000023032100f5ecd333d82d3037e7ce4d075945e814fc0f1f0720e3c02f8a05ae7f5e33f09c01cd3d01ffa53d070502870a894387ea2142f1bacd9e146af668ef96121bb85e8a41062323ed39f1cce31e022b437667e4eea9347631f5d6711fc766303446fc1292d5e306606db915e8dd35f4030282473db1baeb87679169cfc623d7428c8a177f177050c0aff4de1ba2c1819525a846021b73ab4b753c226eecce342061ed25f6472adbc4437c5246a1252e2a22d9601ff0a2040296083a917dca96091d6ecebf535086aa2bebfb89011f0b11d57599665ce81b31a0f736027cd974883b783ff451d539a91eb4f5c5da8f2380131e4c6ecd48e936dcfe30fa80897a027f907ef11b0bc4eb102af3c5fc665c0e2a37b58d2f3d3989d4ae6a475f245ee12b01ffd03515fde283456ea51132743ae3dbcd2045008aec028de8e7fea72b32734202080000000001547f1300');
+
+      assert((a));
+    })
   })
 
-  describe('Hashing', () => {
+  describe('Hashing', function() {
+    this.timeout(20000)
+
     const blocks = [
       {
         block: '010000000000000000000000000000000000000000000000000000000000000000000046000000010a01ff000188f3b501029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd088071210142694232c5b04151d9e4c27d31ec7a68ea568b19488cfcb422659a07a0e44dd500',
