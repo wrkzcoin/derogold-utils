@@ -476,6 +476,7 @@ export class CryptoNote {
 
         for (let i = 0; i < prepared.inputs.length; i++) {
             const input = prepared.inputs[i];
+
             const srcKeys: string[] = [];
 
             if (!input.input.privateEphemeral) {
@@ -672,6 +673,8 @@ export class CryptoNote {
         for (const output of transactionOutputs.outputs) {
             tx.outputs.push(new TransactionOutputs.KeyOutput(output.amount, output.key));
         }
+
+        await tx.generateTxProofOfWork();
 
         if (tx.extra.length > (this.config.maximumExtraSize || Config.maximumExtraSize)) {
             throw new Error('Transaction extra exceeds the limit of [' +

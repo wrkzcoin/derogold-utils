@@ -9,7 +9,7 @@
   "maximumOutputAmount": 100000000000,
   "maximumOutputsPerTransaction": 90,
   "maximumExtraSize": 1024,
-  "activateFeePerByteTransactions": true,
+  "activateFeePerByteTransactions": false,
   "feePerByte": 1.953125,
   "feePerByteChunkSize": 256
 }
