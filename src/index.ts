@@ -15,6 +15,7 @@ export {Multisig} from './Multisig';
 export {MultisigMessage} from './MultisigMessage';
 export {ParentBlock} from './ParentBlock';
 export {Transaction} from './Transaction';
+import {Crypto} from 'turtlecoin-crypto';
 
 /** @ignore */
 import * as Types from './Types';
@@ -41,3 +42,21 @@ export {
     TransactionInputs,
     TransactionOutputs,
 };
+
+/**
+ * Executes the callback method upon the given event
+ * @param event
+ * @param callback
+ */
+export function on(event: string, callback: () => void) {
+    if (event.toLowerCase() === 'ready') {
+        const check = () => setTimeout(() => {
+            if (Crypto.isReady) {
+                return callback();
+            } else {
+                check();
+            }
+        }, 100)
+        check();
+    }
+}
