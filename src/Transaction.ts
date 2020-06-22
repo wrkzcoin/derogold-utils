@@ -555,6 +555,26 @@ export class Transaction {
     }
 
     /**
+     * Adds the private key for the transaction to the transaction extra field
+     * @param privateKey the private key of the transaction
+     */
+    public addPrivateKey(privateKey: string) {
+        if (this.readonly) {
+            throw new Error('Transaction is read-only');
+        }
+
+        const tag = new ExtraTag.ExtraTransactionPrivateKey(privateKey);
+
+        this.m_extra = removeExtraTag(this.m_extra, tag.tag);
+
+        this.m_extra.push(tag);
+
+        this.m_extra.sort((a, b) => (a.tag > b.tag) ? 1 : -1);
+
+        this.transactionKeys.privateKey = privateKey;
+    }
+
+    /**
      * Returns a buffer representation of the transaction object
      * @param [headerOnly] whether we should return just the prefix or not
      * @returns the buffer representation
