@@ -23,6 +23,9 @@ export namespace ExtraTag {
         PUBKEY,
         NONCE,
         MERGED_MINING,
+        RECIPIENT_PUBLIC_VIEW_KEY,
+        RECIPIENT_PUBLIC_SPEND_KEY,
+        TRANSACTION_PRIVATE_KEY
     }
 
     /**
@@ -516,6 +519,266 @@ export namespace ExtraTag {
             writer.varint(subWriter.length);
 
             writer.write(subWriter.blob);
+
+            return writer.buffer;
+        }
+
+        /**
+         * Represents the field as a hexadecimal string (blob)
+         * @returns the hexadecimal (blob) representation of the object
+         */
+        public toString(): string {
+            return this.toBuffer().toString('hex');
+        }
+    }
+
+    /**
+     * Represents the transaction private key contained in the transaction extra field
+     */
+    export class ExtraTransactionPrivateKey implements IExtraTag {
+
+        /**
+         * The tag type of the field
+         */
+        public get tag(): ExtraTagType {
+            return this.m_tag;
+        }
+
+        /**
+         * The public key contained in the field
+         */
+        public get privateKey(): string {
+            return this.m_privateKey;
+        }
+
+        /**
+         * The size of the field in bytes including the tag
+         */
+        public get size(): number {
+            return this.toBuffer().length;
+        }
+
+        /**
+         * Creates a new instance of the field using a Buffer or Blob copy of
+         * field created through other means
+         * @param data the data that makes up the nonce field
+         * @returns the new object
+         */
+        public static from(data: Buffer | string): ExtraTransactionPrivateKey {
+            const reader = new Reader(data);
+
+            if (reader.varint().toJSNumber() !== ExtraTagType.TRANSACTION_PRIVATE_KEY) {
+                throw new Error('Not a public key field');
+            }
+
+            if (reader.unreadBytes !== SIZES.KEY) {
+                throw new RangeError('Not enough data available for reading');
+            }
+
+            const privateKey = reader.hash();
+
+            return new ExtraTransactionPrivateKey(privateKey);
+        }
+
+        private readonly m_tag: ExtraTagType = ExtraTagType.TRANSACTION_PRIVATE_KEY;
+        private readonly m_privateKey: string = '';
+
+        /**
+         * Creates a new instance of the field using the supplied public key
+         * @param publicKey the public key to be stored in the field
+         */
+        constructor(privateKey: string) {
+            if (TurtleCoinCrypto.checkScalar(privateKey)) {
+                this.m_privateKey = privateKey;
+            } else {
+                throw new Error('invalid private key supplied');
+            }
+        }
+
+        /**
+         * Represents the field as a Buffer
+         * @returns the Buffer representation of the object
+         */
+        public toBuffer(): Buffer {
+            const writer = new Writer();
+
+            writer.varint(this.tag);
+
+            writer.hash(this.privateKey);
+
+            return writer.buffer;
+        }
+
+        /**
+         * Represents the field as a hexadecimal string (blob)
+         * @returns the hexadecimal (blob) representation of the object
+         */
+        public toString(): string {
+            return this.toBuffer().toString('hex');
+        }
+    }
+
+    /**
+     * Represents the recipient public view key contained in the transaction
+     * extra field for coinbase transactions
+     */
+    export class ExtraRecipientPublicViewKey implements IExtraTag {
+
+        /**
+         * The tag type of the field
+         */
+        public get tag(): ExtraTagType {
+            return this.m_tag;
+        }
+
+        /**
+         * The public key contained in the field
+         */
+        public get publicKey(): string {
+            return this.m_publicKey;
+        }
+
+        /**
+         * The size of the field in bytes including the tag
+         */
+        public get size(): number {
+            return this.toBuffer().length;
+        }
+
+        /**
+         * Creates a new instance of the field using a Buffer or Blob copy of
+         * field created through other means
+         * @param data the data that makes up the nonce field
+         * @returns the new object
+         */
+        public static from(data: Buffer | string): ExtraRecipientPublicViewKey {
+            const reader = new Reader(data);
+
+            if (reader.varint().toJSNumber() !== ExtraTagType.RECIPIENT_PUBLIC_VIEW_KEY) {
+                throw new Error('Not a public key field');
+            }
+
+            if (reader.unreadBytes !== SIZES.KEY) {
+                throw new RangeError('Not enough data available for reading');
+            }
+
+            const publicKey = reader.hash();
+
+            return new ExtraRecipientPublicViewKey(publicKey);
+        }
+
+        private readonly m_tag: ExtraTagType = ExtraTagType.RECIPIENT_PUBLIC_VIEW_KEY;
+        private readonly m_publicKey: string = '';
+
+        /**
+         * Creates a new instance of the field using the supplied public key
+         * @param publicKey the public key to be stored in the field
+         */
+        constructor(publicKey: string) {
+            if (TurtleCoinCrypto.checkKey(publicKey)) {
+                this.m_publicKey = publicKey;
+            } else {
+                throw new Error('invalid public key supplied');
+            }
+        }
+
+        /**
+         * Represents the field as a Buffer
+         * @returns the Buffer representation of the object
+         */
+        public toBuffer(): Buffer {
+            const writer = new Writer();
+
+            writer.varint(this.tag);
+
+            writer.hash(this.publicKey);
+
+            return writer.buffer;
+        }
+
+        /**
+         * Represents the field as a hexadecimal string (blob)
+         * @returns the hexadecimal (blob) representation of the object
+         */
+        public toString(): string {
+            return this.toBuffer().toString('hex');
+        }
+    }
+
+    /**
+     * Represents the recipient public spend key contained in the transaction
+     * extra field for coinbase transactions
+     */
+    export class ExtraRecipientPublicSpendKey implements IExtraTag {
+
+        /**
+         * The tag type of the field
+         */
+        public get tag(): ExtraTagType {
+            return this.m_tag;
+        }
+
+        /**
+         * The public key contained in the field
+         */
+        public get publicKey(): string {
+            return this.m_publicKey;
+        }
+
+        /**
+         * The size of the field in bytes including the tag
+         */
+        public get size(): number {
+            return this.toBuffer().length;
+        }
+
+        /**
+         * Creates a new instance of the field using a Buffer or Blob copy of
+         * field created through other means
+         * @param data the data that makes up the nonce field
+         * @returns the new object
+         */
+        public static from(data: Buffer | string): ExtraRecipientPublicSpendKey {
+            const reader = new Reader(data);
+
+            if (reader.varint().toJSNumber() !== ExtraTagType.RECIPIENT_PUBLIC_SPEND_KEY) {
+                throw new Error('Not a public key field');
+            }
+
+            if (reader.unreadBytes !== SIZES.KEY) {
+                throw new RangeError('Not enough data available for reading');
+            }
+
+            const publicKey = reader.hash();
+
+            return new ExtraRecipientPublicSpendKey(publicKey);
+        }
+
+        private readonly m_tag: ExtraTagType = ExtraTagType.RECIPIENT_PUBLIC_SPEND_KEY;
+        private readonly m_publicKey: string = '';
+
+        /**
+         * Creates a new instance of the field using the supplied public key
+         * @param publicKey the public key to be stored in the field
+         */
+        constructor(publicKey: string) {
+            if (TurtleCoinCrypto.checkKey(publicKey)) {
+                this.m_publicKey = publicKey;
+            } else {
+                throw new Error('invalid public key supplied');
+            }
+        }
+
+        /**
+         * Represents the field as a Buffer
+         * @returns the Buffer representation of the object
+         */
+        public toBuffer(): Buffer {
+            const writer = new Writer();
+
+            writer.varint(this.tag);
+
+            writer.hash(this.publicKey);
 
             return writer.buffer;
         }

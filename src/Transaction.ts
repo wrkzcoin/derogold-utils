@@ -3,6 +3,7 @@
 // Please see the included LICENSE file for more information.
 
 import {Common} from './Common';
+import {Address} from './Address';
 import {
     BigInteger,
     ED25519,
@@ -71,6 +72,22 @@ export class Transaction {
         }
 
         return false;
+    }
+
+    /**
+     * Returns the recipient address if this is a coinbase
+     * transaction and the information is available
+     */
+    public get recipient(): Address | undefined {
+        if (!this.isCoinbase) {
+            return;
+        }
+
+        if (!this.recipientPublicSpendKey || !this.recipientPublicViewKey) {
+            return;
+        }
+
+        return Address.fromPublicKeys(this.recipientPublicSpendKey, this.recipientPublicViewKey);
     }
 
     /**
@@ -215,7 +232,7 @@ export class Transaction {
     }
 
     /**
-     * Returns the transaction public key
+     * Returns the transaction public key (if available)
      */
     public get publicKey(): string | undefined {
         let result;
@@ -223,6 +240,59 @@ export class Transaction {
         for (const tag of this.m_extra) {
             if (tag.tag === ExtraTag.ExtraTagType.PUBKEY) {
                 result = (tag as ExtraTag.ExtraPublicKey).publicKey;
+            }
+        }
+
+        if (!result && this.transactionKeys.publicKey) {
+            result = this.transactionKeys.publicKey;
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns the transaction private key (if available)
+     */
+    public get privateKey(): string | undefined {
+        let result;
+
+        for (const tag of this.m_extra) {
+            if (tag.tag === ExtraTag.ExtraTagType.TRANSACTION_PRIVATE_KEY) {
+                result = (tag as ExtraTag.ExtraTransactionPrivateKey).privateKey;
+            }
+        }
+
+        if (!result && this.transactionKeys.privateKey) {
+            result = this.transactionKeys.privateKey;
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns the transacton recipient public view key (if available)
+     */
+    public get recipientPublicViewKey(): string | undefined {
+        let result;
+
+        for (const tag of this.m_extra) {
+            if (tag.tag === ExtraTag.ExtraTagType.RECIPIENT_PUBLIC_VIEW_KEY) {
+                result = (tag as ExtraTag.ExtraRecipientPublicViewKey).publicKey;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns the transacton recipient public spend key (if available)
+     */
+    public get recipientPublicSpendKey(): string | undefined {
+        let result;
+
+        for (const tag of this.m_extra) {
+            if (tag.tag === ExtraTag.ExtraTagType.RECIPIENT_PUBLIC_SPEND_KEY) {
+                result = (tag as ExtraTag.ExtraRecipientPublicSpendKey).publicKey;
             }
         }
 
@@ -561,6 +631,9 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
         publicKey: false,
         nonce: false,
         mergedMining: false,
+        transactionPrivateKey: false,
+        recipientPublicViewKey: false,
+        recipientPublicSpendKey: false
     };
 
     const reader = new Reader(data);
@@ -654,6 +727,45 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
                     try {
                         tags.push(ExtraTag.ExtraMergedMining.from(reader.bytes(totalLength)));
                         seen.mergedMining = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
+                } else {
+                    reader.skip();
+                }
+                break;
+            case ExtraTag.ExtraTagType.TRANSACTION_PRIVATE_KEY:
+                totalLength += 32;
+                if (!seen.transactionPrivateKey && reader.unreadBytes >= totalLength) {
+                    try {
+                        tags.push(ExtraTag.ExtraTransactionPrivateKey.from(reader.bytes(totalLength)));
+                        seen.transactionPrivateKey = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
+                } else {
+                    reader.skip();
+                }
+                break;
+            case ExtraTag.ExtraTagType.RECIPIENT_PUBLIC_VIEW_KEY:
+                totalLength += 32;
+                if (!seen.recipientPublicViewKey && reader.unreadBytes >= totalLength) {
+                    try {
+                        tags.push(ExtraTag.ExtraRecipientPublicViewKey.from(reader.bytes(totalLength)));
+                        seen.recipientPublicViewKey = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
+                } else {
+                    reader.skip();
+                }
+                break;
+            case ExtraTag.ExtraTagType.RECIPIENT_PUBLIC_SPEND_KEY:
+                totalLength += 32;
+                if (!seen.recipientPublicSpendKey && reader.unreadBytes >= totalLength) {
+                    try {
+                        tags.push(ExtraTag.ExtraRecipientPublicSpendKey.from(reader.bytes(totalLength)));
+                        seen.recipientPublicSpendKey = true;
                     } catch (e) {
                         reader.skip();
                     }
