@@ -549,7 +549,9 @@ function getBlockPoWHash(data: Buffer, majorVersion: number): string {
         case 5:
             return TurtleCoinCrypto.cn_turtle_lite_slow_hash_v2(blob);
         case 6:
-            return TurtleCoinCrypto.chukwa_slow_hash(blob);
+            return TurtleCoinCrypto.chukwa_slow_hash_v1(blob);
+        case 7:
+            return TurtleCoinCrypto.chukwa_slow_hash_v2(blob);
         default:
             throw new Error('Unhandled major block version');
     }
