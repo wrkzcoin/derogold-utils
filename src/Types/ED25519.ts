@@ -4,13 +4,10 @@
 
 import {Common} from '../Common';
 import {TurtleCoinCrypto} from '../Types';
-import {Mnemonics} from 'turtlecoin-mnemonics';
+import {randomBytes} from 'crypto';
 
 /** @ignore */
 const Config = require('../../config.json');
-
-/** @ignore */
-const SecureRandomString = require('secure-random-string');
 
 export namespace ED25519 {
     /**
@@ -41,7 +38,7 @@ export namespace ED25519 {
             }
 
             /* If no entropy was supplied, we'll go find our own */
-            entropy = entropy || SecureRandomString({length: 256});
+            entropy = entropy || rand(256);
 
             if (publicKey && TurtleCoinCrypto.checkKey(publicKey)) {
                 this.m_publicKey = publicKey;
@@ -53,7 +50,7 @@ export namespace ED25519 {
 
             if (!publicKey && !privateKey) {
                 this.privateKey = simpleKdf(
-                    entropy + rand32(), iterations || Config.keccakIterations);
+                    entropy + rand(32), iterations || Config.keccakIterations);
             }
 
             if (this.m_privateKey && !this.m_publicKey) {
@@ -175,12 +172,9 @@ export namespace ED25519 {
 }
 
 /** @ignore */
-function rand32(): string {
-    try {
-        return Mnemonics.random(256);
-    } catch (error) {
-        throw new Error('Could not retrieve 32-bytes of random data: ' + error.toString());
-    }
+function rand(bytes: number = 32): string {
+    return randomBytes(bytes)
+        .toString('base64');
 }
 
 /** @ignore */
