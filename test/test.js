@@ -755,7 +755,7 @@ describe('Transactions', function () {
           })
     })
 
-    it('generate a transaction using integrated address and matching payment ID',  async function () {
+    it('generate a transaction using integrated address and matching payment ID', async function () {
       const paymentId = '1886db9573ae180e27f39cced773bdf83aa3a55f1168d89e82bf337bb5373506'
       const madeOutputs = cnUtil.generateTransactionOutputs('TRTLuxjc5auCRCJ9dUVPzt9EVTdT8GwogAaXBVFiTzbUC5sTZZaueftBubfuHB6C2BCQpKNjQDAdB9ZhsjZMndwc9ZnDBrCj846SpRsZWxkcbDhiVEfy9rAgX3X9b7z8XQAy9gwjB6cwr6BJ3P52a6TQUSfA4eXf3Avwz7W89J4doLuigLjUzPs6LiD', 90)
       const txPublicKey = '3b0cc2b066812e6b9fcc42a797dc3c723a7344b604fd4be0b22e06254ff57f94'
@@ -1067,7 +1067,7 @@ describe('Transactions', function () {
         })
     })
 
-    it('fail to generate transaction when payment ID does not match payment ID in integrated address', async function() {
+    it('fail to generate transaction when payment ID does not match payment ID in integrated address', async function () {
       const paymentId = '1886db9573ae180e27f39cced773bdf83aa3a55f1168d89e82bf337bb5373505'
       const madeOutputs = cnUtil.generateTransactionOutputs('TRTLuxjc5auCRCJ9dUVPzt9EVTdT8GwogAaXBVFiTzbUC5sTZZaueftBubfuHB6C2BCQpKNjQDAdB9ZhsjZMndwc9ZnDBrCj846SpRsZWxkcbDhiVEfy9rAgX3X9b7z8XQAy9gwjB6cwr6BJ3P52a6TQUSfA4eXf3Avwz7W89J4doLuigLjUzPs6LiD', 90)
       const txPublicKey = '3b0cc2b066812e6b9fcc42a797dc3c723a7344b604fd4be0b22e06254ff57f94'
@@ -1100,11 +1100,11 @@ describe('Transactions', function () {
       ]]
 
       return cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, paymentId, 0)
-          .then(() => { assert(false) })
-          .catch(() => { assert(true)})
+        .then(() => { assert(false) })
+        .catch(() => { assert(true) })
     })
 
-    it('fail to generate transaction using two destinations with differing payment IDs', async function() {
+    it('fail to generate transaction using two destinations with differing payment IDs', async function () {
       const madeOutputs = cnUtil.generateTransactionOutputs('TRTLuxjc5auCRCJ9dUVPzt9EVTdT8GwogAaXBVFiTzbUC5sTZZaueftBubfuHB6C2BCQpKNjQDAdB9ZhsjZMndwc9ZnDBrCj846SpRsZWxkcbDhiVEfy9rAgX3X9b7z8XQAy9gwjB6cwr6BJ3P52a6TQUSfA4eXf3Avwz7W89J4doLuigLjUzPs6LiD', 90)
       const madeOutputs2 = cnUtil.generateTransactionOutputs('TRTLuxp8RkjA5TMvFWhSoz94bwe9fHbFpCb1f669XiNc95D7s7CShfW9unmPq2M3nS9jbdbx37dnH9unntNPGVmqA5LbzVL4HQrSpRsZWxkcbDhiVEfy9rAgX3X9b7z8XQAy9gwjB6cwr6BJ3P52a6TQUSfA4eXf3Avwz7W89J4doLuigLjUzPembYH', 90)
       const txPublicKey = '3b0cc2b066812e6b9fcc42a797dc3c723a7344b604fd4be0b22e06254ff57f94'
@@ -1137,8 +1137,8 @@ describe('Transactions', function () {
       ]]
 
       return cnUtil.createTransaction(madeOutputs.concat(madeOutputs2), [madeInput], randomOutputs, 3, 1000, '', 0)
-          .then(() => { assert(false) })
-          .catch(() => { assert(true)})
+        .then(() => { assert(false) })
+        .catch(() => { assert(true) })
     })
   })
 
@@ -1161,6 +1161,8 @@ describe('Blocks', function () {
 
   describe('Structures', () => {
     const BlockTemplateSample = require('./template.json')
+    const BlockTemplateSample2 = require('./template2.json')
+
     const genesisBlockRaw = '010000000000000000000000000000000000000000000000000000000000000000000046000000010a01ff000188f3b501029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd088071210142694232c5b04151d9e4c27d31ec7a68ea568b19488cfcb422659a07a0e44dd500'
     const miningBlob = '0100b5f9abe605b4318c1249164393f7b9d691e60aba81ca9bbffb9e0b23e6b01c93d9c621ab80000000004b27c162bc89b0bdfa0db8b5c99977943caf754bb6181d8e1bafc6af2ab0b0bb01'
 
@@ -1193,19 +1195,38 @@ describe('Blocks', function () {
 
     it('sets miner transaction nonce', () => {
       const testBlockTemplate = BlockTemplate.from(BlockTemplateSample)
+
       testBlockTemplate.minerNonce++
 
       assert(testBlockTemplate.minerNonce === 1)
     })
 
     it('handles block miner transaction with malformed TX_EXTRA data', () => {
-      const a = Block.from('030051f645cd8d0b1ac7adab144afb79cb4b75edaf4504c62f9c5f6ef1209cfda2a10100b287bcd10551f645cd8d0b1ac7adab144afb79cb4b75edaf4504c62f9c5f6ef1209cfda2a1956055d5010100000023032100f5ecd333d82d3037e7ce4d075945e814fc0f1f0720e3c02f8a05ae7f5e33f09c01cd3d01ffa53d070502870a894387ea2142f1bacd9e146af668ef96121bb85e8a41062323ed39f1cce31e022b437667e4eea9347631f5d6711fc766303446fc1292d5e306606db915e8dd35f4030282473db1baeb87679169cfc623d7428c8a177f177050c0aff4de1ba2c1819525a846021b73ab4b753c226eecce342061ed25f6472adbc4437c5246a1252e2a22d9601ff0a2040296083a917dca96091d6ecebf535086aa2bebfb89011f0b11d57599665ce81b31a0f736027cd974883b783ff451d539a91eb4f5c5da8f2380131e4c6ecd48e936dcfe30fa80897a027f907ef11b0bc4eb102af3c5fc665c0e2a37b58d2f3d3989d4ae6a475f245ee12b01ffd03515fde283456ea51132743ae3dbcd2045008aec028de8e7fea72b32734202080000000001547f1300');
+      const a = Block.from('030051f645cd8d0b1ac7adab144afb79cb4b75edaf4504c62f9c5f6ef1209cfda2a10100b287bcd10551f645cd8d0b1ac7adab144afb79cb4b75edaf4504c62f9c5f6ef1209cfda2a1956055d5010100000023032100f5ecd333d82d3037e7ce4d075945e814fc0f1f0720e3c02f8a05ae7f5e33f09c01cd3d01ffa53d070502870a894387ea2142f1bacd9e146af668ef96121bb85e8a41062323ed39f1cce31e022b437667e4eea9347631f5d6711fc766303446fc1292d5e306606db915e8dd35f4030282473db1baeb87679169cfc623d7428c8a177f177050c0aff4de1ba2c1819525a846021b73ab4b753c226eecce342061ed25f6472adbc4437c5246a1252e2a22d9601ff0a2040296083a917dca96091d6ecebf535086aa2bebfb89011f0b11d57599665ce81b31a0f736027cd974883b783ff451d539a91eb4f5c5da8f2380131e4c6ecd48e936dcfe30fa80897a027f907ef11b0bc4eb102af3c5fc665c0e2a37b58d2f3d3989d4ae6a475f245ee12b01ffd03515fde283456ea51132743ae3dbcd2045008aec028de8e7fea72b32734202080000000001547f1300')
 
-      assert((a));
+      assert((a))
+    })
+
+    it('Can read pool nonce in miner transaction correctly via .poolNonce', () => {
+      const a = BlockTemplate.from(BlockTemplateSample2)
+
+      a.minerTransaction.poolNonce++
+
+      // The value is set to 1 already in the sample template
+      assert(a.minerTransaction.poolNonce === 2)
+    })
+
+    it('Can read pool nonce in miner transaction correctly via .minerNonce', () => {
+      const testBlockTemplate = BlockTemplate.from(BlockTemplateSample2)
+
+      testBlockTemplate.minerNonce++
+
+      // The value is set to 1 already in the sample template
+      assert(testBlockTemplate.minerNonce === 2)
     })
   })
 
-  describe('Hashing', function() {
+  describe('Hashing', function () {
     this.timeout(20000)
 
     const blocks = [
@@ -1312,7 +1333,6 @@ describe('Blocks', function () {
     })
   })
 })
-
 
 describe('Peer-to-Peer', () => {
   describe('1001: COMMAND_HANDSHAKE', () => {
@@ -1465,4 +1485,3 @@ describe('Peer-to-Peer', () => {
     })
   })
 })
-
