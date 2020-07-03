@@ -2,9 +2,9 @@
 //
 // Please see the included LICENSE file for more information.
 
-import {Base58} from 'turtlecoin-base58';
+import { Base58 } from 'turtlecoin-base58';
 import * as ConfigInterface from './Config';
-import {Reader, Writer} from 'bytestream-helper';
+import { Reader, Writer } from 'bytestream-helper';
 import Config = ConfigInterface.Interfaces.Config;
 
 /** @ignore */
@@ -20,11 +20,10 @@ const Config: Config = require('../config.json');
  * Represents a TurtleCoin address prefix
  */
 export class AddressPrefix {
-
     /**
      * The Base58 encoded address prefix
      */
-    public get base58(): string {
+    public get base58 (): string {
         if (this.m_base58) {
             return this.m_base58;
         }
@@ -35,21 +34,21 @@ export class AddressPrefix {
     /**
      * The decimal encoded address prefix
      */
-    public get decimal(): number {
+    public get decimal (): number {
         return this.m_decimal || 0;
     }
 
     /**
      * The hexadecimal encoded address prefix
      */
-    public get hex(): string {
+    public get hex (): string {
         return this.varint.toString('hex');
     }
 
     /**
      * The varint encoded address prefix
      */
-    public get varint(): Buffer {
+    public get varint (): Buffer {
         const writer = new Writer();
 
         writer.varint(this.decimal);
@@ -60,7 +59,7 @@ export class AddressPrefix {
     /**
      * The size of the address prefix in bytes
      */
-    public get size(): number {
+    public get size (): number {
         return this.varint.length;
     }
 
@@ -69,7 +68,7 @@ export class AddressPrefix {
      * @param address the public wallet address to decode to obtain the address prefix
      * @returns the address prefix
      */
-    public static from(address: string): AddressPrefix {
+    public static from (address: string): AddressPrefix {
         let decodedAddress = Base58.decode(address);
 
         /* Chop off the checksum */
@@ -105,7 +104,7 @@ export class AddressPrefix {
      * @param [decimal] the decimal representation of the address prefix
      * @param [base58] the Base58 representation of the address prefix
      */
-    constructor(decimal?: number, base58?: string) {
+    constructor (decimal?: number, base58?: string) {
         if (decimal) {
             this.m_decimal = decimal;
         }

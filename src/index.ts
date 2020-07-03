@@ -2,23 +2,23 @@
 //
 // Please see the included LICENSE file for more information.
 
-export {Address} from './Address';
-export {AddressPrefix} from './AddressPrefix';
-export {Block} from './Block';
-export {BlockTemplate} from './BlockTemplate';
-export {Crypto} from 'turtlecoin-crypto';
-export {CryptoNote} from './CryptoNote';
-export {Interfaces} from './Types/ITransaction';
-export {LevinPacket, LevinProtocol} from './LevinPacket';
-export {LevinPayloads} from './Types/LevinPayloads';
-export {Multisig} from './Multisig';
-export {MultisigMessage} from './MultisigMessage';
-export {ParentBlock} from './ParentBlock';
-export {Transaction} from './Transaction';
-import {Crypto} from 'turtlecoin-crypto';
+import { Crypto } from 'turtlecoin-crypto';
 
 /** @ignore */
 import * as Types from './Types';
+export { Address } from './Address';
+export { AddressPrefix } from './AddressPrefix';
+export { Block } from './Block';
+export { BlockTemplate } from './BlockTemplate';
+export { Crypto } from 'turtlecoin-crypto';
+export { CryptoNote } from './CryptoNote';
+export { Interfaces } from './Types/ITransaction';
+export { LevinPacket, LevinProtocol } from './LevinPacket';
+export { LevinPayloads } from './Types/LevinPayloads';
+export { Multisig } from './Multisig';
+export { MultisigMessage } from './MultisigMessage';
+export { ParentBlock } from './ParentBlock';
+export { Transaction } from './Transaction';
 
 /** @ignore */
 import TransactionOutputs = Types.TransactionOutputs;
@@ -40,7 +40,7 @@ export {
     KeyPair,
     Keys,
     TransactionInputs,
-    TransactionOutputs,
+    TransactionOutputs
 };
 
 /**
@@ -48,7 +48,7 @@ export {
  * @param event
  * @param callback
  */
-export function on(event: string, callback: () => void) {
+export function on (event: string, callback: () => void) {
     if (event.toLowerCase() === 'ready') {
         const check = () => setTimeout(() => {
             if (Crypto.isReady) {
@@ -56,7 +56,7 @@ export function on(event: string, callback: () => void) {
             } else {
                 check();
             }
-        }, 100)
+        }, 100);
         check();
     }
 }

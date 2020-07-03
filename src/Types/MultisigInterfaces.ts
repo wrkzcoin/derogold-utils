@@ -2,7 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 
-import {Interfaces} from './ITransaction';
+import { Interfaces } from './ITransaction';
 
 export namespace MultisigInterfaces {
     /**

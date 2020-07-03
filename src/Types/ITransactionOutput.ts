@@ -2,8 +2,8 @@
 //
 // Please see the included LICENSE file for more information.
 
-import {BigInteger} from '../Types';
-import {Writer} from 'bytestream-helper';
+import { BigInteger } from '../Types';
+import { Writer } from 'bytestream-helper';
 
 export namespace TransactionOutputs {
 
@@ -40,7 +40,6 @@ export namespace TransactionOutputs {
      * Represents an output to a set of keys (wallet)
      */
     export class KeyOutput implements ITransactionOutput {
-
         private readonly m_type: OutputType = OutputType.KEY;
         private readonly m_amount: BigInteger.BigInteger = BigInteger.zero;
         private readonly m_key: string = '';
@@ -50,7 +49,7 @@ export namespace TransactionOutputs {
          * @param amount the output amount
          * @param key the one-time output key of the output
          */
-        constructor(amount: BigInteger.BigInteger | number, key: string) {
+        constructor (amount: BigInteger.BigInteger | number, key: string) {
             if (typeof amount === 'number') {
                 amount = BigInteger(amount);
             }
@@ -63,21 +62,21 @@ export namespace TransactionOutputs {
         /**
          * The output type
          */
-        public get type(): OutputType {
+        public get type (): OutputType {
             return this.m_type;
         }
 
         /**
          * The output amount
          */
-        public get amount(): BigInteger.BigInteger {
+        public get amount (): BigInteger.BigInteger {
             return this.m_amount;
         }
 
         /**
          * The one-time output key of the output
          */
-        public get key(): string {
+        public get key (): string {
             return this.m_key;
         }
 
@@ -85,7 +84,7 @@ export namespace TransactionOutputs {
          * Represents the output as a Buffer
          * @returns the Buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const writer = new Writer();
 
             writer.varint(this.amount);
@@ -101,7 +100,7 @@ export namespace TransactionOutputs {
          * Represents the output as a hexadecimal string (blob)
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }

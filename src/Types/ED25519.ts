@@ -2,9 +2,9 @@
 //
 // Please see the included LICENSE file for more information.
 
-import {Common} from '../Common';
-import {TurtleCoinCrypto} from '../Types';
-import {randomBytes} from 'crypto';
+import { Common } from '../Common';
+import { TurtleCoinCrypto } from '../Types';
+import { randomBytes } from 'crypto';
 
 /** @ignore */
 const Config = require('../../config.json');
@@ -26,12 +26,12 @@ export namespace ED25519 {
          * @param iterations
          * @param createEmpty
          */
-        constructor(
+        constructor (
             publicKey?: string,
             privateKey?: string,
             entropy?: string,
             iterations?: number,
-            createEmpty: boolean = false
+            createEmpty = false
         ) {
             if (createEmpty) {
                 return;
@@ -54,7 +54,7 @@ export namespace ED25519 {
             }
 
             if (this.m_privateKey && !this.m_publicKey) {
-                /* If we supplied a private key but no public key, and we said 1 iteration
+            /* If we supplied a private key but no public key, and we said 1 iteration
                 we are probably looking to generate the deterministic view key for the
                 specified private spend key */
                 if (iterations && iterations === 1) {
@@ -68,7 +68,7 @@ export namespace ED25519 {
         /**
          * Returns the private key
          */
-        public get privateKey(): string {
+        public get privateKey (): string {
             return (this.m_privateKey) ? this.m_privateKey : '';
         }
 
@@ -76,15 +76,15 @@ export namespace ED25519 {
          * Sets the private key or reduces the value to a private key
          * @param key
          */
-        public set privateKey(key: string) {
-            this.m_privateKey = (TurtleCoinCrypto.checkScalar(key)) ?
-                key : TurtleCoinCrypto.scReduce32(key);
+        public set privateKey (key: string) {
+            this.m_privateKey = (TurtleCoinCrypto.checkScalar(key))
+                ? key : TurtleCoinCrypto.scReduce32(key);
         }
 
         /**
          * Returns the public key
          */
-        public get publicKey(): string {
+        public get publicKey (): string {
             return (this.m_publicKey) ? this.m_publicKey : '';
         }
 
@@ -92,7 +92,7 @@ export namespace ED25519 {
          * Sets the public key
          * @param key
          */
-        public set publicKey(key: string) {
+        public set publicKey (key: string) {
             if (TurtleCoinCrypto.checkKey(key)) {
                 this.m_publicKey = key;
             } else {
@@ -103,7 +103,7 @@ export namespace ED25519 {
         /**
          * Returns if the public key belongs to the private key
          */
-        public get isPaired(): boolean {
+        public get isPaired (): boolean {
             if (this.publicKey.length === 0 || this.privateKey.length === 0) {
                 return false;
             }
@@ -124,7 +124,7 @@ export namespace ED25519 {
          * @param spendKeys the spend key pair
          * @param viewKeys the view key pair
          */
-        constructor(spendKeys?: KeyPair, viewKeys?: KeyPair) {
+        constructor (spendKeys?: KeyPair, viewKeys?: KeyPair) {
             if (spendKeys) {
                 this.m_spendKeys = spendKeys;
             }
@@ -142,7 +142,7 @@ export namespace ED25519 {
         /**
          * Returns the spend keys
          */
-        public get spend(): KeyPair {
+        public get spend (): KeyPair {
             return this.m_spendKeys;
         }
 
@@ -150,14 +150,14 @@ export namespace ED25519 {
          * Sets the spend keys
          * @param keys
          */
-        public set spend(keys: KeyPair) {
+        public set spend (keys: KeyPair) {
             this.m_spendKeys = keys;
         }
 
         /**
          * Returns the view keys
          */
-        public get view(): KeyPair {
+        public get view (): KeyPair {
             return this.m_viewKeys;
         }
 
@@ -165,20 +165,20 @@ export namespace ED25519 {
          * Sets the view keys
          * @param keys
          */
-        public set view(keys: KeyPair) {
+        public set view (keys: KeyPair) {
             this.m_viewKeys = keys;
         }
     }
 }
 
 /** @ignore */
-function rand(bytes: number = 32): string {
+function rand (bytes = 32): string {
     return randomBytes(bytes)
         .toString('base64');
 }
 
 /** @ignore */
-function simpleKdf(value: string, iterations: number): string {
+function simpleKdf (value: string, iterations: number): string {
     /** This is a very simple implementation of a pseudo PBKDF2 function */
     let hex = Common.bin2hex(Common.str2bin(value));
     for (let i = 0; i < iterations; i++) {

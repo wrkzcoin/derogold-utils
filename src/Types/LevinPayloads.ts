@@ -2,10 +2,10 @@
 //
 // Please see the included LICENSE file for more information.
 
-import {BigInteger, PortableStorage, StorageType} from '../Types';
-import {Reader, Writer} from 'bytestream-helper';
-import {Block} from '../Block';
-import {Transaction} from '../Transaction';
+import { BigInteger, PortableStorage, StorageType } from '../Types';
+import { Reader, Writer } from 'bytestream-helper';
+import { Block } from '../Block';
+import { Transaction } from '../Transaction';
 
 /** @ignore */
 export enum SIZES {
@@ -34,7 +34,7 @@ export namespace LevinPayloads {
          * @param block
          * @param transactions
          */
-        constructor(block?: Block, transactions?: Transaction[]) {
+        constructor (block?: Block, transactions?: Transaction[]) {
             if (block) {
                 this.block = block;
             }
@@ -49,37 +49,36 @@ export namespace LevinPayloads {
      * Represents a peer entry in the peer list
      */
     export class PeerEntry {
-
         /**
          * The peer IP address
          */
-        public get ip(): string {
+        public get ip (): string {
             return int2ip(this.m_ip);
         }
 
-        public set ip(value: string) {
+        public set ip (value: string) {
             this.m_ip = ip2int(value);
         }
 
         /**
          * The peer's port number
          */
-        public get port(): number {
+        public get port (): number {
             return this.m_port;
         }
 
-        public set port(value: number) {
+        public set port (value: number) {
             this.m_port = value;
         }
 
         /**
          * The peer ID
          */
-        public get id(): string {
+        public get id (): string {
             return this.m_id;
         }
 
-        public set id(value: string) {
+        public set id (value: string) {
             const reader = new Reader(value);
 
             if (reader.length !== 8) {
@@ -92,11 +91,11 @@ export namespace LevinPayloads {
         /**
          * The last seen datetime of the peer
          */
-        public get last_seen(): Date {
+        public get last_seen (): Date {
             return this.m_last_seen;
         }
 
-        public set last_seen(value: Date) {
+        public set last_seen (value: Date) {
             this.m_last_seen = value;
         }
 
@@ -105,7 +104,7 @@ export namespace LevinPayloads {
          * @param data the raw data of the peer entry
          * @returns a new instance of the object
          */
-        public static from(data: Reader | Buffer | string): PeerEntry {
+        public static from (data: Reader | Buffer | string): PeerEntry {
             const reader = new Reader(data);
 
             if (reader.length !== 24) {
@@ -121,8 +120,8 @@ export namespace LevinPayloads {
             return new PeerEntry(ip, port, id, last_seen);
         }
 
-        protected m_ip: number = 0;
-        protected m_port: number = 0;
+        protected m_ip = 0;
+        protected m_port = 0;
         protected m_id: string = ''.padStart(16, '0');
         protected m_last_seen: Date = new Date();
 
@@ -133,7 +132,7 @@ export namespace LevinPayloads {
          * @param id the peer id
          * @param last_seen the date the peer was last seen
          */
-        constructor(ip: string, port: number, id: string, last_seen: Date) {
+        constructor (ip: string, port: number, id: string, last_seen: Date) {
             this.m_ip = ip2int(ip);
             this.m_port = port;
 
@@ -151,7 +150,7 @@ export namespace LevinPayloads {
          * The Buffer representation of the peer entry
          * @returns the buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const writer = new Writer();
 
             writer.uint32_t(this.m_ip);
@@ -169,7 +168,7 @@ export namespace LevinPayloads {
          * The hexadecimal (blob) representation of the peer entry
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
@@ -185,11 +184,11 @@ export namespace LevinPayloads {
 
     /** @ignore */
     export class LevinPayload implements ILevinPayload {
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             return Buffer.alloc(0);
         }
 
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
@@ -198,15 +197,14 @@ export namespace LevinPayloads {
      * Represents a handshake payload
      */
     export class Handshake implements ILevinPayload {
-
         /**
          * The network ID
          */
-        public get network_id(): string {
+        public get network_id (): string {
             return this.m_network_id;
         }
 
-        public set network_id(value: string) {
+        public set network_id (value: string) {
             const reader = new Reader(value);
             if (reader.length !== 16) {
                 throw new Error('Invalid network id length');
@@ -218,44 +216,44 @@ export namespace LevinPayloads {
         /**
          * The protocol version supported
          */
-        public get version(): number {
+        public get version (): number {
             return this.m_version;
         }
 
-        public set version(value: number) {
+        public set version (value: number) {
             this.m_version = value;
         }
 
         /**
          * The current date and time
          */
-        public get local_time(): Date {
+        public get local_time (): Date {
             return this.m_local_time;
         }
 
-        public set local_time(value: Date) {
+        public set local_time (value: Date) {
             this.m_local_time = value;
         }
 
         /**
          * Our port number for p2p traffic
          */
-        public get my_port(): number {
+        public get my_port (): number {
             return this.m_my_port;
         }
 
-        public set my_port(value: number) {
+        public set my_port (value: number) {
             this.m_my_port = value;
         }
 
         /**
          * Our peer ID
          */
-        public get peer_id(): string {
+        public get peer_id (): string {
             return this.m_peer_id;
         }
 
-        public set peer_id(value: string) {
+        public set peer_id (value: string) {
             const reader = new Reader(value);
             if (reader.length !== 8) {
                 throw new Error('Invalid peer id length');
@@ -267,22 +265,22 @@ export namespace LevinPayloads {
         /**
          * Our current blockchain height
          */
-        public get current_height(): number {
+        public get current_height (): number {
             return this.m_current_height;
         }
 
-        public set current_height(value: number) {
+        public set current_height (value: number) {
             this.m_current_height = value;
         }
 
         /**
          * The top block hash that we know about
          */
-        public get top_id(): string {
+        public get top_id (): string {
             return this.m_top_id;
         }
 
-        public set top_id(value: string) {
+        public set top_id (value: string) {
             const reader = new Reader(value);
             if (reader.length !== SIZES.KEY) {
                 throw new Error('Invalid top id length');
@@ -294,11 +292,11 @@ export namespace LevinPayloads {
         /**
          * Our list of locally known peers
          */
-        public get local_peerlist(): PeerEntry[] {
+        public get local_peerlist (): PeerEntry[] {
             return this.m_local_peerlist;
         }
 
-        public set local_peerlist(value: PeerEntry[]) {
+        public set local_peerlist (value: PeerEntry[]) {
             this.m_local_peerlist = value;
         }
 
@@ -307,7 +305,7 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from(data: Reader | Buffer | string): Handshake {
+        public static from (data: Reader | Buffer | string): Handshake {
             const payload = PortableStorage.from(data);
 
             const result = new Handshake();
@@ -357,11 +355,11 @@ export namespace LevinPayloads {
         }
 
         private m_network_id: string = ''.padStart(32, '0');
-        private m_version: number = 0;
+        private m_version = 0;
         private m_local_time: Date = new Date();
-        private m_my_port: number = 0;
+        private m_my_port = 0;
         private m_peer_id: string = ''.padStart(16, '0');
-        private m_current_height: number = 0;
+        private m_current_height = 0;
         private m_top_id: string = ''.padStart(64, '0');
         private m_local_peerlist: PeerEntry[] = [];
 
@@ -369,7 +367,7 @@ export namespace LevinPayloads {
          * Provides the Buffer representation of the object
          * @returns the buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const node_data = new PortableStorage();
             node_data.set('network_id', this.network_id, StorageType.STRING);
             node_data.set('version', BigInteger(this.version), StorageType.UINT8);
@@ -404,43 +402,42 @@ export namespace LevinPayloads {
          * Provides the hexadecimal (blob) representation of the object
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
 
     export class LiteBlock implements ILevinPayload {
-
         /**
          * The block template a as block
          */
-        public get blockTemplate(): Block {
+        public get blockTemplate (): Block {
             return this.m_blockTemplate;
         }
 
-        public set blockTemplate(value: Block) {
+        public set blockTemplate (value: Block) {
             this.m_blockTemplate = value;
         }
 
         /**
          * The current blockchain height
          */
-        public get current_blockchain_height(): number {
+        public get current_blockchain_height (): number {
             return this.m_current_blockchain_height;
         }
 
-        public set current_blockchain_height(value: number) {
+        public set current_blockchain_height (value: number) {
             this.m_current_blockchain_height = value;
         }
 
         /**
          * The hops from the originating node
          */
-        public get hop(): number {
+        public get hop (): number {
             return this.m_hop;
         }
 
-        public set hop(value: number) {
+        public set hop (value: number) {
             this.m_hop = value;
         }
 
@@ -449,7 +446,7 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from(data: Reader | Buffer | string): LiteBlock {
+        public static from (data: Reader | Buffer | string): LiteBlock {
             const payload = PortableStorage.from(data);
 
             const result = new LiteBlock();
@@ -463,14 +460,14 @@ export namespace LevinPayloads {
         }
 
         private m_blockTemplate: Block = new Block();
-        private m_current_blockchain_height: number = 0;
-        private m_hop: number = 0;
+        private m_current_blockchain_height = 0;
+        private m_hop = 0;
 
         /**
          * Provides the Buffer representation of the object
          * @returns the buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const payload = new PortableStorage();
 
             payload.set('current_blockchain_height', BigInteger(this.current_blockchain_height), StorageType.UINT32);
@@ -484,32 +481,31 @@ export namespace LevinPayloads {
          * Provides the hexadecimal (blob) representation of the object
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
 
     export class MissingTransactions implements ILevinPayload {
-
         /**
          * The current blockchain height
          */
-        public get current_blockchain_height(): number {
+        public get current_blockchain_height (): number {
             return this.m_current_blockchain_height;
         }
 
-        public set current_blockchain_height(value: number) {
+        public set current_blockchain_height (value: number) {
             this.m_current_blockchain_height = value;
         }
 
         /**
          * The block hash containing for which we need the transactions
          */
-        public get blockHash(): string {
+        public get blockHash (): string {
             return this.m_blockHash;
         }
 
-        public set blockHash(value: string) {
+        public set blockHash (value: string) {
             const reader = new Reader(value);
             if (reader.length !== SIZES.KEY) {
                 throw new Error('Invalid hash supplied');
@@ -521,11 +517,11 @@ export namespace LevinPayloads {
         /**
          * The list of missing transaction hashes we need
          */
-        public get missing_txs(): string[] {
+        public get missing_txs (): string[] {
             return this.m_missing_txs;
         }
 
-        public set missing_txs(value: string[]) {
+        public set missing_txs (value: string[]) {
             const tmp: string[] = [];
 
             value.forEach((v) => {
@@ -546,7 +542,7 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from(data: Reader | Buffer | string): MissingTransactions {
+        public static from (data: Reader | Buffer | string): MissingTransactions {
             const payload = PortableStorage.from(data);
 
             const result = new MissingTransactions();
@@ -571,14 +567,14 @@ export namespace LevinPayloads {
         }
 
         private m_blockHash: string = ''.padStart(64, '0');
-        private m_current_blockchain_height: number = 0;
+        private m_current_blockchain_height = 0;
         private m_missing_txs: string[] = [];
 
         /**
          * Provides the Buffer representation of the object
          * @returns the buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const payload = new PortableStorage();
 
             payload.set('current_blockchain_height', BigInteger(this.current_blockchain_height), StorageType.UINT32);
@@ -597,54 +593,53 @@ export namespace LevinPayloads {
          * Provides the hexadecimal (blob) representation of the object
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
 
     export class NewBlock implements ILevinPayload {
-
         /**
          * The new block
          */
-        public get block(): Block {
+        public get block (): Block {
             return this.m_block;
         }
 
-        public set block(value: Block) {
+        public set block (value: Block) {
             this.m_block = value;
         }
 
         /**
          * The transactions in the new block
          */
-        public get transactions(): Transaction[] {
+        public get transactions (): Transaction[] {
             return this.m_transactions;
         }
 
-        public set transactions(value: Transaction[]) {
+        public set transactions (value: Transaction[]) {
             this.m_transactions = value;
         }
 
         /**
          * The current blockchain height
          */
-        public get current_blockchain_height(): number {
+        public get current_blockchain_height (): number {
             return this.m_current_blockchain_height;
         }
 
-        public set current_blockchain_height(value: number) {
+        public set current_blockchain_height (value: number) {
             this.m_current_blockchain_height = value;
         }
 
         /**
          * The number of hops from the originating node
          */
-        public get hop(): number {
+        public get hop (): number {
             return this.m_hop;
         }
 
-        public set hop(value: number) {
+        public set hop (value: number) {
             this.m_hop = value;
         }
 
@@ -653,7 +648,7 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from(data: Reader | Buffer | string): NewBlock {
+        public static from (data: Reader | Buffer | string): NewBlock {
             const payload = PortableStorage.from(data);
 
             const result = new NewBlock();
@@ -679,14 +674,14 @@ export namespace LevinPayloads {
 
         private m_block: Block = new Block();
         private m_transactions: Transaction[] = [];
-        private m_current_blockchain_height: number = 0;
-        private m_hop: number = 0;
+        private m_current_blockchain_height = 0;
+        private m_hop = 0;
 
         /**
          * Provides the Buffer representation of the object
          * @returns the buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const payload = new PortableStorage();
 
             const blockPayload = new PortableStorage();
@@ -714,21 +709,20 @@ export namespace LevinPayloads {
          * Provides the hexadecimal (blob) representation of the object
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
 
     export class NewTransactions implements ILevinPayload {
-
         /**
          * The new transactions in the packet
          */
-        public get transactions(): Transaction[] {
+        public get transactions (): Transaction[] {
             return this.m_transactions;
         }
 
-        public set transactions(value: Transaction[]) {
+        public set transactions (value: Transaction[]) {
             this.m_transactions = value;
         }
 
@@ -737,7 +731,7 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from(data: Reader | Buffer | string): NewTransactions {
+        public static from (data: Reader | Buffer | string): NewTransactions {
             const payload = PortableStorage.from(data);
 
             const result = new NewTransactions();
@@ -756,7 +750,7 @@ export namespace LevinPayloads {
          * Provides the Buffer representation of the object
          * @returns the buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const payload = new PortableStorage();
 
             const txs: string[] = [];
@@ -772,33 +766,32 @@ export namespace LevinPayloads {
          * Provides the hexadecimal (blob) representation of the object
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
 
     export class Ping implements ILevinPayload {
-
         /**
          * The current ping status message
          * Usually 'OK'
          */
-        public get status(): string {
+        public get status (): string {
             return this.m_status;
         }
 
-        public set status(value: string) {
+        public set status (value: string) {
             this.m_status = value;
         }
 
         /**
          * The peer ID
          */
-        public get peer_id(): string {
+        public get peer_id (): string {
             return this.m_peer_id;
         }
 
-        public set peer_id(value: string) {
+        public set peer_id (value: string) {
             const reader = new Reader(value);
             if (reader.length !== 8) {
                 throw new Error('Invalid peer id length');
@@ -812,7 +805,7 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from(data: Reader | Buffer | string): Ping {
+        public static from (data: Reader | Buffer | string): Ping {
             const payload = PortableStorage.from(data);
 
             const result = new Ping();
@@ -829,14 +822,14 @@ export namespace LevinPayloads {
             return result;
         }
 
-        private m_status: string = '';
+        private m_status = '';
         private m_peer_id: string = ''.padStart(16, '0');
 
         /**
          * Provides the Buffer representation of the object
          * @returns the buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const payload = new PortableStorage();
 
             if (this.status.length !== 0) {
@@ -854,21 +847,20 @@ export namespace LevinPayloads {
          * Provides the hexadecimal (blob) representation of the object
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
 
     export class RequestChain implements ILevinPayload {
-
         /**
          * A list of known block IDs in descending order (genesis block last)
          */
-        public get block_ids(): string[] {
+        public get block_ids (): string[] {
             return this.m_block_ids;
         }
 
-        public set block_ids(value: string[]) {
+        public set block_ids (value: string[]) {
             const tmp: string[] = [];
 
             value.forEach((v) => {
@@ -889,7 +881,7 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from(data: Reader | Buffer | string): RequestChain {
+        public static from (data: Reader | Buffer | string): RequestChain {
             const payload = PortableStorage.from(data);
 
             const result = new RequestChain();
@@ -915,7 +907,7 @@ export namespace LevinPayloads {
          * Provides the Buffer representation of the object
          * @returns the buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const payload = new PortableStorage();
 
             const writer = new Writer();
@@ -931,21 +923,20 @@ export namespace LevinPayloads {
          * Provides the hexadecimal (blob) representation of the object
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
 
     export class RequestGetObjects implements ILevinPayload {
-
         /**
          * A list of block hashes we would like the data for
          */
-        public get blocks(): string[] {
+        public get blocks (): string[] {
             return this.m_transactions;
         }
 
-        public set blocks(value: string[]) {
+        public set blocks (value: string[]) {
             const tmp: string[] = [];
 
             value.forEach((v) => {
@@ -964,11 +955,11 @@ export namespace LevinPayloads {
         /**
          * A list of transaction hashes we would like the data for
          */
-        public get transactions(): string[] {
+        public get transactions (): string[] {
             return this.m_blocks;
         }
 
-        public set transactions(value: string[]) {
+        public set transactions (value: string[]) {
             const tmp: string[] = [];
 
             value.forEach((v) => {
@@ -989,7 +980,7 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from(data: Reader | Buffer | string): RequestGetObjects {
+        public static from (data: Reader | Buffer | string): RequestGetObjects {
             const payload = PortableStorage.from(data);
 
             const result = new RequestGetObjects();
@@ -1028,7 +1019,7 @@ export namespace LevinPayloads {
          * Provides the Buffer representation of the object
          * @returns the buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const payload = new PortableStorage();
 
             const writer = new Writer();
@@ -1052,21 +1043,20 @@ export namespace LevinPayloads {
          * Provides the hexadecimal (blob) representation of the object
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
 
     export class RequestTXPool implements ILevinPayload {
-
         /**
          * A list of transaction hashes we need data for in the pool
          */
-        public get transactions(): string[] {
+        public get transactions (): string[] {
             return this.m_transactions;
         }
 
-        public set transactions(value: string[]) {
+        public set transactions (value: string[]) {
             const tmp: string[] = [];
 
             value.forEach((v) => {
@@ -1087,7 +1077,7 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from(data: Reader | Buffer | string): RequestTXPool {
+        public static from (data: Reader | Buffer | string): RequestTXPool {
             const payload = PortableStorage.from(data);
 
             const result = new RequestTXPool();
@@ -1113,7 +1103,7 @@ export namespace LevinPayloads {
          * Provides the Buffer representation of the object
          * @returns the buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const payload = new PortableStorage();
 
             const writer = new Writer();
@@ -1129,21 +1119,20 @@ export namespace LevinPayloads {
          * Provides the hexadecimal (blob) representation of the object
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
 
     export class ResponseChain implements ILevinPayload {
-
         /**
          * The block hashes that we know about in descending order
          */
-        public get block_ids(): string[] {
+        public get block_ids (): string[] {
             return this.m_block_ids;
         }
 
-        public set block_ids(value: string[]) {
+        public set block_ids (value: string[]) {
             const tmp: string[] = [];
 
             value.forEach((v) => {
@@ -1162,22 +1151,22 @@ export namespace LevinPayloads {
         /**
          * the starting height of the response data
          */
-        public get start_height(): number {
+        public get start_height (): number {
             return this.m_start_height;
         }
 
-        public set start_height(value: number) {
+        public set start_height (value: number) {
             this.m_start_height = value;
         }
 
         /**
          * The current network height we have observed
          */
-        public get total_height(): number {
+        public get total_height (): number {
             return this.m_total_height;
         }
 
-        public set total_height(value: number) {
+        public set total_height (value: number) {
             this.m_total_height = value;
         }
 
@@ -1186,7 +1175,7 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from(data: Reader | Buffer | string): ResponseChain {
+        public static from (data: Reader | Buffer | string): ResponseChain {
             const payload = PortableStorage.from(data);
 
             const result = new ResponseChain();
@@ -1212,15 +1201,15 @@ export namespace LevinPayloads {
             return result;
         }
 
-        private m_start_height: number = 0;
-        private m_total_height: number = 0;
+        private m_start_height = 0;
+        private m_total_height = 0;
         private m_block_ids: string[] = [];
 
         /**
          * Provides the Buffer representation of the object
          * @returns the buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const payload = new PortableStorage();
 
             payload.set('start_height', BigInteger(this.start_height), StorageType.UINT32);
@@ -1240,54 +1229,53 @@ export namespace LevinPayloads {
          * Provides the hexadecimal (blob) representation of the object
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
 
     export class ResponseGetObjects implements ILevinPayload {
-
         /**
          * A list of transactions in the response
          */
-        public get transactions(): Transaction[] {
+        public get transactions (): Transaction[] {
             return this.m_transactions;
         }
 
-        public set transactions(value: Transaction[]) {
+        public set transactions (value: Transaction[]) {
             this.m_transactions = value;
         }
 
         /**
          * A list of hashes that we cannot find in our copy of the blockchain
          */
-        public get missed_ids(): string[] {
+        public get missed_ids (): string[] {
             return this.m_missed_ids;
         }
 
-        public set missed_ids(value: string[]) {
+        public set missed_ids (value: string[]) {
             this.m_missed_ids = value;
         }
 
         /**
          * The current blockchain height
          */
-        public get current_blockchain_height(): number {
+        public get current_blockchain_height (): number {
             return this.m_current_blockchain_height;
         }
 
-        public set current_blockchain_height(value: number) {
+        public set current_blockchain_height (value: number) {
             this.m_current_blockchain_height = value;
         }
 
         /**
          * A list of blocks in the response
          */
-        public get blocks(): RawBlock[] {
+        public get blocks (): RawBlock[] {
             return this.m_raw_blocks;
         }
 
-        public set blocks(value: RawBlock[]) {
+        public set blocks (value: RawBlock[]) {
             this.m_raw_blocks = value;
         }
 
@@ -1296,7 +1284,7 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from(data: Reader | Buffer | string): ResponseGetObjects {
+        public static from (data: Reader | Buffer | string): ResponseGetObjects {
             const payload = PortableStorage.from(data);
 
             const result = new ResponseGetObjects();
@@ -1347,13 +1335,13 @@ export namespace LevinPayloads {
         private m_transactions: Transaction[] = [];
         private m_raw_blocks: RawBlock[] = [];
         private m_missed_ids: string[] = [];
-        private m_current_blockchain_height: number = 0;
+        private m_current_blockchain_height = 0;
 
         /**
          * Provides the Buffer representation of the object
          * @returns the buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const payload = new PortableStorage();
 
             if (this.transactions.length !== 0) {
@@ -1403,43 +1391,42 @@ export namespace LevinPayloads {
          * Provides the hexadecimal (blob) representation of the object
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
 
     export class TimedSync implements ILevinPayload {
-
         /**
          * The current time of the node
          */
-        public get local_time(): Date {
+        public get local_time (): Date {
             return this.m_local_time;
         }
 
-        public set local_time(value: Date) {
+        public set local_time (value: Date) {
             this.m_local_time = value;
         }
 
         /**
          * The current height of the node
          */
-        public get current_height(): number {
+        public get current_height (): number {
             return this.m_current_height;
         }
 
-        public set current_height(value: number) {
+        public set current_height (value: number) {
             this.m_current_height = value;
         }
 
         /**
          * The last known block hash of the node
          */
-        public get top_id(): string {
+        public get top_id (): string {
             return this.m_top_id;
         }
 
-        public set top_id(value: string) {
+        public set top_id (value: string) {
             const reader = new Reader(value);
             if (reader.length !== SIZES.KEY) {
                 throw new Error('Invalid top id length');
@@ -1451,11 +1438,11 @@ export namespace LevinPayloads {
         /**
          * The list of locally known peers
          */
-        public get local_peerlist(): PeerEntry[] {
+        public get local_peerlist (): PeerEntry[] {
             return this.m_local_peerlist;
         }
 
-        public set local_peerlist(value: PeerEntry[]) {
+        public set local_peerlist (value: PeerEntry[]) {
             this.m_local_peerlist = value;
         }
 
@@ -1464,7 +1451,7 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from(data: Reader | Buffer | string): TimedSync {
+        public static from (data: Reader | Buffer | string): TimedSync {
             const payload = PortableStorage.from(data);
 
             const result = new TimedSync();
@@ -1501,7 +1488,7 @@ export namespace LevinPayloads {
         }
 
         private m_local_time: Date = new Date(0);
-        private m_current_height: number = 0;
+        private m_current_height = 0;
         private m_top_id: string = ''.padStart(64, '0');
         private m_local_peerlist: PeerEntry[] = [];
 
@@ -1509,7 +1496,7 @@ export namespace LevinPayloads {
          * Provides the Buffer representation of the object
          * @returns the buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const payload = new PortableStorage();
 
             if (this.local_time.getTime() !== 0) {
@@ -1539,14 +1526,14 @@ export namespace LevinPayloads {
          * Provides the hexadecimal (blob) representation of the object
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
 }
 
 /** @ignore */
-export function int2ip(ipInt: number): string {
+export function int2ip (ipInt: number): string {
     if (ipInt > 4294967295) {
         throw new Error('Integer value exceeds 32-bit bounds');
     }
@@ -1555,7 +1542,7 @@ export function int2ip(ipInt: number): string {
 }
 
 /** @ignore */
-export function ip2int(ip: string): number {
+export function ip2int (ip: string): number {
     const tmp = ip.split('.');
 
     if (tmp.length !== 4) {

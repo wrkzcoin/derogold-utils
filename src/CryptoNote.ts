@@ -2,10 +2,10 @@
 //
 // Please see the included LICENSE file for more information.
 
-import {Address} from './Address';
-import {AddressPrefix} from './AddressPrefix';
+import { Address } from './Address';
+import { AddressPrefix } from './AddressPrefix';
 import * as ConfigInterface from './Config';
-import {Common} from './Common';
+import { Common } from './Common';
 import {
     BigInteger,
     ED25519,
@@ -13,8 +13,9 @@ import {
     TransactionOutputs,
     TurtleCoinCrypto,
     Interfaces,
-    CryptoNoteInterfaces} from './Types';
-import {Transaction} from './Transaction';
+    CryptoNoteInterfaces
+} from './Types';
+import { Transaction } from './Transaction';
 import * as Numeral from 'numeral';
 import Config = ConfigInterface.Interfaces.Config;
 
@@ -30,7 +31,6 @@ const UINT64_MAX = BigInteger(2).pow(64);
  * of funds on the network
  */
 export class CryptoNote {
-
     protected config: Config = require('../config.json');
 
     /**
@@ -39,49 +39,49 @@ export class CryptoNote {
      * cryptographic library
      * @param [config] the base configuration to apply to our helper
      */
-    constructor(config?: Config) {
+    constructor (config?: Config) {
         if (config) {
             Object.keys(config).forEach((key) => {
                 switch (key) {
-                    case 'coinUnitPlaces':
-                        this.config.coinUnitPlaces = config[key];
-                        break;
-                    case 'addressPrefix':
-                        this.config.addressPrefix = config[key];
-                        break;
-                    case 'keccakIterations':
-                        this.config.keccakIterations = config[key];
-                        break;
-                    case 'defaultNetworkFee':
-                        this.config.defaultNetworkFee = config[key];
-                        break;
-                    case 'fusionMinInputCount':
-                        this.config.fusionMinInputCount = config[key];
-                        break;
-                    case 'fusionMinInOutCountRatio':
-                        this.config.fusionMinInOutCountRatio = config[key];
-                        break;
-                    case 'mmMiningBlockVersion':
-                        this.config.mmMiningBlockVersion = config[key];
-                        break;
-                    case 'maximumOutputAmount':
-                        this.config.maximumOutputAmount = config[key];
-                        break;
-                    case 'maximumOutputsPerTransaction':
-                        this.config.maximumOutputsPerTransaction = config[key];
-                        break;
-                    case 'maximumExtraSize':
-                        this.config.maximumExtraSize = config[key];
-                        break;
-                    case 'activateFeePerByteTransactions':
-                        this.config.activateFeePerByteTransactions = config[key];
-                        break;
-                    case 'feePerByte':
-                        this.config.feePerByte = config[key];
-                        break;
-                    case 'feePerByteChunkSize':
-                        this.config.feePerByteChunkSize = config[key];
-                        break;
+                case 'coinUnitPlaces':
+                    this.config.coinUnitPlaces = config[key];
+                    break;
+                case 'addressPrefix':
+                    this.config.addressPrefix = config[key];
+                    break;
+                case 'keccakIterations':
+                    this.config.keccakIterations = config[key];
+                    break;
+                case 'defaultNetworkFee':
+                    this.config.defaultNetworkFee = config[key];
+                    break;
+                case 'fusionMinInputCount':
+                    this.config.fusionMinInputCount = config[key];
+                    break;
+                case 'fusionMinInOutCountRatio':
+                    this.config.fusionMinInOutCountRatio = config[key];
+                    break;
+                case 'mmMiningBlockVersion':
+                    this.config.mmMiningBlockVersion = config[key];
+                    break;
+                case 'maximumOutputAmount':
+                    this.config.maximumOutputAmount = config[key];
+                    break;
+                case 'maximumOutputsPerTransaction':
+                    this.config.maximumOutputsPerTransaction = config[key];
+                    break;
+                case 'maximumExtraSize':
+                    this.config.maximumExtraSize = config[key];
+                    break;
+                case 'activateFeePerByteTransactions':
+                    this.config.activateFeePerByteTransactions = config[key];
+                    break;
+                case 'feePerByte':
+                    this.config.feePerByte = config[key];
+                    break;
+                case 'feePerByteChunkSize':
+                    this.config.feePerByteChunkSize = config[key];
+                    break;
                 }
             });
 
@@ -94,7 +94,7 @@ export class CryptoNote {
      * @param offsets the absolute offsets
      * @returns the relative offsets
      */
-    public absoluteToRelativeOffsets(offsets: BigInteger.BigInteger[] | string[] | number[]): number[] {
+    public absoluteToRelativeOffsets (offsets: BigInteger.BigInteger[] | string[] | number[]): number[] {
         const result: number[] = [];
 
         const tmpOffsets = Common.absoluteToRelativeOffsets(offsets);
@@ -109,7 +109,7 @@ export class CryptoNote {
      * @param offsets the relative offsets
      * @returns the absolute offsets
      */
-    public relativeToAbsoluteOffsets(offsets: BigInteger.BigInteger[] | string[] | number[]): number[] {
+    public relativeToAbsoluteOffsets (offsets: BigInteger.BigInteger[] | string[] | number[]): number[] {
         const result: number[] = [];
 
         const tmpOffsets = Common.relativeToAbsoluteOffsets(offsets);
@@ -129,7 +129,7 @@ export class CryptoNote {
      * @param outputIndex the index of the output in the transaction
      * @returns the key image
      */
-    public async generateKeyImage(
+    public async generateKeyImage (
         transactionPublicKey: string,
         privateViewKey: string,
         publicSpendKey: string,
@@ -149,7 +149,7 @@ export class CryptoNote {
      * @param derivation the key derivation
      * @returns the key image
      */
-    public async generateKeyImagePrimitive(
+    public async generateKeyImagePrimitive (
         publicSpendKey: string,
         privateSpendKey: string,
         outputIndex: number,
@@ -164,7 +164,7 @@ export class CryptoNote {
             publicEphemeral: publicEphemeral,
             privateEphemeral: privateEphemeral,
             keyImage: keyImage
-        }
+        };
     }
 
     /**
@@ -173,7 +173,7 @@ export class CryptoNote {
      * @param privateKey the private key
      * @returns the public key
      */
-    public async privateKeyToPublicKey(privateKey: string): Promise<string> {
+    public async privateKeyToPublicKey (privateKey: string): Promise<string> {
         return TurtleCoinCrypto.secretKeyToPublicKey(privateKey);
     }
 
@@ -189,13 +189,13 @@ export class CryptoNote {
      * @param [generatePartial] whether we should generate partial key images if the output belongs to use
      * @returns an list of outputs that belong to us
      */
-    public async scanTransactionOutputs(
+    public async scanTransactionOutputs (
         transactionPublicKey: string,
         outputs: Interfaces.Output[],
         privateViewKey: string,
         publicSpendKey: string,
         privateSpendKey?: string,
-        generatePartial?: boolean,
+        generatePartial?: boolean
     ): Promise<Interfaces.Output[]> {
         const promises = [];
 
@@ -207,7 +207,7 @@ export class CryptoNote {
                     privateViewKey,
                     publicSpendKey,
                     privateSpendKey,
-                    generatePartial).catch(),
+                    generatePartial).catch()
             );
         }
 
@@ -236,13 +236,13 @@ export class CryptoNote {
      * @param [generatePartial] whether we should generate partial key images
      * @returns the output if it belongs to us
      */
-    public async isOurTransactionOutput(
+    public async isOurTransactionOutput (
         transactionPublicKey: string,
         output: Interfaces.Output,
         privateViewKey: string,
         publicSpendKey: string,
         privateSpendKey?: string,
-        generatePartial?: boolean,
+        generatePartial?: boolean
     ): Promise<Interfaces.Output> {
         const derivedKey = await TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, privateViewKey);
 
@@ -254,8 +254,8 @@ export class CryptoNote {
                 transactionKeys: {
                     publicKey: transactionPublicKey,
                     derivedKey,
-                    outputIndex: output.index,
-                },
+                    outputIndex: output.index
+                }
             };
 
             if (privateSpendKey) {
@@ -263,9 +263,9 @@ export class CryptoNote {
                     use the supplied private spend key in the key generation instead of
                     the privateEphemeral that we don't have
                  */
-                const privateEphemeral = (generatePartial) ?
-                    privateSpendKey :
-                    await TurtleCoinCrypto.deriveSecretKey(
+                const privateEphemeral = (generatePartial)
+                    ? privateSpendKey
+                    : await TurtleCoinCrypto.deriveSecretKey(
                         derivedKey, output.index, privateSpendKey);
 
                 const derivedPublicEphemeral = await TurtleCoinCrypto.secretKeyToPublicKey(privateEphemeral);
@@ -280,7 +280,7 @@ export class CryptoNote {
 
                 output.keyImage = keyImage;
 
-                output.isPartialKeyImage = (generatePartial) ? generatePartial : false;
+                output.isPartialKeyImage = (generatePartial) || false;
             }
 
             return output;
@@ -294,7 +294,7 @@ export class CryptoNote {
      * @param txSize the transaction size in bytes
      * @returns the minimum transaction fee
      */
-    public calculateMinimumTransactionFee(txSize: number) {
+    public calculateMinimumTransactionFee (txSize: number): number {
         const chunks = Math.ceil(
             txSize /
             (this.config.feePerByteChunkSize || Config.feePerByteChunkSize));
@@ -311,7 +311,7 @@ export class CryptoNote {
      * @param [prefix] the address prefix
      * @returns the integrated address
      */
-    public createIntegratedAddress(address: string, paymentId: string, prefix?: AddressPrefix | number): string {
+    public createIntegratedAddress (address: string, paymentId: string, prefix?: AddressPrefix | number): string {
         if (typeof prefix === 'number') {
             prefix = new AddressPrefix(prefix);
         }
@@ -336,7 +336,7 @@ export class CryptoNote {
      * @param amount the amount in atomic units
      * @returns the amount in human readable units
      */
-    public formatMoney(amount: BigInteger.BigInteger | number): string {
+    public formatMoney (amount: BigInteger.BigInteger | number): string {
         let places = '';
 
         for (let i = 0; i < (this.config.coinUnitPlaces || Config.coinUnitPlaces); i++) {
@@ -348,7 +348,7 @@ export class CryptoNote {
         }
 
         return Numeral(
-            amount / Math.pow(10, this.config.coinUnitPlaces || Config.coinUnitPlaces),
+            amount / Math.pow(10, this.config.coinUnitPlaces || Config.coinUnitPlaces)
         ).format('0,0.' + places);
     }
 
@@ -359,7 +359,7 @@ export class CryptoNote {
      * @param amount the amount to send
      * @returns a list of transaction outputs
      */
-    public generateTransactionOutputs(address: string, amount: number): Interfaces.GeneratedOutput[] {
+    public generateTransactionOutputs (address: string, amount: number): Interfaces.GeneratedOutput[] {
         if (amount < 0) {
             throw new RangeError('Amount must be a positive value');
         }
@@ -379,14 +379,14 @@ export class CryptoNote {
                 while (splitAmt >= (this.config.maximumOutputAmount || Config.maximumOutputAmount)) {
                     result.push({
                         amount: this.config.maximumOutputAmount || Config.maximumOutputAmount,
-                        destination: destination,
+                        destination: destination
                     });
                     splitAmt -= this.config.maximumOutputAmount || Config.maximumOutputAmount;
                 }
             } else if (amt !== 0) {
                 result.push({
                     amount: amt,
-                    destination: destination,
+                    destination: destination
                 });
             }
         }
@@ -401,7 +401,7 @@ export class CryptoNote {
      * @param privateKey the private key to sign with
      * @returns the signature
      */
-    public async signMessage(message: any, privateKey: string): Promise<string> {
+    public async signMessage (message: any, privateKey: string): Promise<string> {
         if (typeof message !== 'string') {
             message = JSON.stringify(message);
         }
@@ -423,7 +423,7 @@ export class CryptoNote {
      * @param signature the signature
      * @returns whether the signature is valid
      */
-    public async verifyMessageSignature(message: any, publicKey: string, signature: string): Promise<void> {
+    public async verifyMessageSignature (message: any, publicKey: string, signature: string): Promise<void> {
         if (typeof message !== 'string') {
             message = JSON.stringify(message);
         }
@@ -453,7 +453,7 @@ export class CryptoNote {
      * @param [extraData] arbitrary extra data to include in the transaction extra field
      * @returns the newly created transaction object
      */
-    public async createTransaction(
+    public async createTransaction (
         outputs: Interfaces.GeneratedOutput[],
         inputs: Interfaces.Output[],
         randomOutputs: Interfaces.RandomOutput[][],
@@ -461,13 +461,13 @@ export class CryptoNote {
         feeAmount?: number,
         paymentId?: string,
         unlockTime?: number,
-        extraData?: any,
+        extraData?: any
     ): Promise<Transaction> {
         const feePerByte =
             this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
 
         const prepared = await this.createTransactionStructure(
-            outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData,
+            outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData
         );
 
         const txPrefixHash = prepared.transaction.prefixHash;
@@ -532,7 +532,7 @@ export class CryptoNote {
      * @param [extraData] arbitrary extra data to include in the transaction extra field
      * @returns the newly created transaction object and it's input data
      */
-    public async createTransactionStructure(
+    public async createTransactionStructure (
         outputs: Interfaces.GeneratedOutput[],
         inputs: Interfaces.Output[],
         randomOutputs: Interfaces.RandomOutput[][],
@@ -540,7 +540,7 @@ export class CryptoNote {
         feeAmount?: number,
         paymentId?: string,
         unlockTime?: number,
-        extraData?: any,
+        extraData?: any
     ): Promise<Interfaces.IPreparedTransaction> {
         if (typeof feeAmount === 'undefined') {
             feeAmount = this.config.defaultNetworkFee || Config.defaultNetworkFee;
@@ -625,8 +625,8 @@ export class CryptoNote {
 
         if (feeAmount === 0) {
             if (transactionInputs.length < 12) {
-                throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of ['
-                    + (this.config.fusionMinInputCount || Config.fusionMinInputCount) + '] inputs');
+                throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of [' +
+                    (this.config.fusionMinInputCount || Config.fusionMinInputCount) + '] inputs');
             }
             const ratio = this.config.fusionMinInOutCountRatio || Config.fusionMinInOutCountRatio;
             if ((transactionInputs.length / transactionOutputs.outputs.length) < ratio) {
@@ -648,8 +648,8 @@ export class CryptoNote {
 
         if (extraData) {
             if (!(extraData instanceof Buffer)) {
-                extraData = (typeof extraData === 'string') ?
-                    Buffer.from(extraData) : Buffer.from(JSON.stringify(extraData));
+                extraData = (typeof extraData === 'string')
+                    ? Buffer.from(extraData) : Buffer.from(JSON.stringify(extraData));
             }
 
             tx.addData(extraData);
@@ -680,7 +680,7 @@ export class CryptoNote {
 
         return {
             transaction: tx,
-            inputs: transactionInputs,
+            inputs: transactionInputs
         };
     }
 
@@ -698,7 +698,7 @@ export class CryptoNote {
      * @param [extraData] arbitrary extra data to include in the transaction extra field
      * @returns the newly created transaction object with prepared signatures
      */
-    public async prepareTransaction(
+    public async prepareTransaction (
         outputs: Interfaces.GeneratedOutput[],
         inputs: Interfaces.Output[],
         randomOutputs: Interfaces.RandomOutput[][],
@@ -706,13 +706,13 @@ export class CryptoNote {
         feeAmount?: number,
         paymentId?: string,
         unlockTime?: number,
-        extraData?: any,
+        extraData?: any
     ): Promise<Interfaces.PreparedTransaction> {
         const feePerByte =
             this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
 
         const prepared = await this.createTransactionStructure(
-            outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData,
+            outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData
         );
 
         const recipients: Interfaces.TransactionRecipient[] = [];
@@ -720,7 +720,7 @@ export class CryptoNote {
         for (const output of outputs) {
             recipients.push({
                 address: output.destination.address,
-                amount: output.amount,
+                amount: output.amount
             });
         }
 
@@ -769,8 +769,8 @@ export class CryptoNote {
                 inputKeys: result.inputKeys,
                 input: {
                     derivation: prepared.inputs[result.index].input.transactionKeys.derivedKey,
-                    outputIndex: prepared.inputs[result.index].input.transactionKeys.outputIndex,
-                },
+                    outputIndex: prepared.inputs[result.index].input.transactionKeys.outputIndex
+                }
             };
 
             signatureMeta.push(meta);
@@ -789,7 +789,7 @@ export class CryptoNote {
             transaction: prepared.transaction,
             transactionRecipients: recipients,
             transactionPrivateKey: prepared.transaction.transactionKeys.privateKey,
-            signatureMeta: signatureMeta,
+            signatureMeta: signatureMeta
         };
     }
 
@@ -801,9 +801,9 @@ export class CryptoNote {
      * @param privateSpendKey the private spend key of the wallet that contains the funds
      * @returns the completed transaction
      */
-    public async completeTransaction(
+    public async completeTransaction (
         preparedTransaction: Interfaces.PreparedTransaction,
-        privateSpendKey: string,
+        privateSpendKey: string
     ): Promise<Transaction> {
         const promises = [];
 
@@ -825,7 +825,7 @@ export class CryptoNote {
                 meta.realOutputIndex,
                 meta.key,
                 tx.signatures[meta.index],
-                meta.index,
+                meta.index
             ));
         }
 
@@ -844,7 +844,7 @@ export class CryptoNote {
                 prefixHash,
                 (tx.inputs[i] as TransactionInputs.KeyInput).keyImage,
                 getInputKeys(preparedTransaction.signatureMeta, i),
-                tx.signatures[i],
+                tx.signatures[i]
             ));
         }
 
@@ -861,23 +861,23 @@ export class CryptoNote {
 }
 
 /** @ignore */
-async function checkRingSignatures(
+async function checkRingSignatures (
     hash: string,
     keyImage: string,
     publicKeys: string[],
-    signatures: string[],
+    signatures: string[]
 ): Promise<boolean> {
     return TurtleCoinCrypto.checkRingSignatures(hash, keyImage, publicKeys, signatures);
 }
 
 /** @ignore */
-async function generateRingSignatures(
+async function generateRingSignatures (
     hash: string,
     keyImage: string,
     publicKeys: string[],
     privateKey: string,
     realOutputIndex: number,
-    index: number,
+    index: number
 ): Promise<Interfaces.GeneratedRingSignatures> {
     const signatures = await TurtleCoinCrypto.generateRingSignatures(
         hash,
@@ -892,18 +892,18 @@ async function generateRingSignatures(
         throw new Error('Could not generate ring signatures');
     }
 
-    return {signatures, index};
+    return { signatures, index };
 }
 
 /** @ignore */
-async function prepareRingSignatures(
+async function prepareRingSignatures (
     hash: string,
     keyImage: string,
     publicKeys: string[],
     realOutputIndex: number,
     derivation: string,
     outputIndex: number,
-    index: number,
+    index: number
 ): Promise<Interfaces.PreparedRingSignature> {
     const prepped = await TurtleCoinCrypto.prepareRingSignatures(hash, keyImage, publicKeys, realOutputIndex);
 
@@ -915,30 +915,30 @@ async function prepareRingSignatures(
         inputKeys: publicKeys,
         input: {
             derivation,
-            outputIndex,
-        },
+            outputIndex
+        }
     };
 }
 
 /** @ignore */
-async function completeRingSignatures(
+async function completeRingSignatures (
     privateSpendKey: string,
     derivation: string,
     outputIndex: number,
     realOutputIndex: number,
     key: string,
     sigs: string[],
-    index: number,
+    index: number
 ): Promise<Interfaces.GeneratedRingSignatures> {
     const privateEphemeral = await TurtleCoinCrypto.deriveSecretKey(derivation, outputIndex, privateSpendKey);
 
     const signatures = await TurtleCoinCrypto.completeRingSignatures(privateEphemeral, realOutputIndex, key, sigs);
 
-    return {signatures, index};
+    return { signatures, index };
 }
 
 /** @ignore */
-function prepareTransactionInputs(
+function prepareTransactionInputs (
     inputs: Interfaces.Output[],
     randomOutputs: Interfaces.RandomOutput[][],
     mixin: number): Interfaces.PreparedInput[] {
@@ -988,7 +988,7 @@ function prepareTransactionInputs(
 
                 mixedOutputs.push({
                     key: fakeOutput.key,
-                    index: fakeOutput.globalIndex,
+                    index: fakeOutput.globalIndex
                 });
             }
 
@@ -999,7 +999,7 @@ function prepareTransactionInputs(
 
         mixedOutputs.push({
             key: realOutput.key,
-            index: realOutput.globalIndex,
+            index: realOutput.globalIndex
         });
 
         mixedOutputs.sort((a, b) => {
@@ -1011,7 +1011,7 @@ function prepareTransactionInputs(
             realOutputIndex: 0,
             keyImage: realOutput.keyImage,
             input: realOutput.input,
-            outputs: mixedOutputs,
+            outputs: mixedOutputs
         };
 
         for (let j = 0; j < mixedOutputs.length; j++) {
@@ -1027,8 +1027,8 @@ function prepareTransactionInputs(
 }
 
 /** @ignore */
-async function prepareTransactionOutputs(outputs: Interfaces.GeneratedOutput[]): Promise<Interfaces.PreparedOutputs> {
-    async function prepareOutput(
+async function prepareTransactionOutputs (outputs: Interfaces.GeneratedOutput[]): Promise<Interfaces.PreparedOutputs> {
+    async function prepareOutput (
         destination: Address,
         amount: number,
         index: number,
@@ -1042,7 +1042,7 @@ async function prepareTransactionOutputs(outputs: Interfaces.GeneratedOutput[]):
 
         return {
             amount,
-            key: outPublicEphemeral,
+            key: outPublicEphemeral
         };
     }
 
@@ -1067,12 +1067,12 @@ async function prepareTransactionOutputs(outputs: Interfaces.GeneratedOutput[]):
 
     return {
         transactionKeys,
-        outputs: preparedOutputs,
+        outputs: preparedOutputs
     };
 }
 
 /** @ignore */
-function getInputKeys(preparedSignatures: Interfaces.PreparedRingSignature[], index: number): string[] {
+function getInputKeys (preparedSignatures: Interfaces.PreparedRingSignature[], index: number): string[] {
     for (const meta of preparedSignatures) {
         if (meta.index === index) {
             if (meta.inputKeys) {

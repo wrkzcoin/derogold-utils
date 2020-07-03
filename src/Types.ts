@@ -2,13 +2,13 @@
 //
 // Please see the included LICENSE file for more information.
 
-import {Crypto} from 'turtlecoin-crypto';
+import { Crypto } from 'turtlecoin-crypto';
 import * as BigInteger from 'big-integer';
 
 /** @ignore */
 const TurtleCoinCrypto = new Crypto();
 
-export {TurtleCoinCrypto};
+export { TurtleCoinCrypto };
 
 /** @ignore */
 export enum PortableStorageConstants {
@@ -33,6 +33,6 @@ export * from './Types/MultisigInterfaces';
 
 export * from './Types/ICryptoNote';
 
-export {PortableStorage, StorageType} from './Types/PortableStorage';
+export { PortableStorage, StorageType } from './Types/PortableStorage';
 
-export {BigInteger};
+export { BigInteger };

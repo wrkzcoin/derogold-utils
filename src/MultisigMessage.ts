@@ -2,36 +2,35 @@
 //
 // Please see the included LICENSE file for more information.
 
-import {Address} from './Address';
-import {AddressPrefix} from './AddressPrefix';
-import {ED25519, Interfaces as TransactionInterfaces, MultisigInterfaces, TurtleCoinCrypto} from './Types';
-import {Counter, ModeOfOperation, utils as AESUtils} from 'aes-js';
-import {Reader, Writer} from 'bytestream-helper';
-import {Base58} from 'turtlecoin-base58';
+import { Address } from './Address';
+import { AddressPrefix } from './AddressPrefix';
+import { ED25519, Interfaces as TransactionInterfaces, MultisigInterfaces, TurtleCoinCrypto } from './Types';
+import { Counter, ModeOfOperation, utils as AESUtils } from 'aes-js';
+import { Reader, Writer } from 'bytestream-helper';
+import { Base58 } from 'turtlecoin-base58';
 
 /** @ignore */
-const messagePrefix: number = 0xde0aec198;
+const messagePrefix = 0xde0aec198;
 
 /**
  * Represents a Multisignature inter-wallet Message that is used to exchange data between multisignature participants
  */
 export class MultisigMessage {
-
     /**
      * The private view key communicated in the message
      */
-    public get view(): string {
+    public get view (): string {
         return this.m_privateViewKey.privateKey;
     }
 
     /**
      * The source individual wallet address that the message is being sent FROM
      */
-    public get source(): Address {
+    public get source (): Address {
         return this.m_source;
     }
 
-    public set source(source: Address) {
+    public set source (source: Address) {
         if (source.view.privateKey.length === 0) {
             throw new Error('Source private view key not available');
         }
@@ -44,58 +43,58 @@ export class MultisigMessage {
     /**
      * The destination individual wallet address the message is being sent TO
      */
-    public get destination(): Address {
+    public get destination (): Address {
         return this.m_destination;
     }
 
-    public set destination(destination: Address) {
+    public set destination (destination: Address) {
         this.m_destination = destination;
     }
 
     /**
      * A one-time nonce value that should increment/change for every message exchanged between the wallets
      */
-    public get nonce(): number {
+    public get nonce (): number {
         return this.m_nonce;
     }
 
     /**
      * The multisig public spend keys transferred in the message
      */
-    public get spendKeys(): ED25519.KeyPair[] {
+    public get spendKeys (): ED25519.KeyPair[] {
         return this.m_spendKeys;
     }
 
     /**
      * The partial key images transferred in the message
      */
-    public get partialKeyImages(): MultisigInterfaces.PartialKeyImage[] {
+    public get partialKeyImages (): MultisigInterfaces.PartialKeyImage[] {
         return this.m_partialKeyImages;
     }
 
-    public set partialKeyImages(partialKeyImages: MultisigInterfaces.PartialKeyImage[]) {
+    public set partialKeyImages (partialKeyImages: MultisigInterfaces.PartialKeyImage[]) {
         this.m_partialKeyImages = partialKeyImages;
     }
 
     /**
      * The partial signing keys transferred in the message
      */
-    public get partialSigningKeys(): MultisigInterfaces.PartialSigningKey[] {
+    public get partialSigningKeys (): MultisigInterfaces.PartialSigningKey[] {
         return this.m_partialSigningKeys;
     }
 
-    public set partialSigningKeys(partialSigningKeys: MultisigInterfaces.PartialSigningKey[]) {
+    public set partialSigningKeys (partialSigningKeys: MultisigInterfaces.PartialSigningKey[]) {
         this.m_partialSigningKeys = partialSigningKeys;
     }
 
     /**
      * The prepared transactions transferred in the message
      */
-    public get preparedTransactions(): TransactionInterfaces.PreparedTransaction[] {
+    public get preparedTransactions (): TransactionInterfaces.PreparedTransaction[] {
         return this.m_preparedTransactions;
     }
 
-    public set preparedTransactions(preparedTransactions: TransactionInterfaces.PreparedTransaction[]) {
+    public set preparedTransactions (preparedTransactions: TransactionInterfaces.PreparedTransaction[]) {
         this.m_preparedTransactions = preparedTransactions;
     }
 
@@ -109,7 +108,7 @@ export class MultisigMessage {
      * @param destination The wallet address that this message was sent
      * @param base58 The Base58 encoded data
      */
-    public static async decode(destination: Address, base58: string): Promise<MultisigMessage> {
+    public static async decode (destination: Address, base58: string): Promise<MultisigMessage> {
         if (!destination.spend.isPaired) {
             throw new Error('Cannot attempt decryption without private spend key');
         }
@@ -184,7 +183,7 @@ export class MultisigMessage {
     protected m_source: Address = new Address();
     protected m_spendKeys: ED25519.KeyPair[] = [];
     protected m_privateViewKey: ED25519.KeyPair = new ED25519.KeyPair();
-    protected m_nonce: number = 1;
+    protected m_nonce = 1;
     protected m_partialKeyImages: MultisigInterfaces.PartialKeyImage[] = [];
     protected m_partialSigningKeys: MultisigInterfaces.PartialSigningKey[] = [];
     protected m_preparedTransactions: TransactionInterfaces.PreparedTransaction[] = [];
@@ -197,7 +196,7 @@ export class MultisigMessage {
      * @param [nonce] A one-time nonce value that should increment/change for every message
      * exchanged between the wallets
      */
-    constructor(source?: Address, destination?: Address, nonce?: number) {
+    constructor (source?: Address, destination?: Address, nonce?: number) {
         if (source) {
             this.source = source;
         }
@@ -219,7 +218,7 @@ export class MultisigMessage {
      *
      * @param keypair The spend key pair to include.
      */
-    public addSpendKeys(keypair: ED25519.KeyPair): boolean {
+    public addSpendKeys (keypair: ED25519.KeyPair): boolean {
         if (!keypair.isPaired) {
             throw new Error('The private key and public key are not cryptographically paired');
         }
@@ -245,7 +244,7 @@ export class MultisigMessage {
      * @async
      * @returns The Base58 encoded string for transmission
      */
-    public async encode(): Promise<string> {
+    public async encode (): Promise<string> {
         if (!this.source.spend.isPaired) {
             throw new Error('Cannot encode as we do not have the full key pair to do so [SPEND]');
         }
@@ -256,7 +255,7 @@ export class MultisigMessage {
 
         const payload: MultisigInterfaces.Payload = {
             publicSpendKeys: await calculateSpendKeySignatures(this.spendKeys),
-            privateViewKey: this.source.view.privateKey,
+            privateViewKey: this.source.view.privateKey
         };
 
         if (this.partialKeyImages.length !== 0) {
@@ -298,11 +297,10 @@ export class MultisigMessage {
 
         return Base58.encode(writer.blob);
     }
-
 }
 
 /** @ignore */
-async function encrypt(
+async function encrypt (
     source: Address,
     destination: Address,
     payload: MultisigInterfaces.Payload,
@@ -313,6 +311,7 @@ async function encrypt(
         await TurtleCoinCrypto.generateKeyDerivation(
             destination.spend.publicKey, source.spend.privateKey), 'hex');
 
+    // eslint-disable-next-line new-cap
     const ctx = new ModeOfOperation.ctr(aesKey, new Counter(nonce));
 
     const encryptedBytes = ctx.encrypt(transfer);
@@ -320,12 +319,12 @@ async function encrypt(
     return {
         address: source.address,
         messageId: nonce,
-        payload: AESUtils.hex.fromBytes(encryptedBytes),
+        payload: AESUtils.hex.fromBytes(encryptedBytes)
     };
 }
 
 /** @ignore */
-async function decrypt(
+async function decrypt (
     destination: Address,
     transfer: MultisigInterfaces.Transfer,
     nonce: number): Promise<MultisigInterfaces.Payload> {
@@ -335,6 +334,7 @@ async function decrypt(
         await TurtleCoinCrypto.generateKeyDerivation(
             sender.spend.publicKey, destination.spend.privateKey), 'hex');
 
+    // eslint-disable-next-line new-cap
     const ctx = new ModeOfOperation.ctr(aesKey, new Counter(nonce));
 
     const decryptedBytes = ctx.decrypt(AESUtils.hex.toBytes(transfer.payload));
@@ -347,7 +347,7 @@ async function decrypt(
 }
 
 /** @ignore */
-async function calculateSpendKeySignatures(
+async function calculateSpendKeySignatures (
     spendKeys: ED25519.KeyPair[]): Promise<MultisigInterfaces.PublicSpendKey[]> {
     const signatures: MultisigInterfaces.PublicSpendKey[] = [];
 
@@ -358,14 +358,14 @@ async function calculateSpendKeySignatures(
 
         const sig = TurtleCoinCrypto.generateSignature(keys.publicKey, keys.publicKey, keys.privateKey);
 
-        signatures.push({key: keys.publicKey, signature: sig});
+        signatures.push({ key: keys.publicKey, signature: sig });
     }
 
     return signatures;
 }
 
 /** @ignore */
-async function verifySpendKeySignatures(spendKeys: MultisigInterfaces.PublicSpendKey[]): Promise<void> {
+async function verifySpendKeySignatures (spendKeys: MultisigInterfaces.PublicSpendKey[]): Promise<void> {
     for (const spendKey of spendKeys) {
         if (!await TurtleCoinCrypto.checkSignature(spendKey.key, spendKey.key, spendKey.signature)) {
             throw new Error('Invalid public spend key signature for: ' + spendKey.key);

@@ -3,8 +3,8 @@
 // Please see the included LICENSE file for more information.
 
 /** @ignore */
-import {Writer} from 'bytestream-helper';
-import {BigInteger} from '../Types';
+import { Writer } from 'bytestream-helper';
+import { BigInteger } from '../Types';
 
 export namespace TransactionInputs {
 
@@ -49,21 +49,21 @@ export namespace TransactionInputs {
          * Creates a new Coinbase input for the specified block index (0-based)
          * @param blockIndex
          */
-        constructor(blockIndex: number) {
+        constructor (blockIndex: number) {
             this.m_blockIndex = blockIndex;
         }
 
         /**
          * The input type
          */
-        public get type(): InputType {
+        public get type (): InputType {
             return this.m_type;
         }
 
         /**
          * The block index of the input (0-based)
          */
-        public get blockIndex(): number {
+        public get blockIndex (): number {
             return this.m_blockIndex;
         }
 
@@ -71,7 +71,7 @@ export namespace TransactionInputs {
          * Represents the input as a Buffer
          * @returns the Buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const writer = new Writer();
 
             writer.uint8_t(this.type);
@@ -85,7 +85,7 @@ export namespace TransactionInputs {
          * Represents the input as a hexadecimal string (blob)
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
@@ -94,7 +94,6 @@ export namespace TransactionInputs {
      * Represents an input from a set of keys (wallet)
      */
     export class KeyInput implements ITransactionInput {
-
         private readonly m_type: InputType = InputType.KEY;
         private readonly m_amount: BigInteger.BigInteger = BigInteger.zero;
         private readonly m_keyOffsets: BigInteger.BigInteger[] = [];
@@ -106,7 +105,7 @@ export namespace TransactionInputs {
          * @param keyOffsets the input offsets used in the transaction signature(s)
          * @param keyImage the key image of the input
          */
-        constructor(
+        constructor (
             amount: BigInteger.BigInteger | number,
             keyOffsets: BigInteger.BigInteger[] | number[],
             keyImage: string) {
@@ -134,28 +133,28 @@ export namespace TransactionInputs {
         /**
          * The input type
          */
-        public get type(): InputType {
+        public get type (): InputType {
             return this.m_type;
         }
 
         /**
          * The input amount
          */
-        public get amount(): BigInteger.BigInteger {
+        public get amount (): BigInteger.BigInteger {
             return this.m_amount;
         }
 
         /**
          * The input offsets used in the transaction signature(s)
          */
-        public get keyOffsets(): BigInteger.BigInteger[] {
+        public get keyOffsets (): BigInteger.BigInteger[] {
             return this.m_keyOffsets;
         }
 
         /**
          * The key image of the input
          */
-        public get keyImage(): string {
+        public get keyImage (): string {
             return this.m_keyImage;
         }
 
@@ -163,7 +162,7 @@ export namespace TransactionInputs {
          * Represents the input as a Buffer
          * @returns the Buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const writer = new Writer();
 
             writer.uint8_t(this.type);
@@ -183,7 +182,7 @@ export namespace TransactionInputs {
          * Represents the input as a hexadecimal string (blob)
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }

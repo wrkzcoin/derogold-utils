@@ -2,7 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 
-import {Transaction} from './Transaction';
+import { Transaction } from './Transaction';
 
 /**
  * Represents a parent block object
@@ -11,11 +11,11 @@ export class ParentBlock {
     /**
      * The major block version number
      */
-    public majorVersion: number = 0;
+    public majorVersion = 0;
     /**
      * The minor block version number
      */
-    public minorVersion: number = 0;
+    public minorVersion = 0;
     /**
      * The previous block hash
      */
@@ -23,7 +23,7 @@ export class ParentBlock {
     /**
      * The number of transactions in the block
      */
-    public transactionCount: number = 0;
+    public transactionCount = 0;
     /**
      * The base transaction branches
      */

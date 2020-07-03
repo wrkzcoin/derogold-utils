@@ -2,8 +2,8 @@
 //
 // Please see the included LICENSE file for more information.
 
-import {Reader, Writer} from 'bytestream-helper';
-import {Common} from '../Common';
+import { Reader, Writer } from 'bytestream-helper';
+import { Common } from '../Common';
 
 /** @ignore */
 enum SIZES {
@@ -50,25 +50,24 @@ export namespace ExtraNonceTag {
      * Represents arbitrary extra data included in the nonce by the user
      */
     export class ExtraNonceData implements IExtraNonce {
-
         /**
          * The tag type of the field
          */
-        public get tag(): NonceTagType {
+        public get tag (): NonceTagType {
             return this.m_tag;
         }
 
         /**
          * The size of the field in bytes including the tag
          */
-        public get size(): number {
+        public get size (): number {
             return this.toBuffer().length;
         }
 
         /**
          * The arbitrary data included in the field
          */
-        public get data(): Buffer {
+        public get data (): Buffer {
             return this.m_data;
         }
 
@@ -78,7 +77,7 @@ export namespace ExtraNonceTag {
          * @param data the data that makes up the nonce field
          * @returns the new object
          */
-        public static from(data: Buffer | string): ExtraNonceData {
+        public static from (data: Buffer | string): ExtraNonceData {
             const reader = new Reader(data);
 
             if (reader.varint().toJSNumber() !== NonceTagType.EXTRA_DATA) {
@@ -101,6 +100,7 @@ export namespace ExtraNonceTag {
 
             return new ExtraNonceData(dataLength);
         }
+
         private readonly m_tag: NonceTagType = NonceTagType.EXTRA_DATA;
         private readonly m_data: Buffer = Buffer.alloc(0);
 
@@ -108,7 +108,7 @@ export namespace ExtraNonceTag {
          * Creates a new instance of the field from just the extra data to be included
          * @param data the arbitrary data to be included in the field
          */
-        constructor(data: Buffer) {
+        constructor (data: Buffer) {
             this.m_data = data;
         }
 
@@ -116,7 +116,7 @@ export namespace ExtraNonceTag {
          * Represents the field as a Buffer
          * @returns the Buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const writer = new Writer();
 
             writer.varint(this.tag);
@@ -132,7 +132,7 @@ export namespace ExtraNonceTag {
          * Represents the field as a hexadecimal string (blob)
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
@@ -141,25 +141,24 @@ export namespace ExtraNonceTag {
      * Represents a payment ID included in the Extra Nonce field
      */
     export class ExtraNoncePaymentId implements IExtraNonce {
-
         /**
          * The tag type of the field
          */
-        public get tag(): NonceTagType {
+        public get tag (): NonceTagType {
             return this.m_tag;
         }
 
         /**
          * The size of the field in bytes including the tag
          */
-        public get size(): number {
+        public get size (): number {
             return this.toBuffer().length;
         }
 
         /**
          * The payment ID contained in the field
          */
-        public get paymentId(): string {
+        public get paymentId (): string {
             return this.m_paymentId;
         }
 
@@ -169,7 +168,7 @@ export namespace ExtraNonceTag {
          * @param data the data that makes up the nonce field
          * @returns the new object
          */
-        public static from(data: Buffer | string): ExtraNoncePaymentId {
+        public static from (data: Buffer | string): ExtraNoncePaymentId {
             const reader = new Reader(data);
 
             if (reader.varint().toJSNumber() !== NonceTagType.PAYMENT_ID) {
@@ -192,7 +191,7 @@ export namespace ExtraNonceTag {
          * Constructs a new instance of the field using the supplied payment ID
          * @param paymentId
          */
-        constructor(paymentId: string) {
+        constructor (paymentId: string) {
             if (!Common.isHex64(paymentId)) {
                 throw new Error('paymentId must be 64 hexadecimal characters');
             }
@@ -204,7 +203,7 @@ export namespace ExtraNonceTag {
          * Represents the field as a Buffer
          * @returns the Buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const writer = new Writer();
 
             writer.varint(this.tag);
@@ -218,7 +217,7 @@ export namespace ExtraNonceTag {
          * Represents the field as a hexadecimal string (blob)
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
