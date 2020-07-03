@@ -117,67 +117,17 @@ export class BlockTemplate {
      * The extra miner nonce typically used for pool based mining
      */
     public get minerNonce(): number {
-        const extra = this.minerTransaction.extra;
-
-        const reader = new Reader(extra);
-
-        let offset: number = 0;
-
-        while (reader.unreadBytes > 0) {
-            const tag = reader.varint().toJSNumber();
-
-            switch (tag) {
-                case ExtraTag.ExtraTagType.PADDING:
-                    break;
-                case ExtraTag.ExtraTagType.PUBKEY:
-                    reader.skip(SIZES.KEY);
-                    break;
-                case ExtraTag.ExtraTagType.MERGED_MINING:
-                    const length = reader.varint().toJSNumber();
-                    reader.skip(length);
-                    break;
-                case ExtraTag.ExtraTagType.NONCE:
-                    offset = reader.currentOffset;
-                    const nonceLength = reader.varint().toJSNumber();
-                    this.m_extraNonceOffset = reader.currentOffset;
-                    this.m_extraNonceSafeLength = (nonceLength >= 4) ? 4 : (nonceLength >= 2) ? 2 : 1;
-                    return reader.uint_t(this.m_extraNonceSafeLength * 8, true).toJSNumber();
-            }
+        if (!this.minerTransaction.poolNonce) {
+            return 0;
+        } else if (typeof this.minerTransaction.poolNonce === 'number') {
+            return this.minerTransaction.poolNonce;
+        } else {
+            return (this.minerTransaction.poolNonce as BigInteger.BigInteger).toJSNumber();
         }
-
-        return 0;
     }
 
     public set minerNonce(nonce: number) {
-        if (nonce > 0xFFFFFFFF) {
-            throw new RangeError('Cannot store values larger than uint64_t');
-        }
-
-        if (nonce !== this.minerNonce) {
-            const extra = this.minerTransaction.extra;
-
-            const bytesRequired = (nonce > 65535) ? 4 : (nonce > 255) ? 2 : 1;
-
-            if (bytesRequired > this.m_extraNonceSafeLength) {
-                throw new RangeError('Reserved space ');
-            }
-
-            switch (this.m_extraNonceSafeLength) {
-                case 4:
-                    extra.writeUInt32BE(nonce, this.m_extraNonceOffset);
-                    break;
-                case 2:
-                    extra.writeUInt16BE(nonce, this.m_extraNonceOffset);
-                    break;
-                case 1:
-                    extra.writeUInt8(nonce, this.m_extraNonceOffset);
-                    break;
-                default:
-                    throw new Error('Unhandled safe nonce length');
-            }
-
-            this.minerTransaction.parseExtra(extra);
-        }
+        this.minerTransaction.poolNonce = nonce;
     }
 
     /**
