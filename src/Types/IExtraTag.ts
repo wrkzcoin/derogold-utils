@@ -25,7 +25,8 @@ export namespace ExtraTag {
         MERGED_MINING,
         RECIPIENT_PUBLIC_VIEW_KEY,
         RECIPIENT_PUBLIC_SPEND_KEY,
-        TRANSACTION_PRIVATE_KEY
+        TRANSACTION_PRIVATE_KEY,
+        POOL_NONCE
     }
 
     /**
@@ -779,6 +780,97 @@ export namespace ExtraTag {
             writer.varint(this.tag);
 
             writer.hash(this.publicKey);
+
+            return writer.buffer;
+        }
+
+        /**
+         * Represents the field as a hexadecimal string (blob)
+         * @returns the hexadecimal (blob) representation of the object
+         */
+        public toString(): string {
+            return this.toBuffer().toString('hex');
+        }
+    }
+
+    /**
+     * Represents the extra field for the pool nonce used by mining pools
+     */
+    export class ExtraPoolNonce implements IExtraTag {
+
+        /**
+         * The tag type of the field
+         */
+        public get tag(): ExtraTagType {
+            return this.m_tag;
+        }
+
+        /**
+         * The size of the field in bytes including the tag
+         */
+        public get size(): number {
+            return this.toBuffer().length;
+        }
+
+        /**
+         * The arbitrary data included in the field
+         */
+        public get data(): Buffer {
+            return this.m_data;
+        }
+
+        /**
+         * Creates a new instance of the field using a Buffer or Blob copy of
+         * field created through other means
+         * @param data the data that makes up the nonce field
+         * @returns the new object
+         */
+        public static from(data: Buffer | string): ExtraPoolNonce {
+            const reader = new Reader(data);
+
+            if (reader.varint().toJSNumber() !== ExtraTagType.POOL_NONCE) {
+                throw new Error('Not an extra data field');
+            }
+
+            try {
+                reader.varint(true);
+            } catch {
+                throw new Error('Cannot read required field data');
+            }
+
+            const length = reader.varint().toJSNumber();
+
+            if (reader.unreadBytes !== length) {
+                throw new RangeError('Not enough data available for reading');
+            }
+
+            const dataLength = reader.bytes(length);
+
+            return new ExtraPoolNonce(dataLength);
+        }
+        private readonly m_tag: ExtraTagType = ExtraTagType.POOL_NONCE;
+        private readonly m_data: Buffer = Buffer.alloc(0);
+
+        /**
+         * Creates a new instance of the field from just the extra data to be included
+         * @param data the pool nonce data to be included
+         */
+        constructor(data: Buffer) {
+            this.m_data = data;
+        }
+
+        /**
+         * Represents the field as a Buffer
+         * @returns the Buffer representation of the object
+         */
+        public toBuffer(): Buffer {
+            const writer = new Writer();
+
+            writer.varint(this.tag);
+
+            writer.varint(this.data.length);
+
+            writer.write(this.data);
 
             return writer.buffer;
         }

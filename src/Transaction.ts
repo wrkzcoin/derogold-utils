@@ -200,6 +200,55 @@ export class Transaction {
     }
 
     /**
+     * Returns pool nonce field within the transaction as Buffer
+     */
+    public get poolNonce(): BigInteger.BigInteger | number | undefined {
+        let result;
+
+        for (const tag of this.m_extra)
+        {
+            if (tag.tag === ExtraTag.ExtraTagType.POOL_NONCE) {
+                result = BigInteger((tag as ExtraTag.ExtraPoolNonce).data
+                    .toString('hex'));
+            }
+        }
+
+        if (!result) {
+            return undefined;
+        } else if (result.greater(Number.MAX_SAFE_INTEGER)) {
+            return result;
+        } else {
+            return result.toJSNumber();
+        }
+    }
+
+    /**
+     * Sets the pool nonce field within the transaction from a Buffer
+     * @param nonce the nonce data to use
+     */
+    public set poolNonce(nonce: BigInteger.BigInteger | number | undefined) {
+        if (!nonce) {
+            this.m_extra = removeExtraTag(this.m_extra, ExtraTag.ExtraTagType.POOL_NONCE);
+
+            return;
+        }
+
+        if (typeof nonce === 'number') {
+            nonce = BigInteger(nonce);
+        }
+
+        const buffer = Common.hexPadToBuffer(nonce);
+
+        const tag = new ExtraTag.ExtraPoolNonce(buffer);
+
+        this.m_extra = removeExtraTag(this.m_extra, tag.tag);
+
+        this.m_extra.push(tag);
+
+        this.m_extra.sort((a, b) => (a.tag > b.tag) ? 1 : -1);
+    }
+
+    /**
      * Returns the transaction prefix in hexadecimal (blob) form
      */
     public get prefix(): string {
@@ -653,7 +702,8 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
         mergedMining: false,
         transactionPrivateKey: false,
         recipientPublicViewKey: false,
-        recipientPublicSpendKey: false
+        recipientPublicSpendKey: false,
+        poolNonce: false
     };
 
     const reader = new Reader(data);
@@ -786,6 +836,35 @@ function readExtra(data: Buffer): ExtraTag.IExtraTag[] {
                     try {
                         tags.push(ExtraTag.ExtraRecipientPublicSpendKey.from(reader.bytes(totalLength)));
                         seen.recipientPublicSpendKey = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
+                } else {
+                    reader.skip();
+                }
+                break;
+            case ExtraTag.ExtraTagType.POOL_NONCE:
+                if (!seen.poolNonce) {
+                    const tmpReader = new Reader(reader.unreadBuffer);
+                    tmpReader.skip(totalLength);
+
+                    let nonceLength = 0;
+                    try {
+                        nonceLength = tmpReader.varint().toJSNumber();
+                        if (nonceLength > reader.unreadBytes) {
+                            reader.skip();
+                            continue;
+                        }
+                    } catch {
+                        reader.skip();
+                        continue;
+                    }
+
+                    totalLength += Common.varintLength(nonceLength) + nonceLength;
+
+                    try {
+                        tags.push(ExtraTag.ExtraPoolNonce.from(reader.bytes(totalLength)));
+                        seen.nonce = true;
                     } catch (e) {
                         reader.skip();
                     }

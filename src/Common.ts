@@ -102,4 +102,20 @@ export class Common {
         writer.varint(value);
         return writer.length;
     }
+
+    public static hexPad(value: number | BigInteger.BigInteger, padLength?: number): string {
+        if (typeof value === 'number') {
+            value = BigInteger(value);
+        }
+
+        const hex = value.toString(16);
+
+        padLength = padLength || Math.round(hex.length / 2) * 2;
+
+        return hex.padStart(padLength, '0');
+    }
+
+    public static hexPadToBuffer(value: number | BigInteger.BigInteger, padLength?: number): Buffer {
+        return Buffer.from(Common.hexPad(value, padLength), 'hex');
+    }
 }
