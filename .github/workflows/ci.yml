@@ -21,6 +21,9 @@ jobs:
       with:
         node-version: ${{ matrix.node }}
         registry-url: 'https://registry.npmjs.org'
+    - name: Install Windows Node.js Build Tools
+      if: matrix.os == 'windows-latest'
+      run: npm install -g windows-build-tools --vs2015
     - name: Install Dependencies
       run: npm install
     - name: Execute Unit Tests
