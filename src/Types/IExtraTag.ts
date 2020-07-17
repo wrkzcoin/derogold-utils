@@ -581,7 +581,7 @@ export namespace ExtraTag {
 
         /**
          * Creates a new instance of the field using the supplied public key
-         * @param publicKey the public key to be stored in the field
+         * @param privateKey the public key to be stored in the field
          */
         constructor (privateKey: string) {
             if (TurtleCoinCrypto.checkScalar(privateKey)) {
