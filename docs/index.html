@@ -94,20 +94,20 @@
     CryptoNote, 
     LevinPacket, 
     Transaction
-} <span class="hljs-keyword">from</span> <span class="hljs-string">'turtlecoin-utils'</span>
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;turtlecoin-utils&#x27;</span>
 <span class="hljs-keyword">const</span> coinUtils = <span class="hljs-keyword">new</span> CryptoNote()</code></pre>
 				<a href="#javascript" id="javascript" style="color: inherit; text-decoration: none;">
 					<h3>Javascript</h3>
 				</a>
-				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> TurtleCoinUtils = <span class="hljs-built_in">require</span>(<span class="hljs-string">'turtlecoin-utils'</span>)
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> TurtleCoinUtils = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;turtlecoin-utils&#x27;</span>)
 <span class="hljs-keyword">const</span> coinUtils = <span class="hljs-keyword">new</span> TurtleCoinUtils.CryptoNote()</code></pre>
 				<a href="#browser-support" id="browser-support" style="color: inherit; text-decoration: none;">
 					<h3>Browser Support</h3>
 				</a>
 				<p>When packing for the browser with a tool like <a href="https://webpack.js.org/">webpack</a> we advise that you use the ready <code>event</code> of the webpacked module to determine when the Cryptographic methods are available.</p>
-				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"TurtleCoinUtils.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;TurtleCoinUtils.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
-  TurtleCoinUtils.on(<span class="hljs-string">'ready'</span>, () =&gt; {
+  TurtleCoinUtils.on(<span class="hljs-string">&#x27;ready&#x27;</span>, <span class="hljs-function">() =&gt;</span> {
     <span class="hljs-keyword">const</span> coinUtils = <span class="hljs-keyword">new</span> TurtleCoinUtils.CryptoNote()
   })
 </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
@@ -222,6 +222,5 @@
 </div>
 <div class="overlay"></div>
 <script src="assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>
