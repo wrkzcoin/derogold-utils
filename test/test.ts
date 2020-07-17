@@ -2,9 +2,21 @@
 //
 // Please see the included LICENSE file for more information.
 
-import { Address, AddressPrefix, Crypto, Transaction, LevinPacket, CryptoNote } from '../src';
+import {
+    Address,
+    AddressPrefix,
+    Block,
+    BlockTemplate,
+    KeyInput,
+    KeyOutput,
+    Crypto,
+    Transaction,
+    LevinPacket,
+    CryptoNote
+} from '../src';
 import * as assert from 'assert';
 import { describe, it } from 'mocha';
+import { BigInteger } from '../src/Types';
 
 const TurtleCoinCrypto = new Crypto();
 const cnUtil = new CryptoNote(require('../config.json'));
@@ -658,11 +670,7 @@ describe('Transactions', async function () {
 
             const tx = new Transaction();
 
-            const KeyInput = require('../').KeyInput;
-
             tx.inputs.push(new KeyInput(10000, [2434121, 1, 1, 63], '86a1c38f2f1b712b8ed1c0b9db5108d37469cee287b345c301e0d6298ad1011c'));
-
-            const KeyOutput = require('../').KeyOutput;
 
             tx.outputs = [
                 new KeyOutput(1, '7c58ce140c54108f92d088f345e2693f04e01d76221913af7ee5863d4ec88502'),
@@ -1161,9 +1169,6 @@ describe('Transactions', async function () {
 describe('Blocks', async function () {
     this.timeout(10000);
 
-    const Block = require('../').Block;
-    const BlockTemplate = require('../').BlockTemplate;
-
     describe('Structures', async () => {
         const BlockTemplateSample = require('./template.json');
         const BlockTemplateSample2 = require('./template2.json');
@@ -1213,12 +1218,15 @@ describe('Blocks', async function () {
         });
 
         it('Can read pool nonce in miner transaction correctly via .poolNonce', async () => {
+            const expected = BigInteger(2);
             const a = await BlockTemplate.from(BlockTemplateSample2);
 
-            a.minerTransaction.poolNonce++;
+            a.minerTransaction.incrementPoolNonce();
+
+            console.log(a.minerTransaction.poolNonce, expected);
 
             // The value is set to 1 already in the sample template
-            assert(a.minerTransaction.poolNonce === 2);
+            assert.deepStrictEqual(a.minerTransaction.poolNonce, expected);
         });
 
         it('Can read pool nonce in miner transaction correctly via .minerNonce', async () => {

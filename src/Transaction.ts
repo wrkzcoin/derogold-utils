@@ -199,9 +199,16 @@ export class Transaction {
     }
 
     /**
+     * Increments the pool nonce by 1
+     */
+    public incrementPoolNonce () {
+        this.poolNonce = this.poolNonce.add(1);
+    }
+
+    /**
      * Returns pool nonce field within the transaction as Buffer
      */
-    public get poolNonce (): BigInteger.BigInteger | number | undefined {
+    public get poolNonce (): BigInteger.BigInteger {
         let result;
 
         for (const tag of this.m_extra) {
@@ -212,11 +219,9 @@ export class Transaction {
         }
 
         if (!result) {
-            return undefined;
-        } else if (result.greater(Number.MAX_SAFE_INTEGER)) {
-            return result;
+            return BigInteger.zero;
         } else {
-            return result.toJSNumber();
+            return result;
         }
     }
 
@@ -224,15 +229,11 @@ export class Transaction {
      * Sets the pool nonce field within the transaction from a Buffer
      * @param nonce the nonce data to use
      */
-    public set poolNonce (nonce: BigInteger.BigInteger | number | undefined) {
+    public set poolNonce (nonce: BigInteger.BigInteger) {
         if (!nonce) {
             this.m_extra = removeExtraTag(this.m_extra, ExtraTag.ExtraTagType.POOL_NONCE);
 
             return;
-        }
-
-        if (typeof nonce === 'number') {
-            nonce = BigInteger(nonce);
         }
 
         const buffer = Common.hexPadToBuffer(nonce);

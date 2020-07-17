@@ -117,15 +117,13 @@ export class BlockTemplate {
     public get minerNonce (): number {
         if (!this.minerTransaction.poolNonce) {
             return 0;
-        } else if (typeof this.minerTransaction.poolNonce === 'number') {
-            return this.minerTransaction.poolNonce;
         } else {
             return (this.minerTransaction.poolNonce as BigInteger.BigInteger).toJSNumber();
         }
     }
 
     public set minerNonce (nonce: number) {
-        this.minerTransaction.poolNonce = nonce;
+        this.minerTransaction.poolNonce = BigInteger(nonce);
     }
 
     /**
