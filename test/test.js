@@ -712,6 +712,7 @@ describe('Transactions', function () {
       return cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, paymentId, 0)
           .then(tx => {
             assert(tx.paymentId === paymentId)
+            assert(tx.toString().indexOf(paymentId) !== -1)
           })
     })
 
@@ -750,6 +751,7 @@ describe('Transactions', function () {
       return cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, '', 0)
           .then(tx => {
             assert(tx.paymentId === paymentId)
+            assert(tx.toString().indexOf(paymentId) !== -1)
           })
     })
 
@@ -788,6 +790,7 @@ describe('Transactions', function () {
       return cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, paymentId, 0)
           .then(tx => {
             assert(tx.paymentId === paymentId)
+            assert(tx.toString().indexOf(paymentId) !== -1)
           })
     })
 
