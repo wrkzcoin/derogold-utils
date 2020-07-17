@@ -507,6 +507,16 @@ export namespace ExtraTag {
 
             writer.varint(this.tag);
 
+            const subWriter = new Writer();
+
+            for (const tag of this.tags) {
+                subWriter.write(tag.toBuffer());
+            }
+
+            writer.varint(subWriter.length);
+
+            writer.write(subWriter.blob);
+
             return writer.buffer;
         }
 
