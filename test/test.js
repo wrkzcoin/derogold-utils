@@ -2,29 +2,29 @@
 //
 // Please see the included LICENSE file for more information.
 
-'use strict'
+'use strict';
 
-const assert = require('assert')
-const Address = require('../').Address
-const AddressPrefix = require('../').AddressPrefix
-const Crypto = require('../').Crypto
-const describe = require('mocha').describe
-const it = require('mocha').it
-const Transaction = require('../').Transaction
-const LevinPacket = require('../').LevinPacket
-const TurtleCoinCrypto = new Crypto()
-const TurtleCoinUtils = require('../').CryptoNote
-const cnUtil = new TurtleCoinUtils(require('../config.json'))
+const assert = require('assert');
+const Address = require('../').Address;
+const AddressPrefix = require('../').AddressPrefix;
+const Crypto = require('../').Crypto;
+const describe = require('mocha').describe;
+const it = require('mocha').it;
+const Transaction = require('../').Transaction;
+const LevinPacket = require('../').LevinPacket;
+const TurtleCoinCrypto = new Crypto();
+const TurtleCoinUtils = require('../').CryptoNote;
+const cnUtil = new TurtleCoinUtils(require('../config.json'));
 
 if (process.env.FORCE_JS) {
-  if (TurtleCoinCrypto.forceJSCrypto()) {
-    console.warn('Performing tests with JS Cryptographic library')
-  } else {
-    console.warn('Could not activate JS Cryptographic library')
-    process.exit(1)
-  }
+    if (TurtleCoinCrypto.forceJSCrypto()) {
+        console.warn('Performing tests with JS Cryptographic library');
+    } else {
+        console.warn('Could not activate JS Cryptographic library');
+        process.exit(1);
+    }
 } else {
-  console.warn('Performing tests with C++ Cryptographic library')
+    console.warn('Performing tests with C++ Cryptographic library');
 }
 
 describe('Cryptography', function () {
