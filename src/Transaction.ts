@@ -77,7 +77,7 @@ export class Transaction {
      * Returns the recipient address if this is a coinbase
      * transaction and the information is available
      */
-    public get recipient (): Address | undefined {
+    public async recipient (): Promise<Address | undefined> {
         if (!this.isCoinbase) {
             return;
         }
@@ -141,17 +141,17 @@ export class Transaction {
     /**
      * Returns the transaction hash
      */
-    public get hash (): string {
+    public async hash (): Promise<string> {
         if (this.m_cached.blob && this.m_cached.blob === this.toString() && this.m_cached.hash) {
             return this.m_cached.hash;
         }
 
         this.m_cached.blob = this.toString();
 
-        const hash = TurtleCoinCrypto.cn_fast_hash(this.m_cached.blob);
+        const hash = await TurtleCoinCrypto.cn_fast_hash(this.m_cached.blob);
 
         if (this.version >= 2) {
-            const hash2 = TurtleCoinCrypto.cn_fast_hash(hash + TransactionVersion2Suffix);
+            const hash2 = await TurtleCoinCrypto.cn_fast_hash(hash + TransactionVersion2Suffix);
 
             this.m_cached.hash = hash2;
 
@@ -256,17 +256,17 @@ export class Transaction {
     /**
      * Returns the transaction prefix hash
      */
-    public get prefixHash (): string {
+    public async prefixHash (): Promise<string> {
         if (this.m_cached.prefix && this.m_cached.prefix === this.prefix && this.m_cached.prefixHash) {
             return this.m_cached.prefixHash;
         }
 
         this.m_cached.prefix = this.prefix;
 
-        const hash = TurtleCoinCrypto.cn_fast_hash(this.m_cached.prefix);
+        const hash = await TurtleCoinCrypto.cn_fast_hash(this.m_cached.prefix);
 
         if (this.version >= 2) {
-            const hash2 = TurtleCoinCrypto.cn_fast_hash(hash + TransactionVersion2Suffix);
+            const hash2 = await TurtleCoinCrypto.cn_fast_hash(hash + TransactionVersion2Suffix);
 
             this.m_cached.prefixHash = hash2;
 
@@ -388,10 +388,10 @@ export class Transaction {
      * @param data the transaction data blob
      * @returns the new transaction object
      */
-    public static from (data: Buffer | string): Transaction {
-        const reader = new Reader(data);
-
+    public static async from (data: Buffer | string): Promise<Transaction> {
         const result = new Transaction();
+
+        const reader = new Reader(data);
 
         result.m_readonly = true;
 
@@ -447,7 +447,7 @@ export class Transaction {
         result.m_extra = readExtra(result.m_rawExtra);
 
         if (result.publicKey) {
-            result.transactionKeys.publicKey = result.publicKey;
+            await result.transactionKeys.setPublicKey(result.publicKey);
         }
 
         /* If there are bytes remaining and mod 64 then they are signatures */
@@ -487,12 +487,7 @@ export class Transaction {
     public outputs: TransactionOutputs.ITransactionOutput[] = [];
     public signatures: string[][] = [];
     public ignoredField = 0;
-    public transactionKeys: ED25519.KeyPair = new ED25519.KeyPair(
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        true);
+    public transactionKeys: ED25519.KeyPair = new ED25519.KeyPair();
 
     protected m_unlockTime: BigInteger.BigInteger = BigInteger.zero;
     protected m_rawExtra: Buffer = Buffer.alloc(0);
@@ -501,7 +496,7 @@ export class Transaction {
     protected m_cached: Cache = { prefix: '', prefixHash: '', blob: '', hash: '' };
 
     /** @ignore */
-    public parseExtra (extra: Buffer) {
+    public async parseExtra (extra: Buffer): Promise<void> {
         this.m_readonly = true;
 
         this.m_rawExtra = extra;
@@ -509,7 +504,7 @@ export class Transaction {
         this.m_extra = readExtra(this.m_rawExtra);
 
         if (this.publicKey) {
-            this.transactionKeys.publicKey = this.publicKey;
+            await this.transactionKeys.setPublicKey(this.publicKey);
         }
     }
 
@@ -588,7 +583,7 @@ export class Transaction {
      * Adds the public key for the transaction to the transaction extra field
      * @param publicKey the public key of the transaction
      */
-    public addPublicKey (publicKey: string) {
+    public async addPublicKey (publicKey: string): Promise<void> {
         if (this.readonly) {
             throw new Error('Transaction is read-only');
         }
@@ -601,14 +596,14 @@ export class Transaction {
 
         this.m_extra.sort((a, b) => (a.tag > b.tag) ? 1 : -1);
 
-        this.transactionKeys.publicKey = publicKey;
+        await this.transactionKeys.setPublicKey(publicKey);
     }
 
     /**
      * Adds the private key for the transaction to the transaction extra field
      * @param privateKey the private key of the transaction
      */
-    public addPrivateKey (privateKey: string) {
+    public async addPrivateKey (privateKey: string): Promise<void> {
         if (this.readonly) {
             throw new Error('Transaction is read-only');
         }
@@ -621,7 +616,7 @@ export class Transaction {
 
         this.m_extra.sort((a, b) => (a.tag > b.tag) ? 1 : -1);
 
-        this.transactionKeys.privateKey = privateKey;
+        await this.transactionKeys.setPrivateKey(privateKey);
     }
 
     /**

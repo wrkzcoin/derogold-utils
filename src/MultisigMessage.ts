@@ -137,7 +137,7 @@ export class MultisigMessage {
 
         const transfer: MultisigInterfaces.Transfer = JSON.parse(reader.bytes(length).toString());
 
-        const source = Address.fromAddress(transfer.address);
+        const source = await Address.fromAddress(transfer.address);
 
         if (!await TurtleCoinCrypto.checkSignature(hash, source.spend.publicKey, signature)) {
             throw new Error('Invalid data signature');
@@ -158,7 +158,7 @@ export class MultisigMessage {
         const payload = await decrypt(destination, transfer, nonce);
 
         for (const publicSpendKey of payload.publicSpendKeys) {
-            result.m_spendKeys.push(new ED25519.KeyPair(publicSpendKey.key));
+            result.m_spendKeys.push(await ED25519.KeyPair.from(publicSpendKey.key));
         }
 
         if (payload.partialKeyImages) {
@@ -173,7 +173,7 @@ export class MultisigMessage {
             result.preparedTransactions = payload.preparedTransactions;
         }
 
-        result.m_privateViewKey = new ED25519.KeyPair(undefined, payload.privateViewKey);
+        result.m_privateViewKey = await ED25519.KeyPair.from(undefined, payload.privateViewKey);
 
         await verifySpendKeySignatures(payload.publicSpendKeys);
 
@@ -304,7 +304,8 @@ async function encrypt (
     source: Address,
     destination: Address,
     payload: MultisigInterfaces.Payload,
-    nonce: number): Promise<MultisigInterfaces.Transfer> {
+    nonce: number
+): Promise<MultisigInterfaces.Transfer> {
     const transfer = Buffer.from(JSON.stringify(payload));
 
     const aesKey = Buffer.from(
@@ -317,7 +318,7 @@ async function encrypt (
     const encryptedBytes = ctx.encrypt(transfer);
 
     return {
-        address: source.address,
+        address: await source.address(),
         messageId: nonce,
         payload: AESUtils.hex.fromBytes(encryptedBytes)
     };
@@ -327,8 +328,9 @@ async function encrypt (
 async function decrypt (
     destination: Address,
     transfer: MultisigInterfaces.Transfer,
-    nonce: number): Promise<MultisigInterfaces.Payload> {
-    const sender = Address.fromAddress(transfer.address);
+    nonce: number
+): Promise<MultisigInterfaces.Payload> {
+    const sender = await Address.fromAddress(transfer.address);
 
     const aesKey = Buffer.from(
         await TurtleCoinCrypto.generateKeyDerivation(
@@ -356,7 +358,7 @@ async function calculateSpendKeySignatures (
             throw new Error('The supplied spend keys are not paired correctly');
         }
 
-        const sig = TurtleCoinCrypto.generateSignature(keys.publicKey, keys.publicKey, keys.privateKey);
+        const sig = await TurtleCoinCrypto.generateSignature(keys.publicKey, keys.publicKey, keys.privateKey);
 
         signatures.push({ key: keys.publicKey, signature: sig });
     }

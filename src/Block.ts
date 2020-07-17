@@ -73,8 +73,8 @@ export class Block {
     /**
      * The base transaction branch of the block
      */
-    public get baseTransactionBranch (): string[] {
-        const transactions = [this.m_minerTransaction.hash].concat(this.transactions);
+    public async baseTransactionBranch (): Promise<string[]> {
+        const transactions = [await this.m_minerTransaction.hash()].concat(this.transactions);
 
         return TurtleCoinCrypto.tree_branch(transactions);
     }
@@ -82,10 +82,10 @@ export class Block {
     /**
      * The transaction tree hash of the block
      */
-    public get transactionTreeHash (): { hash: string, count: number } {
-        const transactions = [this.m_minerTransaction.hash].concat(this.transactions);
+    public async transactionTreeHash (): Promise<{ hash: string, count: number }> {
+        const transactions = [await this.m_minerTransaction.hash()].concat(this.transactions);
 
-        const treeHash = TurtleCoinCrypto.tree_hash(transactions);
+        const treeHash = await TurtleCoinCrypto.tree_hash(transactions);
 
         return { hash: treeHash, count: transactions.length };
     }
@@ -93,7 +93,7 @@ export class Block {
     /**
      * The merkle root of the block
      */
-    public get merkleRoot (): string {
+    public async merkleRoot (): Promise<string> {
         const writer = new Writer();
 
         writer.varint(this.m_majorVersion);
@@ -109,8 +109,10 @@ export class Block {
             writer.uint32_t(this.m_nonce, true);
         }
 
-        writer.hash(this.transactionTreeHash.hash);
-        writer.varint(this.transactionTreeHash.count);
+        const transactionTreeHash = await this.transactionTreeHash();
+
+        writer.hash(transactionTreeHash.hash);
+        writer.varint(transactionTreeHash.count);
 
         return getBlockHash(writer.buffer);
     }
@@ -140,8 +142,8 @@ export class Block {
     /**
      * The block hash (id)
      */
-    public get hash (): string {
-        const blob = this.toHashingBuffer();
+    public async hash (): Promise<string> {
+        const blob = await this.toHashingBuffer();
 
         if (this.m_cache.blob === blob.toString('hex') && this.m_cache.hash) {
             return this.m_cache.hash;
@@ -149,7 +151,7 @@ export class Block {
 
         this.m_cache.blob = blob.toString('hex');
 
-        this.m_cache.hash = getBlockHash(blob);
+        this.m_cache.hash = await getBlockHash(blob);
 
         return this.m_cache.hash;
     }
@@ -157,8 +159,8 @@ export class Block {
     /**
      * The block PoW hash
      */
-    public get longHash (): string {
-        const blob = this.toHashingBuffer(true);
+    public async longHash (): Promise<string> {
+        const blob = await this.toHashingBuffer(true);
 
         if (this.m_cache.longBlob === blob.toString('hex') && this.m_cache.longHash) {
             return this.m_cache.longHash;
@@ -166,7 +168,7 @@ export class Block {
 
         this.m_cache.longBlob = blob.toString('hex');
 
-        this.m_cache.longHash = getBlockPoWHash(blob, this.m_majorVersion);
+        this.m_cache.longHash = await getBlockPoWHash(blob, this.m_majorVersion);
 
         return this.m_cache.longHash;
     }
@@ -232,7 +234,7 @@ export class Block {
      * @param [config] the configuration that may define the major block version to activate parent block usage
      * @returns the new block object
      */
-    public static from (data: Buffer | string, config?: Config): Block {
+    public static async from (data: Buffer | string, config?: Config): Promise<Block> {
         const activateParentBlockVersion =
             (config && config.activateParentBlockVersion &&
                 typeof config.activateParentBlockVersion !== 'undefined')
@@ -264,7 +266,7 @@ export class Block {
         if (block.m_majorVersion >= activateParentBlockVersion) {
             block.m_parentBlock.transactionCount = reader.varint().toJSNumber();
 
-            const baseTransactionBranchDepth = TurtleCoinCrypto.tree_depth(block.m_parentBlock.transactionCount);
+            const baseTransactionBranchDepth = await TurtleCoinCrypto.tree_depth(block.m_parentBlock.transactionCount);
 
             for (let i = 0; i < baseTransactionBranchDepth; i++) {
                 block.m_parentBlock.baseTransactionBranch.push(reader.hash());
@@ -453,7 +455,7 @@ export class Block {
      * @param [headerOnly] whether to return just the header or the full block
      * @returns the hashing buffer
      */
-    public toHashingBuffer (headerOnly = false): Buffer {
+    public async toHashingBuffer (headerOnly = false): Promise<Buffer> {
         const writer = new Writer();
 
         writer.varint(this.m_majorVersion);
@@ -467,9 +469,11 @@ export class Block {
             writer.uint32_t(this.m_nonce, true);
         }
 
-        writer.hash(this.transactionTreeHash.hash);
+        const transactionTreeHash = await this.transactionTreeHash();
 
-        writer.varint(this.transactionTreeHash.count);
+        writer.hash(transactionTreeHash.hash);
+
+        writer.varint(transactionTreeHash.count);
 
         if (this.m_majorVersion >= this.m_activateParentBlockVersion) {
             if (headerOnly) {
@@ -482,9 +486,9 @@ export class Block {
             writer.hash(this.m_parentBlock.previousBlockHash);
             writer.uint32_t(this.m_nonce, true);
 
-            const treeHash = TurtleCoinCrypto.tree_hash_from_branch(
+            const treeHash = await TurtleCoinCrypto.tree_hash_from_branch(
                 this.m_parentBlock.baseTransactionBranch,
-                this.m_parentBlock.minerTransaction.hash,
+                await this.m_parentBlock.minerTransaction.hash(),
                 0
             );
 
@@ -519,13 +523,14 @@ export class Block {
      * @param [headerOnly] whether to return just the header or the full block
      * @returns the hexadecimal (blob) representation of the hashing buffer
      */
-    public toHashingString (headerOnly = false): string {
-        return this.toHashingBuffer(headerOnly).toString('hex');
+    public async toHashingString (headerOnly = false): Promise<string> {
+        return (await this.toHashingBuffer(headerOnly))
+            .toString('hex');
     }
 }
 
 /** @ignore */
-function getBlockHash (data: Buffer): string {
+async function getBlockHash (data: Buffer): Promise<string> {
     const writer = new Writer();
 
     writer.varint(data.length);
@@ -535,7 +540,7 @@ function getBlockHash (data: Buffer): string {
 }
 
 /** @ignore */
-function getBlockPoWHash (data: Buffer, majorVersion: number): string {
+async function getBlockPoWHash (data: Buffer, majorVersion: number): Promise<string> {
     const blob = data.toString('hex');
 
     switch (majorVersion) {

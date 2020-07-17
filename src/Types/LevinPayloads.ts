@@ -446,7 +446,7 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from (data: Reader | Buffer | string): LiteBlock {
+        public static async from (data: Reader | Buffer | string): Promise<LiteBlock> {
             const payload = PortableStorage.from(data);
 
             const result = new LiteBlock();
@@ -454,7 +454,7 @@ export namespace LevinPayloads {
             result.current_blockchain_height =
                 (payload.get('current_blockchain_height') as BigInteger.BigInteger).toJSNumber();
             result.hop = (payload.get('hop') as BigInteger.BigInteger).toJSNumber();
-            result.blockTemplate = Block.from((payload.get('blockTemplate') as string));
+            result.blockTemplate = await Block.from((payload.get('blockTemplate') as string));
 
             return result;
         }
@@ -648,7 +648,7 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from (data: Reader | Buffer | string): NewBlock {
+        public static async from (data: Reader | Buffer | string): Promise<NewBlock> {
             const payload = PortableStorage.from(data);
 
             const result = new NewBlock();
@@ -656,12 +656,12 @@ export namespace LevinPayloads {
             if (payload.exists('block')) {
                 const blockPayload = (payload.get('block') as PortableStorage);
 
-                result.block = Block.from((blockPayload.get('block') as string));
+                result.block = await Block.from((blockPayload.get('block') as string));
 
                 if (blockPayload.exists('txs')) {
-                    (blockPayload.get('txs') as string[]).forEach((tx) => {
-                        result.transactions.push(Transaction.from(tx));
-                    });
+                    for (const tx of (blockPayload.get('txs') as string[])) {
+                        result.transactions.push(await Transaction.from(tx));
+                    }
                 }
             }
 
@@ -731,14 +731,15 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from (data: Reader | Buffer | string): NewTransactions {
+        public static async from (data: Reader | Buffer | string): Promise<NewTransactions> {
             const payload = PortableStorage.from(data);
 
             const result = new NewTransactions();
 
             if (payload.exists('txs')) {
-                (payload.get('txs') as string[])
-                    .forEach((tx) => result.transactions.push(Transaction.from(tx)));
+                for (const tx of (payload.get('txs') as string[])) {
+                    result.transactions.push(await Transaction.from(tx));
+                }
             }
 
             return result;
@@ -1284,32 +1285,31 @@ export namespace LevinPayloads {
          * @param data the data contained for the payload in the levin packet
          * @returns a new instance of the object
          */
-        public static from (data: Reader | Buffer | string): ResponseGetObjects {
+        public static async from (data: Reader | Buffer | string): Promise<ResponseGetObjects> {
             const payload = PortableStorage.from(data);
 
             const result = new ResponseGetObjects();
 
             if (payload.exists('txs')) {
-                (payload.get('txs') as string[])
-                    .forEach((tx) => result.transactions.push(Transaction.from(tx)));
+                for (const tx of (payload.get('txs') as string[])) {
+                    result.transactions.push(await Transaction.from(tx));
+                }
             }
 
             if (payload.exists('blocks')) {
-                (payload.get('blocks') as PortableStorage[])
-                    .forEach((block: PortableStorage) => {
-                        const l_block = Block.from(block.get('block') as string);
+                for (const block of (payload.get('blocks') as PortableStorage[])) {
+                    const l_block = await Block.from(block.get('block') as string);
 
-                        const l_txs: Transaction[] = [];
+                    const l_txs: Transaction[] = [];
 
-                        if (block.exists('txs')) {
-                            (block.get('txs') as string[])
-                                .forEach((tx) => {
-                                    l_txs.push(Transaction.from(tx));
-                                });
+                    if (block.exists('txs')) {
+                        for (const tx of (block.get('txs') as string[])) {
+                            l_txs.push(await Transaction.from(tx));
                         }
+                    }
 
-                        result.blocks.push(new RawBlock(l_block, l_txs));
-                    });
+                    result.blocks.push(new RawBlock(l_block, l_txs));
+                }
             }
 
             if (payload.exists('missed_ids')) {

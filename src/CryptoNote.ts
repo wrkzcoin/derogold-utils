@@ -311,7 +311,11 @@ export class CryptoNote {
      * @param [prefix] the address prefix
      * @returns the integrated address
      */
-    public createIntegratedAddress (address: string, paymentId: string, prefix?: AddressPrefix | number): string {
+    public async createIntegratedAddress (
+        address: string,
+        paymentId: string,
+        prefix?: AddressPrefix | number
+    ): Promise<string> {
         if (typeof prefix === 'number') {
             prefix = new AddressPrefix(prefix);
         }
@@ -320,7 +324,7 @@ export class CryptoNote {
             prefix = new AddressPrefix(this.config.addressPrefix || Config.addressPrefix);
         }
 
-        const addr = Address.fromAddress(address);
+        const addr = await Address.fromAddress(address);
 
         addr.paymentId = paymentId;
 
@@ -359,14 +363,17 @@ export class CryptoNote {
      * @param amount the amount to send
      * @returns a list of transaction outputs
      */
-    public generateTransactionOutputs (address: string, amount: number): Interfaces.GeneratedOutput[] {
+    public async generateTransactionOutputs (
+        address: string,
+        amount: number
+    ): Promise<Interfaces.GeneratedOutput[]> {
         if (amount < 0) {
             throw new RangeError('Amount must be a positive value');
         }
 
         const result: Interfaces.GeneratedOutput[] = [];
 
-        const destination = Address.fromAddress(address);
+        const destination = await Address.fromAddress(address);
 
         const amountChars = amount.toString().split('').reverse();
 
@@ -470,7 +477,7 @@ export class CryptoNote {
             outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData
         );
 
-        const txPrefixHash = prepared.transaction.prefixHash;
+        const txPrefixHash = await prepared.transaction.prefixHash();
 
         const promises = [];
 
@@ -719,12 +726,12 @@ export class CryptoNote {
 
         for (const output of outputs) {
             recipients.push({
-                address: output.destination.address,
+                address: await output.destination.address(),
                 amount: output.amount
             });
         }
 
-        const txPrefixHash = prepared.transaction.prefixHash;
+        const txPrefixHash = await prepared.transaction.prefixHash();
 
         const promises = [];
 
@@ -835,7 +842,7 @@ export class CryptoNote {
             tx.signatures[result.index] = result.signatures;
         }
 
-        const prefixHash = tx.prefixHash;
+        const prefixHash = await tx.prefixHash();
 
         const checkPromises = [];
 
@@ -1048,7 +1055,7 @@ async function prepareTransactionOutputs (outputs: Interfaces.GeneratedOutput[])
 
     const keys = await TurtleCoinCrypto.generateKeys();
 
-    const transactionKeys: ED25519.KeyPair = new ED25519.KeyPair(keys.publicKey, keys.privateKey);
+    const transactionKeys: ED25519.KeyPair = await ED25519.KeyPair.from(keys.publicKey, keys.privateKey);
 
     outputs.sort((a, b) => (a.amount > b.amount) ? 1 : ((b.amount > a.amount) ? -1 : 0));
 

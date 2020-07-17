@@ -151,14 +151,14 @@ export class BlockTemplate {
      * Creates a new block template instance using the supplied daemon response
      * @param response the daemon response to the get_blocktemplate call
      */
-    public static from (response: Interfaces.DaemonBlockTemplateResponse): BlockTemplate {
+    public static async from (response: Interfaces.DaemonBlockTemplateResponse): Promise<BlockTemplate> {
         const result = new BlockTemplate();
 
         result.m_blockTemplate = Buffer.from(response.blocktemplate, 'hex');
         result.m_difficulty = response.difficulty;
         result.m_reservedOffset = response.reservedOffset;
         result.m_height = response.height;
-        result.m_block = Block.from(response.blocktemplate);
+        result.m_block = await Block.from(response.blocktemplate);
 
         return result;
     }
@@ -177,7 +177,7 @@ export class BlockTemplate {
      * @param block the block to convert for miner hashing
      * @returns the mining block
      */
-    public convert (block?: Block): Block {
+    public async convert (block?: Block): Promise<Block> {
         const originalBlock = block || this.m_block;
 
         if (originalBlock.majorVersion >= this.activateParentBlockVersion) {
@@ -193,7 +193,7 @@ export class BlockTemplate {
             newBlock.previousBlockHash = originalBlock.previousBlockHash;
             newBlock.nonce = originalBlock.nonce;
 
-            newBlock.minerTransaction.addMergedMining(0, originalBlock.merkleRoot);
+            newBlock.minerTransaction.addMergedMining(0, await originalBlock.merkleRoot());
 
             return newBlock;
         } else {
@@ -208,14 +208,14 @@ export class BlockTemplate {
      * @param [branch] the blockchain branch containing the merged mining information
      * @returns the block that can be submitted to the network
      */
-    public construct (nonce: number, branch?: string): Block {
+    public async construct (nonce: number, branch?: string): Promise<Block> {
         const block: Block = this.m_block;
 
         block.nonce = nonce;
 
         if (block.majorVersion >= this.activateParentBlockVersion) {
         /* First we create the new parent block */
-            const newBlock = this.convert(block);
+            const newBlock = await this.convert(block);
 
             /* Then assign the nonce to it */
             newBlock.nonce = nonce;
@@ -227,7 +227,7 @@ export class BlockTemplate {
             block.parentBlock.previousBlockHash = newBlock.previousBlockHash;
             block.parentBlock.minerTransaction = newBlock.minerTransaction;
             block.parentBlock.transactionCount = newBlock.transactions.length + 1; // +1 for the miner transaction
-            block.parentBlock.baseTransactionBranch = newBlock.baseTransactionBranch;
+            block.parentBlock.baseTransactionBranch = await newBlock.baseTransactionBranch();
 
             /* We only add this if it actually exists */
             if (branch) {

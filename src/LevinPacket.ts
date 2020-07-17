@@ -193,7 +193,7 @@ export class LevinPacket {
      * @param data the raw data that came in over the wire
      * @returns a new instance of the object
      */
-    public static from (data: Reader | Buffer | string): LevinPacket {
+    public static async from (data: Reader | Buffer | string): Promise<LevinPacket> {
         const reader = new Reader(data);
 
         if (reader.length < 33) {
@@ -233,16 +233,16 @@ export class LevinPacket {
             result.payload = Ping.from(payload);
             break;
         case LevinProtocol.CommandType.NEW_BLOCK:
-            result.payload = NewBlock.from(payload);
+            result.payload = await NewBlock.from(payload);
             break;
         case LevinProtocol.CommandType.NEW_TRANSACTIONS:
-            result.payload = NewTransactions.from(payload);
+            result.payload = await NewTransactions.from(payload);
             break;
         case LevinProtocol.CommandType.REQUEST_GET_OBJECTS:
             result.payload = RequestGetObjects.from(payload);
             break;
         case LevinProtocol.CommandType.RESPONSE_GET_OBJECTS:
-            result.payload = ResponseGetObjects.from(payload);
+            result.payload = await ResponseGetObjects.from(payload);
             break;
         case LevinProtocol.CommandType.REQUEST_CHAIN:
             result.payload = RequestChain.from(payload);
@@ -254,7 +254,7 @@ export class LevinPacket {
             result.payload = RequestTXPool.from(payload);
             break;
         case LevinProtocol.CommandType.LITE_BLOCK:
-            result.payload = LiteBlock.from(payload);
+            result.payload = await LiteBlock.from(payload);
             break;
         case LevinProtocol.CommandType.MISSING_TRANSACTIONS:
             result.payload = MissingTransactions.from(payload);

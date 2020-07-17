@@ -20,8 +20,8 @@
     "fix-style": "./node_modules/.bin/eslint --fix src/**/*.ts src/*.ts",
     "test": "npm run style && npm run build && npm run test-node && npm run test-js",
     "mocha": "./node_modules/.bin/mocha",
-    "test-node": "npm run mocha",
-    "test-js": "env FORCE_JS=1 npm run mocha"
+    "test-node": "./node_modules/.bin/mocha --require ts-node/register test/test.ts",
+    "test-js": "env FORCE_JS=1 ./node_modules/.bin/mocha --require ts-node/register test/test.ts"
   },
   "keywords": [
     "TurtleCoin",
@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "@types/aes-js": "^3.1.1",
+    "@types/mocha": "^8.0.0",
     "@types/node": "^13.13.14",
     "@types/numeral": "0.0.26",
     "@typescript-eslint/eslint-plugin": "^3.6.1",
@@ -63,6 +64,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "mocha": "^8.0.1",
+    "ts-node": "^8.10.2",
     "typedoc": "^0.17.8",
     "typescript": "^3.9.7"
   }

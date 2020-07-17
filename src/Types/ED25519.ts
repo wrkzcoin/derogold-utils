@@ -15,8 +15,8 @@ export namespace ED25519 {
      * for generating new key pairs including deterministic methods.
      */
     export class KeyPair {
-        private m_privateKey?: string;
-        private m_publicKey?: string;
+        protected m_privateKey?: string;
+        protected m_publicKey?: string;
 
         /**
          * Constructs a new KeyPair object
@@ -26,43 +26,49 @@ export namespace ED25519 {
          * @param iterations
          * @param createEmpty
          */
-        constructor (
+        public static async from (
             publicKey?: string,
             privateKey?: string,
             entropy?: string,
             iterations?: number,
             createEmpty = false
-        ) {
+        ): Promise<KeyPair> {
+            const pair = new KeyPair();
+
             if (createEmpty) {
-                return;
+                return pair;
             }
 
             /* If no entropy was supplied, we'll go find our own */
             entropy = entropy || rand(256);
 
-            if (publicKey && TurtleCoinCrypto.checkKey(publicKey)) {
-                this.m_publicKey = publicKey;
+            if (publicKey && await TurtleCoinCrypto.checkKey(publicKey)) {
+                pair.m_publicKey = publicKey;
             }
 
-            if (privateKey && TurtleCoinCrypto.checkScalar(privateKey)) {
-                this.m_privateKey = privateKey;
+            if (privateKey && await TurtleCoinCrypto.checkScalar(privateKey)) {
+                pair.m_privateKey = privateKey;
             }
 
             if (!publicKey && !privateKey) {
-                this.privateKey = simpleKdf(
+                const temp = await simpleKdf(
                     entropy + rand(32), iterations || Config.keccakIterations);
+                await pair.setPrivateKey(temp);
             }
 
-            if (this.m_privateKey && !this.m_publicKey) {
-            /* If we supplied a private key but no public key, and we said 1 iteration
-                we are probably looking to generate the deterministic view key for the
-                specified private spend key */
+            if (pair.m_privateKey && !pair.m_publicKey) {
+                /* If we supplied a private key but no public key, and we said 1 iteration
+                    we are probably looking to generate the deterministic view key for the
+                    specified private spend key */
                 if (iterations && iterations === 1) {
-                    this.privateKey = TurtleCoinCrypto.cn_fast_hash(this.m_privateKey);
+                    const temp = await TurtleCoinCrypto.cn_fast_hash(pair.m_privateKey);
+                    await pair.setPrivateKey(temp);
                 }
 
-                this.m_publicKey = TurtleCoinCrypto.secretKeyToPublicKey(this.m_privateKey);
+                pair.m_publicKey = await TurtleCoinCrypto.secretKeyToPublicKey(pair.m_privateKey);
             }
+
+            return pair;
         }
 
         /**
@@ -76,9 +82,9 @@ export namespace ED25519 {
          * Sets the private key or reduces the value to a private key
          * @param key
          */
-        public set privateKey (key: string) {
-            this.m_privateKey = (TurtleCoinCrypto.checkScalar(key))
-                ? key : TurtleCoinCrypto.scReduce32(key);
+        public async setPrivateKey (key: string): Promise<void> {
+            this.m_privateKey = (await TurtleCoinCrypto.checkScalar(key))
+                ? key : await TurtleCoinCrypto.scReduce32(key);
         }
 
         /**
@@ -92,8 +98,8 @@ export namespace ED25519 {
          * Sets the public key
          * @param key
          */
-        public set publicKey (key: string) {
-            if (TurtleCoinCrypto.checkKey(key)) {
+        public async setPublicKey (key: string): Promise<void> {
+            if (await TurtleCoinCrypto.checkKey(key)) {
                 this.m_publicKey = key;
             } else {
                 throw new Error('Not a public key');
@@ -103,12 +109,12 @@ export namespace ED25519 {
         /**
          * Returns if the public key belongs to the private key
          */
-        public get isPaired (): boolean {
+        public async isPaired (): Promise<boolean> {
             if (this.publicKey.length === 0 || this.privateKey.length === 0) {
                 return false;
             }
 
-            return (TurtleCoinCrypto.secretKeyToPublicKey(this.privateKey) === this.publicKey);
+            return (await TurtleCoinCrypto.secretKeyToPublicKey(this.privateKey) === this.publicKey);
         }
     }
 
@@ -116,27 +122,32 @@ export namespace ED25519 {
      * Represents a set of ED25519 key pairs (view and spend) used by TurtleCoin wallets
      */
     export class Keys {
-        private m_spendKeys: KeyPair = new KeyPair();
-        private m_viewKeys: KeyPair = new KeyPair();
+        protected m_spendKeys: KeyPair = new KeyPair();
+        protected m_viewKeys: KeyPair = new KeyPair();
 
         /**
          * Creates a new instance of a set of Keys
          * @param spendKeys the spend key pair
          * @param viewKeys the view key pair
          */
-        constructor (spendKeys?: KeyPair, viewKeys?: KeyPair) {
+        public static async from (spendKeys?: KeyPair, viewKeys?: KeyPair): Promise<Keys> {
+            const keys = new Keys();
+
             if (spendKeys) {
-                this.m_spendKeys = spendKeys;
+                keys.m_spendKeys = spendKeys;
             }
 
             if (viewKeys) {
-                this.m_viewKeys = viewKeys;
+                keys.m_viewKeys = viewKeys;
             }
 
             if (!spendKeys && !viewKeys) {
-                this.m_spendKeys = new KeyPair();
-                this.m_viewKeys = new KeyPair(undefined, this.m_spendKeys.privateKey, undefined, 1);
+                keys.m_spendKeys = await KeyPair.from();
+                keys.m_viewKeys = await KeyPair.from(
+                    undefined, keys.m_spendKeys.privateKey, undefined, 1);
             }
+
+            return keys;
         }
 
         /**
@@ -178,11 +189,11 @@ function rand (bytes = 32): string {
 }
 
 /** @ignore */
-function simpleKdf (value: string, iterations: number): string {
+async function simpleKdf (value: string, iterations: number): Promise<string> {
     /** This is a very simple implementation of a pseudo PBKDF2 function */
     let hex = Common.bin2hex(Common.str2bin(value));
     for (let i = 0; i < iterations; i++) {
-        hex = TurtleCoinCrypto.cn_fast_hash(hex);
+        hex = await TurtleCoinCrypto.cn_fast_hash(hex);
     }
     return hex;
 }

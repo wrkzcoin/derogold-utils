@@ -16,12 +16,12 @@ export class Multisig {
     /**
      * Returns an address object representing the multisig wallet address
      */
-    public get address (): Address {
+    public async address (): Promise<Address> {
         if (!this.isReady) {
             throw new Error('Not all participants have been loaded');
         }
 
-        return Address.fromViewOnlyKeys(this.spend, this.view);
+        return Address.fromViewOnlyKeys(await this.spend(), await this.view());
     }
 
     /**
@@ -48,7 +48,7 @@ export class Multisig {
     /**
      * Returns the shared private view key of the multisig wallet
      */
-    public get view (): string {
+    public async view (): Promise<string> {
         if (!this.isViewReady) {
             throw new Error('Not all participants have been loaded');
         }
@@ -59,7 +59,7 @@ export class Multisig {
     /**
      * Returns the shared public spend key of the multisig wallet
      */
-    public get spend (): string {
+    public async spend (): Promise<string> {
         if (!this.isSpendReady) {
             throw new Error('Not all participants have been loaded');
         }
@@ -94,12 +94,14 @@ export class Multisig {
     /**
      * Returns the public multisig keys
      */
-    public get public_multisig_keys (): string[] {
+    public async public_multisig_keys (): Promise<string[]> {
         const result: string[] = [];
 
-        this.calculated_multisig_keys.forEach((key) => {
+        const keys = await this.calculated_multisig_keys();
+
+        for (const key of keys) {
             result.push(key.publicKey);
-        });
+        }
 
         return result;
     }
@@ -107,12 +109,14 @@ export class Multisig {
     /**
      * Returns the private multisig keys
      */
-    public get private_multisig_keys (): string [] {
+    public async private_multisig_keys (): Promise<string []> {
         const result: string[] = [];
 
-        this.calculated_multisig_keys.forEach((key) => {
+        const keys = await this.calculated_multisig_keys();
+
+        for (const key of keys) {
             result.push(key.privateKey);
-        });
+        }
 
         return result;
     }
@@ -121,18 +125,18 @@ export class Multisig {
      * Calculates our multisig keys using the participant public spend keys
      * @returns our multisig keys key pairs
      */
-    private get calculated_multisig_keys (): KeyPair[] {
+    private async calculated_multisig_keys (): Promise<KeyPair[]> {
         if (this.m_threshold !== this.m_participants) {
             const multisig_keys: KeyPair[] = [];
 
-            this.m_wallet_multisig_keys.forEach((multisig_key) => {
+            for (const multisig_key of this.m_wallet_multisig_keys) {
                 const keys =
-                    TurtleCoinCrypto.calculateMultisigPrivateKeys(multisig_key.privateKey, this.m_participant_keys);
+                    await TurtleCoinCrypto.calculateMultisigPrivateKeys(multisig_key.privateKey, this.m_participant_keys);
 
-                keys.forEach((key) => {
-                    multisig_keys.push(new KeyPair(undefined, key));
-                });
-            });
+                for (const key of keys) {
+                    multisig_keys.push(await KeyPair.from(undefined, key));
+                }
+            }
 
             return multisig_keys;
         }
@@ -210,27 +214,27 @@ export class Multisig {
      * @param participants the wallet participants
      * @returns a new instance of the object
      */
-    public static fromMultisigKeys (
+    public static async fromMultisigKeys (
         multisig_private_keys: string[],
         sharedPrivateViewKey: string,
         threshold: number,
         participants: number
-    ): Multisig {
+    ): Promise<Multisig> {
         if (!isValidThreshold(threshold, participants)) {
             throw new Error('Threshold does not require a majority of participants');
         }
 
         const result = new Multisig();
 
-        multisig_private_keys.forEach((key) => {
-            if (!TurtleCoinCrypto.checkScalar(key)) {
+        for (const key of multisig_private_keys) {
+            if (!await TurtleCoinCrypto.checkScalar(key)) {
                 throw new Error('Found an invalid private key in the list of multisig private keys');
             }
 
-            result.m_multisig_keys.push(new KeyPair(undefined, key));
+            result.m_multisig_keys.push(await KeyPair.from(undefined, key));
 
-            result.m_wallet_multisig_keys.push(new KeyPair(undefined, key));
-        });
+            result.m_wallet_multisig_keys.push(await KeyPair.from(undefined, key));
+        }
 
         if (!TurtleCoinCrypto.checkScalar(sharedPrivateViewKey)) {
             throw new Error('Private view key is not a valid private key');
@@ -391,7 +395,7 @@ export class Multisig {
 
         for (const result of results) {
             partialSigningKeys.push({
-                transactionPrefixHash: tx.transaction.prefixHash,
+                transactionPrefixHash: await tx.transaction.prefixHash(),
                 index: result.index,
                 partialSigningKey: result.key
             });
@@ -433,7 +437,7 @@ export class Multisig {
             tx.transaction.signatures[result.index] = result.sigs;
         }
 
-        const prefixHash = tx.transaction.prefixHash;
+        const prefixHash = await tx.transaction.prefixHash();
 
         const checkPromises = [];
 
