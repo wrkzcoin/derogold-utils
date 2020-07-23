@@ -226,20 +226,6 @@ export class Transaction {
     }
 
     /**
-     * Returns the pool nonce field as hexadecimal text
-     */
-    public get poolNonceHex (): string | undefined {
-        for (const tag of this.m_extra) {
-            if (tag.tag === ExtraTag.ExtraTagType.POOL_NONCE) {
-                return (tag as ExtraTag.ExtraPoolNonce).data
-                    .toString('hex');
-            }
-        }
-
-        return undefined;
-    }
-
-    /**
      * Sets the pool nonce field within the transaction from a Buffer
      * @param nonce the nonce data to use
      */
@@ -259,6 +245,20 @@ export class Transaction {
         this.m_extra.push(tag);
 
         this.m_extra.sort((a, b) => (a.tag > b.tag) ? 1 : -1);
+    }
+
+    /**
+     * Returns the pool nonce field as hexadecimal text
+     */
+    public get poolNonceHex (): string | undefined {
+        for (const tag of this.m_extra) {
+            if (tag.tag === ExtraTag.ExtraTagType.POOL_NONCE) {
+                return (tag as ExtraTag.ExtraPoolNonce).data
+                    .toString('hex');
+            }
+        }
+
+        return undefined;
     }
 
     /**
