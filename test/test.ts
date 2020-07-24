@@ -1223,8 +1223,6 @@ describe('Blocks', async function () {
 
             a.minerTransaction.incrementPoolNonce();
 
-            console.log(a.minerTransaction.poolNonce, expected);
-
             // The value is set to 1 already in the sample template
             assert.deepStrictEqual(a.minerTransaction.poolNonce, expected);
         });
