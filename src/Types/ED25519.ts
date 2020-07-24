@@ -83,8 +83,12 @@ export namespace ED25519 {
          * @param key
          */
         public async setPrivateKey (key: string): Promise<void> {
-            this.m_privateKey = (await TurtleCoinCrypto.checkScalar(key))
-                ? key : await TurtleCoinCrypto.scReduce32(key);
+            try {
+                this.m_privateKey = (await TurtleCoinCrypto.checkScalar(key))
+                    ? key : await TurtleCoinCrypto.scReduce32(key);
+            } catch (e) {
+                this.m_publicKey = key;
+            }
         }
 
         /**
@@ -99,7 +103,19 @@ export namespace ED25519 {
          * @param key
          */
         public async setPublicKey (key: string): Promise<void> {
-            if (await TurtleCoinCrypto.checkKey(key)) {
+            let isPubKey = false;
+
+            // Try to verify that it is a public key via the library
+            try {
+                isPubKey = await TurtleCoinCrypto.checkKey(key);
+            } catch (e) {
+                // If the library could not process this, then set the key anyway
+                this.m_publicKey = key;
+
+                return;
+            }
+
+            if (isPubKey) {
                 this.m_publicKey = key;
             } else {
                 throw new Error('Not a public key');
