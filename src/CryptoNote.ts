@@ -703,6 +703,7 @@ export class CryptoNote {
      * @param [paymentId] the payment ID to use in the transaction,
      * @param [unlockTime] the unlock time or block height for the transaction
      * @param [extraData] arbitrary extra data to include in the transaction extra field
+     * @param [randomKey] a random scalar (private key)
      * @returns the newly created transaction object with prepared signatures
      */
     public async prepareTransaction (
@@ -713,7 +714,8 @@ export class CryptoNote {
         feeAmount?: number,
         paymentId?: string,
         unlockTime?: number,
-        extraData?: any
+        extraData?: any,
+        randomKey?: string
     ): Promise<Interfaces.PreparedTransaction> {
         const feePerByte =
             this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
@@ -749,7 +751,8 @@ export class CryptoNote {
                     input.realOutputIndex,
                     input.input.transactionKeys.derivedKey,
                     input.input.transactionKeys.outputIndex,
-                    i));
+                    i,
+                    randomKey));
         }
 
         const results = await Promise.all(promises);
@@ -910,9 +913,11 @@ async function prepareRingSignatures (
     realOutputIndex: number,
     derivation: string,
     outputIndex: number,
-    index: number
+    index: number,
+    randomKey?: string
 ): Promise<Interfaces.PreparedRingSignature> {
-    const prepped = await TurtleCoinCrypto.prepareRingSignatures(hash, keyImage, publicKeys, realOutputIndex);
+    const prepped = await TurtleCoinCrypto.prepareRingSignatures(
+        hash, keyImage, publicKeys, realOutputIndex, randomKey);
 
     return {
         index: index,

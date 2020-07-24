@@ -33,7 +33,7 @@ if (process.env.FORCE_JS) {
 }
 
 describe('Cryptography', async function () {
-    this.timeout(10000);
+    this.timeout(30000);
 
     it('Generate Random Keys', async () => {
         const keys = await TurtleCoinCrypto.generateKeys();
@@ -424,7 +424,7 @@ describe('SubWallets', async () => {
 });
 
 describe('Transactions', async function () {
-    this.timeout(20000);
+    this.timeout(30000);
 
     describe('Create Transaction Outputs', async () => {
         it('Amount: 1234567', async () => {
@@ -1155,6 +1155,152 @@ describe('Transactions', async function () {
         });
     });
 
+    describe('Prepared Transactions', async () => {
+        it('prepare a transaction', async function () {
+            const madeOutputs = await cnUtil.generateTransactionOutputs('TRTLv3nzumGSpRsZWxkcbDhiVEfy9rAgX3X9b7z8XQAy9gwjB6cwr6BJ3P52a6TQUSfA4eXf3Avwz7W89J4doLuigLjUzQjvRqX', 90);
+            const txPublicKey = '3b0cc2b066812e6b9fcc42a797dc3c723a7344b604fd4be0b22e06254ff57f94';
+            const walletPrivateViewKey = '6968a0b8f744ec4b8cea5ec124a1b4bd1626a2e6f31e999f8adbab52c4dfa909';
+            const walletPrivateSpendKey = 'd9d555a892a85f64916cae1a168bd3f7f400b6471c7b12b438b599601298210b';
+            const walletPublicSpendKey = '854a637b2863af9e8e8216eb2382f3d16616b3ac3e53d0976fbd6f8da6c56418';
+
+            const fakeInput = {
+                index: 2,
+                key: 'bb55bef919d1c9f74b5b52a8a6995a1dc4af4c0bb8824f5dc889012bc748173d',
+                amount: 1090,
+                globalIndex: 1595598
+            };
+
+            const madeInput = await cnUtil.isOurTransactionOutput(txPublicKey, fakeInput, walletPrivateViewKey, walletPublicSpendKey, walletPrivateSpendKey);
+
+            const randomOutputs = [[
+                {
+                    globalIndex: 53984,
+                    key: 'a5add8e36ca2473734fc7019730593888ae8c320753215976aac105816ba4848'
+                },
+                {
+                    globalIndex: 403047,
+                    key: '273dd5b63e84e6d7f12cf05eab092a7556708d8aac836c8748c1f0df3f0ff7fa'
+                },
+                {
+                    globalIndex: 1533859,
+                    key: '147121ea91715ee21af16513bc058d4ac445accfbe5cedc377c897fb04f4fecc'
+                }
+            ]];
+
+            return cnUtil.prepareTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, undefined, 0);
+        });
+
+        it('prepare a transaction - precomputed K', async function () {
+            const madeOutputs = await cnUtil.generateTransactionOutputs('TRTLv3nzumGSpRsZWxkcbDhiVEfy9rAgX3X9b7z8XQAy9gwjB6cwr6BJ3P52a6TQUSfA4eXf3Avwz7W89J4doLuigLjUzQjvRqX', 90);
+            const txPublicKey = '3b0cc2b066812e6b9fcc42a797dc3c723a7344b604fd4be0b22e06254ff57f94';
+            const walletPrivateViewKey = '6968a0b8f744ec4b8cea5ec124a1b4bd1626a2e6f31e999f8adbab52c4dfa909';
+            const walletPrivateSpendKey = 'd9d555a892a85f64916cae1a168bd3f7f400b6471c7b12b438b599601298210b';
+            const walletPublicSpendKey = '854a637b2863af9e8e8216eb2382f3d16616b3ac3e53d0976fbd6f8da6c56418';
+            const keys = await TurtleCoinCrypto.generateKeys();
+
+            const fakeInput = {
+                index: 2,
+                key: 'bb55bef919d1c9f74b5b52a8a6995a1dc4af4c0bb8824f5dc889012bc748173d',
+                amount: 1090,
+                globalIndex: 1595598
+            };
+
+            const madeInput = await cnUtil.isOurTransactionOutput(txPublicKey, fakeInput, walletPrivateViewKey, walletPublicSpendKey, walletPrivateSpendKey);
+
+            const randomOutputs = [[
+                {
+                    globalIndex: 53984,
+                    key: 'a5add8e36ca2473734fc7019730593888ae8c320753215976aac105816ba4848'
+                },
+                {
+                    globalIndex: 403047,
+                    key: '273dd5b63e84e6d7f12cf05eab092a7556708d8aac836c8748c1f0df3f0ff7fa'
+                },
+                {
+                    globalIndex: 1533859,
+                    key: '147121ea91715ee21af16513bc058d4ac445accfbe5cedc377c897fb04f4fecc'
+                }
+            ]];
+
+            const prep = await cnUtil.prepareTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, undefined, 0, undefined, keys.privateKey);
+
+            assert(prep && prep.signatureMeta[0].key === keys.privateKey);
+        });
+
+        it('complete a transaction', async function () {
+            const madeOutputs = await cnUtil.generateTransactionOutputs('TRTLv3nzumGSpRsZWxkcbDhiVEfy9rAgX3X9b7z8XQAy9gwjB6cwr6BJ3P52a6TQUSfA4eXf3Avwz7W89J4doLuigLjUzQjvRqX', 90);
+            const txPublicKey = '3b0cc2b066812e6b9fcc42a797dc3c723a7344b604fd4be0b22e06254ff57f94';
+            const walletPrivateViewKey = '6968a0b8f744ec4b8cea5ec124a1b4bd1626a2e6f31e999f8adbab52c4dfa909';
+            const walletPrivateSpendKey = 'd9d555a892a85f64916cae1a168bd3f7f400b6471c7b12b438b599601298210b';
+            const walletPublicSpendKey = '854a637b2863af9e8e8216eb2382f3d16616b3ac3e53d0976fbd6f8da6c56418';
+
+            const fakeInput = {
+                index: 2,
+                key: 'bb55bef919d1c9f74b5b52a8a6995a1dc4af4c0bb8824f5dc889012bc748173d',
+                amount: 1090,
+                globalIndex: 1595598
+            };
+
+            const madeInput = await cnUtil.isOurTransactionOutput(txPublicKey, fakeInput, walletPrivateViewKey, walletPublicSpendKey, walletPrivateSpendKey);
+
+            const randomOutputs = [[
+                {
+                    globalIndex: 53984,
+                    key: 'a5add8e36ca2473734fc7019730593888ae8c320753215976aac105816ba4848'
+                },
+                {
+                    globalIndex: 403047,
+                    key: '273dd5b63e84e6d7f12cf05eab092a7556708d8aac836c8748c1f0df3f0ff7fa'
+                },
+                {
+                    globalIndex: 1533859,
+                    key: '147121ea91715ee21af16513bc058d4ac445accfbe5cedc377c897fb04f4fecc'
+                }
+            ]];
+
+            const prep = await cnUtil.prepareTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, undefined, 0);
+
+            return cnUtil.completeTransaction(prep, walletPrivateSpendKey);
+        });
+
+        it('complete a transaction - precomputed K', async function () {
+            const madeOutputs = await cnUtil.generateTransactionOutputs('TRTLv3nzumGSpRsZWxkcbDhiVEfy9rAgX3X9b7z8XQAy9gwjB6cwr6BJ3P52a6TQUSfA4eXf3Avwz7W89J4doLuigLjUzQjvRqX', 90);
+            const txPublicKey = '3b0cc2b066812e6b9fcc42a797dc3c723a7344b604fd4be0b22e06254ff57f94';
+            const walletPrivateViewKey = '6968a0b8f744ec4b8cea5ec124a1b4bd1626a2e6f31e999f8adbab52c4dfa909';
+            const walletPrivateSpendKey = 'd9d555a892a85f64916cae1a168bd3f7f400b6471c7b12b438b599601298210b';
+            const walletPublicSpendKey = '854a637b2863af9e8e8216eb2382f3d16616b3ac3e53d0976fbd6f8da6c56418';
+            const keys = await TurtleCoinCrypto.generateKeys();
+
+            const fakeInput = {
+                index: 2,
+                key: 'bb55bef919d1c9f74b5b52a8a6995a1dc4af4c0bb8824f5dc889012bc748173d',
+                amount: 1090,
+                globalIndex: 1595598
+            };
+
+            const madeInput = await cnUtil.isOurTransactionOutput(txPublicKey, fakeInput, walletPrivateViewKey, walletPublicSpendKey, walletPrivateSpendKey);
+
+            const randomOutputs = [[
+                {
+                    globalIndex: 53984,
+                    key: 'a5add8e36ca2473734fc7019730593888ae8c320753215976aac105816ba4848'
+                },
+                {
+                    globalIndex: 403047,
+                    key: '273dd5b63e84e6d7f12cf05eab092a7556708d8aac836c8748c1f0df3f0ff7fa'
+                },
+                {
+                    globalIndex: 1533859,
+                    key: '147121ea91715ee21af16513bc058d4ac445accfbe5cedc377c897fb04f4fecc'
+                }
+            ]];
+
+            const prep = await cnUtil.prepareTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, undefined, 0, undefined, keys.privateKey);
+
+            return cnUtil.completeTransaction(prep, walletPrivateSpendKey);
+        });
+    });
+
     describe('Parsing', async () => {
         it('Parse a transaction with a max unlock time', async () => {
             const raw = '01feffffffffffffffff010102e80705a101b3094bee0afe0ecfbb15ec01455949cfb1969da686948ed1babb761b45b053f8db505bcce50645035a02144da66c147cb413b99504fecf2d23a23b605ca98327043208d1d0658dc7fc8e6402038e86bd155a518d9810c7b9c568ce665a4078df99b826007aac3bf43dd94edaa00602488c123065769f6017340d93f349f084afa805695034e4da6cb640b9fdfeda9544022100cad826dac837aa45954bd48e66173f0cf6ff653e42055855b88ccb34d074324a011c4fadf9225eed74d3953e388c74c227803336d2f0f0939b153617c0c86deff7692d63c7db269107e3b6842d9a31b5dbe4a7ebc3ab4ede9318c8089df0d9a7069d84f5bc9e15826c3e30cbf6386bbfe4936afd1967f41011e14f0a662207550ebf4dd5d7100e6100bdfdd4503d456dbc7a70593eeeb941e41cc0618e55c43505d2cb5619eb83c1e22a309143a826dcaeac84d8a8648d4ba86d1976d05c7384029c894d3b4ece9c9c6dfd5c699c38e3f90dc010ee1fd57930a9f38e744ade500ad7ca6418cdcf55ec0570f8cd22fe40a04a19ae55ccbdb0833fc41e2d62f06802fd65a556b2a187c2c115a0acf8b1b934c1efb9ec383f5de33f8b981803e45d09f63cb1c7dfa239e15df9c122b636899d93641e1e1a61ad8d8ceb5759a8dcad03dd7e0e459aa6d623ab9052b29e228bacd3bb89cdbdc82bd3a8b99615cdc4f309df7e33650eab865674672d381d38774351dc1e9db66492d4c1863ca30b0e8105';
@@ -1167,7 +1313,7 @@ describe('Transactions', async function () {
 });
 
 describe('Blocks', async function () {
-    this.timeout(10000);
+    this.timeout(30000);
 
     describe('Structures', async () => {
         const BlockTemplateSample = require('./template.json');
@@ -1238,7 +1384,7 @@ describe('Blocks', async function () {
     });
 
     describe('Hashing', async function () {
-        this.timeout(20000);
+        this.timeout(30000);
 
         const blocks = [
             {
