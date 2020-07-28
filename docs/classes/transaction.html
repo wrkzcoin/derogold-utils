@@ -99,14 +99,17 @@
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#extra" class="tsd-kind-icon">extra</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#extradata" class="tsd-kind-icon">extra<wbr>Data</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#fee" class="tsd-kind-icon">fee</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#hash" class="tsd-kind-icon">hash</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#iscoinbase" class="tsd-kind-icon">is<wbr>Coinbase</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#mergedmining" class="tsd-kind-icon">merged<wbr>Mining</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#paymentid" class="tsd-kind-icon">payment<wbr>Id</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="transaction.html#poolnonce" class="tsd-kind-icon">pool<wbr>Nonce</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#poolnoncehex" class="tsd-kind-icon">pool<wbr>Nonce<wbr>Hex</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#prefix" class="tsd-kind-icon">prefix</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#prefixhash" class="tsd-kind-icon">prefix<wbr>Hash</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#privatekey" class="tsd-kind-icon">private<wbr>Key</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#publickey" class="tsd-kind-icon">public<wbr>Key</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#readonly" class="tsd-kind-icon">readonly</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#recipientpublicspendkey" class="tsd-kind-icon">recipient<wbr>Public<wbr>Spend<wbr>Key</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#recipientpublicviewkey" class="tsd-kind-icon">recipient<wbr>Public<wbr>View<wbr>Key</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="transaction.html#size" class="tsd-kind-icon">size</a></li>
 								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="transaction.html#unlocktime" class="tsd-kind-icon">unlock<wbr>Time</a></li>
 							</ul>
@@ -117,7 +120,12 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#adddata" class="tsd-kind-icon">add<wbr>Data</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#addmergedmining" class="tsd-kind-icon">add<wbr>Merged<wbr>Mining</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#addpaymentid" class="tsd-kind-icon">add<wbr>Payment<wbr>Id</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#addprivatekey" class="tsd-kind-icon">add<wbr>Private<wbr>Key</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#addpublickey" class="tsd-kind-icon">add<wbr>Public<wbr>Key</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#hash" class="tsd-kind-icon">hash</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#incrementpoolnonce" class="tsd-kind-icon">increment<wbr>Pool<wbr>Nonce</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#prefixhash" class="tsd-kind-icon">prefix<wbr>Hash</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#recipient" class="tsd-kind-icon">recipient</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transaction.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="transaction.html#from" class="tsd-kind-icon">from</a></li>
@@ -134,7 +142,7 @@
 					<div class="tsd-signature tsd-kind-icon">ignored<wbr>Field<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L370">Transaction.ts:370</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L504">src/Transaction.ts:504</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -144,7 +152,7 @@
 					<div class="tsd-signature tsd-kind-icon">inputs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ITransactionInput</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L367">Transaction.ts:367</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L501">src/Transaction.ts:501</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -154,7 +162,7 @@
 					<div class="tsd-signature tsd-kind-icon">outputs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ITransactionOutput</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L368">Transaction.ts:368</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L502">src/Transaction.ts:502</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -164,17 +172,17 @@
 					<div class="tsd-signature tsd-kind-icon">signatures<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L369">Transaction.ts:369</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L503">src/Transaction.ts:503</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="transactionkeys" class="tsd-anchor"></a>
 					<h3>transaction<wbr>Keys</h3>
-					<div class="tsd-signature tsd-kind-icon">transaction<wbr>Keys<span class="tsd-signature-symbol">:</span> <a href="ed25519.keypair.html" class="tsd-signature-type">KeyPair</a><span class="tsd-signature-symbol"> = new ED25519.KeyPair(undefined,undefined,undefined,undefined,true)</span></div>
+					<div class="tsd-signature tsd-kind-icon">transaction<wbr>Keys<span class="tsd-signature-symbol">:</span> <a href="ed25519.keypair.html" class="tsd-signature-type">KeyPair</a><span class="tsd-signature-symbol"> = new ED25519.KeyPair()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L371">Transaction.ts:371</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L505">src/Transaction.ts:505</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -184,7 +192,7 @@
 					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 1</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L366">Transaction.ts:366</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L500">src/Transaction.ts:500</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -201,7 +209,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L79">Transaction.ts:79</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L95">src/Transaction.ts:95</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -223,7 +231,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L90">Transaction.ts:90</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L106">src/Transaction.ts:106</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -245,7 +253,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L101">Transaction.ts:101</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L117">src/Transaction.ts:117</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -267,7 +275,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L121">Transaction.ts:121</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L137">src/Transaction.ts:137</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -276,28 +284,6 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="hash" class="tsd-anchor"></a>
-					<h3>hash</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> hash<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L128">Transaction.ts:128</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Returns the transaction hash</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -311,7 +297,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L66">Transaction.ts:66</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L66">src/Transaction.ts:66</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -333,7 +319,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L153">Transaction.ts:153</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L169">src/Transaction.ts:169</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -355,12 +341,79 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L168">Transaction.ts:168</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L184">src/Transaction.ts:184</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Returns the payment ID found within the transaction</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="poolnonce" class="tsd-anchor"></a>
+					<h3>pool<wbr>Nonce</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> poolNonce<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BigInteger.BigInteger</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> poolNonce<span class="tsd-signature-symbol">(</span>nonce<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BigInteger.BigInteger</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L211">src/Transaction.ts:211</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns pool nonce field within the transaction as Buffer</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">BigInteger.BigInteger</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L232">src/Transaction.ts:232</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Sets the pool nonce field within the transaction from a Buffer</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>nonce: <span class="tsd-signature-type">BigInteger.BigInteger</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the nonce data to use</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="poolnoncehex" class="tsd-anchor"></a>
+					<h3>pool<wbr>Nonce<wbr>Hex</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> poolNonceHex<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L253">src/Transaction.ts:253</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the pool nonce field as hexadecimal text</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
@@ -377,7 +430,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L188">Transaction.ts:188</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L267">src/Transaction.ts:267</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -390,24 +443,24 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="prefixhash" class="tsd-anchor"></a>
-					<h3>prefix<wbr>Hash</h3>
+					<a name="privatekey" class="tsd-anchor"></a>
+					<h3>private<wbr>Key</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> prefixHash<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> privateKey<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L195">Transaction.ts:195</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L318">src/Transaction.ts:318</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Returns the transaction prefix hash</p>
+									<p>Returns the transaction private key (if available)</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -421,12 +474,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L220">Transaction.ts:220</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L299">src/Transaction.ts:299</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Returns the transaction public key</p>
+									<p>Returns the transaction public key (if available)</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
@@ -443,7 +496,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L265">Transaction.ts:265</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L397">src/Transaction.ts:397</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -459,6 +512,50 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="recipientpublicspendkey" class="tsd-anchor"></a>
+					<h3>recipient<wbr>Public<wbr>Spend<wbr>Key</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> recipientPublicSpendKey<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L352">src/Transaction.ts:352</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the transacton recipient public spend key (if available)</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="recipientpublicviewkey" class="tsd-anchor"></a>
+					<h3>recipient<wbr>Public<wbr>View<wbr>Key</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> recipientPublicViewKey<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L337">src/Transaction.ts:337</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the transacton recipient public view key (if available)</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="size" class="tsd-anchor"></a>
 					<h3>size</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
@@ -468,7 +565,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L235">Transaction.ts:235</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L367">src/Transaction.ts:367</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -491,7 +588,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L243">Transaction.ts:243</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L375">src/Transaction.ts:375</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -505,7 +602,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L251">Transaction.ts:251</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L383">src/Transaction.ts:383</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -537,7 +634,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L400">Transaction.ts:400</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L530">src/Transaction.ts:530</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -568,7 +665,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L427">Transaction.ts:427</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L557">src/Transaction.ts:557</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -605,7 +702,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L445">Transaction.ts:445</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L575">src/Transaction.ts:575</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -627,16 +724,47 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="addpublickey" class="tsd-anchor"></a>
-					<h3>add<wbr>Public<wbr>Key</h3>
+					<a name="addprivatekey" class="tsd-anchor"></a>
+					<h3>add<wbr>Private<wbr>Key</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Public<wbr>Key<span class="tsd-signature-symbol">(</span>publicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Private<wbr>Key<span class="tsd-signature-symbol">(</span>privateKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L471">Transaction.ts:471</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L621">src/Transaction.ts:621</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Adds the private key for the transaction to the transaction extra field</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>privateKey: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the private key of the transaction</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addpublickey" class="tsd-anchor"></a>
+					<h3>add<wbr>Public<wbr>Key</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Public<wbr>Key<span class="tsd-signature-symbol">(</span>publicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L601">src/Transaction.ts:601</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -653,7 +781,96 @@
 									</div>
 								</li>
 							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="hash" class="tsd-anchor"></a>
+					<h3>hash</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">hash<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L144">src/Transaction.ts:144</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the transaction hash</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="incrementpoolnonce" class="tsd-anchor"></a>
+					<h3>increment<wbr>Pool<wbr>Nonce</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">increment<wbr>Pool<wbr>Nonce<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L204">src/Transaction.ts:204</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Increments the pool nonce by 1</p>
+								</div>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="prefixhash" class="tsd-anchor"></a>
+					<h3>prefix<wbr>Hash</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">prefix<wbr>Hash<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L274">src/Transaction.ts:274</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the transaction prefix hash</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="recipient" class="tsd-anchor"></a>
+					<h3>recipient</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">recipient<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="address.html" class="tsd-signature-type">Address</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L80">src/Transaction.ts:80</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the recipient address if this is a coinbase
+									transaction and the information is available</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="address.html" class="tsd-signature-type">Address</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -667,7 +884,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L492">Transaction.ts:492</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L642">src/Transaction.ts:642</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -696,7 +913,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L538">Transaction.ts:538</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L688">src/Transaction.ts:688</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -719,13 +936,13 @@
 					<a name="from" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> from</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">from<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="transaction.html" class="tsd-signature-type">Transaction</a></li>
+						<li class="tsd-signature tsd-kind-icon">from<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="transaction.html" class="tsd-signature-type">Transaction</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/76183ae/src/Transaction.ts#L274">Transaction.ts:274</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/58d1532/src/Transaction.ts#L406">src/Transaction.ts:406</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -742,7 +959,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="transaction.html" class="tsd-signature-type">Transaction</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="transaction.html" class="tsd-signature-type">Transaction</a><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>the new transaction object</p>
 						</li>
 					</ul>
@@ -773,6 +990,9 @@
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="cryptonote.html" class="tsd-kind-icon">Crypto<wbr>Note</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="ledgerdevice.html" class="tsd-kind-icon">Ledger<wbr>Device</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="levinpacket.html" class="tsd-kind-icon">Levin<wbr>Packet</a>
@@ -822,9 +1042,6 @@
 								<a href="transaction.html#fee" class="tsd-kind-icon">fee</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="transaction.html#hash" class="tsd-kind-icon">hash</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="transaction.html#iscoinbase" class="tsd-kind-icon">is<wbr>Coinbase</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
@@ -833,17 +1050,29 @@
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="transaction.html#paymentid" class="tsd-kind-icon">payment<wbr>Id</a>
 							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="transaction.html#poolnonce" class="tsd-kind-icon">pool<wbr>Nonce</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="transaction.html#poolnoncehex" class="tsd-kind-icon">pool<wbr>Nonce<wbr>Hex</a>
+							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="transaction.html#prefix" class="tsd-kind-icon">prefix</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="transaction.html#prefixhash" class="tsd-kind-icon">prefix<wbr>Hash</a>
+								<a href="transaction.html#privatekey" class="tsd-kind-icon">private<wbr>Key</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="transaction.html#publickey" class="tsd-kind-icon">public<wbr>Key</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="transaction.html#readonly" class="tsd-kind-icon">readonly</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="transaction.html#recipientpublicspendkey" class="tsd-kind-icon">recipient<wbr>Public<wbr>Spend<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="transaction.html#recipientpublicviewkey" class="tsd-kind-icon">recipient<wbr>Public<wbr>View<wbr>Key</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="transaction.html#size" class="tsd-kind-icon">size</a>
@@ -861,7 +1090,22 @@
 								<a href="transaction.html#addpaymentid" class="tsd-kind-icon">add<wbr>Payment<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="transaction.html#addprivatekey" class="tsd-kind-icon">add<wbr>Private<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="transaction.html#addpublickey" class="tsd-kind-icon">add<wbr>Public<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="transaction.html#hash" class="tsd-kind-icon">hash</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="transaction.html#incrementpoolnonce" class="tsd-kind-icon">increment<wbr>Pool<wbr>Nonce</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="transaction.html#prefixhash" class="tsd-kind-icon">prefix<wbr>Hash</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="transaction.html#recipient" class="tsd-kind-icon">recipient</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="transaction.html#tobuffer" class="tsd-kind-icon">to<wbr>Buffer</a>
@@ -893,6 +1137,9 @@
 				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
