@@ -372,6 +372,10 @@ export class LedgerDevice extends EventEmitter {
             signatures.push(result.hex(64));
         }
 
+        if (signatures.length !== input_keys.length) {
+            throw new Error('Returned signature count does not match the number of input keys supplied');
+        }
+
         return signatures;
     }
 
