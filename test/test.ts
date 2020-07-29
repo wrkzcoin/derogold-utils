@@ -1470,7 +1470,9 @@ describe('Blocks', async function () {
         for (const block of blocks) {
             const testBlock = await Block.from(block.block);
 
-            describe('Test block v' + testBlock.majorVersion + '.' + testBlock.minorVersion + ' #' + testBlock.height, () => {
+            describe('Test block v' + testBlock.majorVersion + '.' + testBlock.minorVersion + ' #' + testBlock.height, function () {
+                this.timeout(30000);
+
                 it('serialization works', async () => {
                     assert(await testBlock.toString() === block.block);
                 });
