@@ -26,6 +26,7 @@ export namespace LedgerWalletTypes {
         PUBLIC_KEYS = 0x10,
         VIEW_SECRET_KEY = 0x11,
         SPEND_ESECRET_KEY = 0x12,
+        PRIVATE_TO_PUBLIC= 0x18,
         RANDOM_KEY_PAIR = 0x19,
         ADDRESS = 0x30,
         GENERATE_KEY_IMAGE = 0x40,
@@ -176,6 +177,24 @@ export class LedgerDevice extends EventEmitter {
      */
     public async getPrivateSpendKey (confirm = true): Promise<string> {
         const result = await this.exchange(LedgerWalletTypes.CMD.SPEND_ESECRET_KEY, confirm);
+
+        return result.hash();
+    }
+
+    /**
+     * Calculates the public key for the given private key
+     * @param private_key the private key
+     */
+    public async privateToPublic (private_key: string): Promise<string> {
+        if (!isHex64(private_key)) {
+            throw new Error('Malformed private_key supplied');
+        }
+
+        const writer = new Writer();
+
+        writer.hash(private_key);
+
+        const result = await this.exchange(LedgerWalletTypes.CMD.PRIVATE_TO_PUBLIC, undefined, writer.buffer);
 
         return result.hash();
     }
