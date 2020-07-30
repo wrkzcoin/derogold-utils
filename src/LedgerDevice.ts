@@ -151,7 +151,7 @@ export class LedgerDevice extends EventEmitter {
      * @param key the key to check
      */
     public async checkKey (key: string): Promise<boolean> {
-        if (isHex64(key)) {
+        if (!isHex64(key)) {
             throw new Error('Malformed key supplied');
         }
 
@@ -169,7 +169,7 @@ export class LedgerDevice extends EventEmitter {
      * @param scalar the scalar to check
      */
     public async checkScalar (scalar: string): Promise<boolean> {
-        if (isHex64(scalar)) {
+        if (!isHex64(scalar)) {
             throw new Error('Malformed key supplied');
         }
 

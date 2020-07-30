@@ -142,7 +142,7 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     checkKey(key) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (isHex64(key)) {
+            if (!isHex64(key)) {
                 throw new Error('Malformed key supplied');
             }
             const writer = new bytestream_helper_1.Writer();
@@ -157,7 +157,7 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     checkScalar(scalar) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (isHex64(scalar)) {
+            if (!isHex64(scalar)) {
                 throw new Error('Malformed key supplied');
             }
             const writer = new bytestream_helper_1.Writer();
