@@ -37,6 +37,8 @@ var LedgerWalletTypes;
         CMD[CMD["PUBLIC_KEYS"] = 16] = "PUBLIC_KEYS";
         CMD[CMD["VIEW_SECRET_KEY"] = 17] = "VIEW_SECRET_KEY";
         CMD[CMD["SPEND_ESECRET_KEY"] = 18] = "SPEND_ESECRET_KEY";
+        CMD[CMD["CHECK_KEY"] = 22] = "CHECK_KEY";
+        CMD[CMD["CHECK_SCALAR"] = 23] = "CHECK_SCALAR";
         CMD[CMD["PRIVATE_TO_PUBLIC"] = 24] = "PRIVATE_TO_PUBLIC";
         CMD[CMD["RANDOM_KEY_PAIR"] = 25] = "RANDOM_KEY_PAIR";
         CMD[CMD["ADDRESS"] = 48] = "ADDRESS";
@@ -132,6 +134,36 @@ class LedgerDevice extends events_1.EventEmitter {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield this.exchange(LedgerWalletTypes.CMD.IDENT);
             return result.unreadBuffer.toString('hex');
+        });
+    }
+    /**
+     * Checks to confirm that the key is a valid public key
+     * @param key the key to check
+     */
+    checkKey(key) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (isHex64(key)) {
+                throw new Error('Malformed key supplied');
+            }
+            const writer = new bytestream_helper_1.Writer();
+            writer.hash(key);
+            const result = yield this.exchange(LedgerWalletTypes.CMD.CHECK_KEY, undefined, writer.buffer);
+            return (result.uint8_t().toJSNumber() === 1);
+        });
+    }
+    /**
+     * Checks to confirm that the scalar is indeed a scalar value
+     * @param scalar the scalar to check
+     */
+    checkScalar(scalar) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (isHex64(scalar)) {
+                throw new Error('Malformed key supplied');
+            }
+            const writer = new bytestream_helper_1.Writer();
+            writer.hash(scalar);
+            const result = yield this.exchange(LedgerWalletTypes.CMD.CHECK_SCALAR, undefined, writer.buffer);
+            return (result.uint8_t().toJSNumber() === 1);
         });
     }
     /**

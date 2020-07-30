@@ -21,6 +21,8 @@ export declare namespace LedgerWalletTypes {
         PUBLIC_KEYS = 16,
         VIEW_SECRET_KEY = 17,
         SPEND_ESECRET_KEY = 18,
+        CHECK_KEY = 22,
+        CHECK_SCALAR = 23,
         PRIVATE_TO_PUBLIC = 24,
         RANDOM_KEY_PAIR = 25,
         ADDRESS = 48,
@@ -106,6 +108,16 @@ export declare class LedgerDevice extends EventEmitter {
      * running on the ledger device
      */
     getIdent(): Promise<string>;
+    /**
+     * Checks to confirm that the key is a valid public key
+     * @param key the key to check
+     */
+    checkKey(key: string): Promise<boolean>;
+    /**
+     * Checks to confirm that the scalar is indeed a scalar value
+     * @param scalar the scalar to check
+     */
+    checkScalar(scalar: string): Promise<boolean>;
     /**
      * Retrieves the public keys from the connected ledger device
      * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)

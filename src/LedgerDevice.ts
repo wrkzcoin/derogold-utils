@@ -26,6 +26,8 @@ export namespace LedgerWalletTypes {
         PUBLIC_KEYS = 0x10,
         VIEW_SECRET_KEY = 0x11,
         SPEND_ESECRET_KEY = 0x12,
+        CHECK_KEY = 0x16,
+        CHECK_SCALAR = 0x17,
         PRIVATE_TO_PUBLIC= 0x18,
         RANDOM_KEY_PAIR = 0x19,
         ADDRESS = 0x30,
@@ -142,6 +144,42 @@ export class LedgerDevice extends EventEmitter {
         const result = await this.exchange(LedgerWalletTypes.CMD.IDENT);
 
         return result.unreadBuffer.toString('hex');
+    }
+
+    /**
+     * Checks to confirm that the key is a valid public key
+     * @param key the key to check
+     */
+    public async checkKey (key: string): Promise<boolean> {
+        if (isHex64(key)) {
+            throw new Error('Malformed key supplied');
+        }
+
+        const writer = new Writer();
+
+        writer.hash(key);
+
+        const result = await this.exchange(LedgerWalletTypes.CMD.CHECK_KEY, undefined, writer.buffer);
+
+        return (result.uint8_t().toJSNumber() === 1);
+    }
+
+    /**
+     * Checks to confirm that the scalar is indeed a scalar value
+     * @param scalar the scalar to check
+     */
+    public async checkScalar (scalar: string): Promise<boolean> {
+        if (isHex64(scalar)) {
+            throw new Error('Malformed key supplied');
+        }
+
+        const writer = new Writer();
+
+        writer.hash(scalar);
+
+        const result = await this.exchange(LedgerWalletTypes.CMD.CHECK_SCALAR, undefined, writer.buffer);
+
+        return (result.uint8_t().toJSNumber() === 1);
     }
 
     /**
