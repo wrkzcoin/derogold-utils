@@ -430,7 +430,7 @@ export class CryptoNote {
      * @param signature the signature
      * @returns whether the signature is valid
      */
-    public async verifyMessageSignature (message: any, publicKey: string, signature: string): Promise<void> {
+    public async verifyMessageSignature (message: any, publicKey: string, signature: string): Promise<boolean> {
         if (typeof message !== 'string') {
             message = JSON.stringify(message);
         }
@@ -439,11 +439,7 @@ export class CryptoNote {
 
         const hash = await TurtleCoinCrypto.cn_fast_hash(hex.toString('hex'));
 
-        const valid = await TurtleCoinCrypto.checkSignature(hash, publicKey, signature);
-
-        if (!valid) {
-            throw new Error('Invalid signature');
-        }
+        return TurtleCoinCrypto.checkSignature(hash, publicKey, signature);
     }
 
     /**
