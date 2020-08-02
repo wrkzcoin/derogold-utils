@@ -42,6 +42,7 @@
   "license": "GPL-3.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "^5.19.1",
+    "@types/ledgerhq__hw-transport": "^4.21.2",
     "aes-js": "^3.1.2",
     "big-integer": "^1.6.48",
     "bytestream-helper": "0.0.8",
@@ -53,7 +54,6 @@
   },
   "devDependencies": {
     "@types/aes-js": "^3.1.1",
-    "@types/ledgerhq__hw-transport": "^4.21.2",
     "@types/mocha": "^8.0.0",
     "@types/node": "^13.13.15",
     "@types/numeral": "0.0.26",
