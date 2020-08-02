@@ -349,10 +349,7 @@ class CryptoNote {
             }
             const hex = Buffer.from(message);
             const hash = yield Types_1.TurtleCoinCrypto.cn_fast_hash(hex.toString('hex'));
-            const valid = yield Types_1.TurtleCoinCrypto.checkSignature(hash, publicKey, signature);
-            if (!valid) {
-                throw new Error('Invalid signature');
-            }
+            return Types_1.TurtleCoinCrypto.checkSignature(hash, publicKey, signature);
         });
     }
     /**

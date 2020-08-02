@@ -129,7 +129,7 @@ export declare class CryptoNote {
      * @param signature the signature
      * @returns whether the signature is valid
      */
-    verifyMessageSignature(message: any, publicKey: string, signature: string): Promise<void>;
+    verifyMessageSignature(message: any, publicKey: string, signature: string): Promise<boolean>;
     /**
      * Constructs a new Transaction using the supplied values.
      * The resulting transaction can be broadcasted to the TurtleCoin network
