@@ -199,12 +199,12 @@ describe('Cryptography', async function () {
     }
 });
 
-describe('Wallets', () => {
+describe('Wallets', async function () {
     const rawSeed = 'dd0c02d3202634821b4d9d91b63d919725f5c3e97e803f3512e52fb0dc2aab0c';
     const rawMnemonic = 'teeming taken piano ramped vegan jazz earth enjoy suture quick lied awkward ferry python often exotic cube hexagon ionic joyous cage abnormal hull jigsaw lied';
     const testAddress = 'TRTLv3nzumGSpRsZWxkcbDhiVEfy9rAgX3X9b7z8XQAy9gwjB6cwr6BJ3P52a6TQUSfA4eXf3Avwz7W89J4doLuigLjUzQjvRqX';
 
-    describe('Mnemonics', () => {
+    describe('Mnemonics', async () => {
         it('address from mnemonic phrase has matching seed', async () => {
             const result = await Address.fromMnemonic(rawMnemonic);
 
@@ -249,52 +249,47 @@ describe('Wallets', () => {
         });
     });
 
-    describe('Message Signing', () => {
-        it('sign a string message', () => {
-            return cnUtil.signMessage('this is a test message', 'd4c7e338d7efe0468b6498dd2f96620fad6b103d1a70dea76bab4de9db9c0a0b');
+    describe('Message Signing', async () => {
+        it('sign a string message', async () => {
+            await cnUtil.signMessage('this is a test message', 'd4c7e338d7efe0468b6498dd2f96620fad6b103d1a70dea76bab4de9db9c0a0b');
         });
 
-        it('sign an object-based message', () => {
-            return cnUtil.signMessage({
+        it('sign an object-based message', async () => {
+            await cnUtil.signMessage({
                 mac: 'deadbeef',
                 amount: 10
             }, 'd4c7e338d7efe0468b6498dd2f96620fad6b103d1a70dea76bab4de9db9c0a0b');
         });
 
-        it('verify signature - string message', () => {
-            return cnUtil.verifyMessageSignature('this is a test message', '013099b244d5d86194f3bbf7a50772b50e6c73675a6866dc2f278139e35ba8e8', '9ef44c5b3ffe86e31b126e284227953bdb78714b40af4e43c66d4e4a72a3150096b2b8e6a974e5fbc5a6ed700381f5356e6f80ad0ca62b020382f37b00d4d401');
+        it('verify signature - string message', async () => {
+            const valid = await cnUtil.verifyMessageSignature('this is a test message', '013099b244d5d86194f3bbf7a50772b50e6c73675a6866dc2f278139e35ba8e8', '9ef44c5b3ffe86e31b126e284227953bdb78714b40af4e43c66d4e4a72a3150096b2b8e6a974e5fbc5a6ed700381f5356e6f80ad0ca62b020382f37b00d4d401');
+            assert(valid);
         });
 
-        it('verify signature - object-based message', () => {
-            return cnUtil.verifyMessageSignature({
+        it('verify signature - object-based message', async () => {
+            const valid = await cnUtil.verifyMessageSignature({
                 mac: 'deadbeef',
                 amount: 10
             }, '013099b244d5d86194f3bbf7a50772b50e6c73675a6866dc2f278139e35ba8e8', 'f111faac9365c62eaf016364e9db6ec50060f379e9b0e480ba1dc41993c3380f55a6f4b10bb3e1d18ee0aa139157ee657a451746e5f6358199a7425e4f65af0c');
+            assert(valid);
         });
 
-        it('fail to verify signature - string message', () => {
-            return cnUtil.verifyMessageSignature('this is a test message', '013099b244d5d86194f3bbf7a50772b50e6c73675a6866dc2f278139e35ba8e8', '9ef44c5b3ffe86e31b126e284227953bdb78714b40af4e43c66d4e4a72a3150096b2b8e6a974e5fbc5a6ed700381f5356e6f80ad0ca62b020382f37b00d4d401')
-                .then(() => {
-                    assert(false);
-                })
-                .catch(() => {
-                    assert(true);
-                });
+        it('fail to verify signature - string message', async () => {
+            const valid = await cnUtil.verifyMessageSignature('this is a test message', '013099b244d5d86194f3bbf7a50772b50e6c73675a6866dc2f278139e35ba8e8', '9ef44c5b3ffe86e31b126e284227953bdb78714b40af4e43c66d4e4a72a3150096b2b8e6a974e5fbc5a6ed700381f5356e6f80ad0ca62b020382f37b00d4d401');
+            assert(valid);
         });
     });
-    describe('Keys', () => {
+    describe('Keys', async () => {
         const testPrivateKey = '4a078e76cd41a3d3b534b83dc6f2ea2de500b653ca82273b7bfad8045d85a400';
         const testPublicKey = '7849297236cd7c0d6c69a3c8c179c038d3c1c434735741bb3c8995c3c9d6f2ac';
 
-        it('create public key from private key', () => {
-            return cnUtil.privateKeyToPublicKey(testPrivateKey)
-                .then(publicKey => {
-                    assert(publicKey === testPublicKey);
-                });
+        it('create public key from private key', async () => {
+            const pubkey = await cnUtil.privateKeyToPublicKey(testPrivateKey);
+            assert(pubkey === testPublicKey);
         });
     });
 
-    describe('Prefix Detection', () => {
+    describe('Prefix Detection', async () => {
         const athenaAddress = 'athena28QHa49cTHWjRLYN1XW46Xj8D2mPiu7bovQ67V4z1C84R16VSJvbHmD2Yfq5Yvw5GKVTnfuS5pX3LXH3LNPezfLhhe5Lc27';
         const athenaPrefix = {
             prefix: 'ca9f97c218',
@@ -304,11 +299,11 @@ describe('Wallets', () => {
         };
         const calculatedPrefix = AddressPrefix.from(athenaAddress);
 
-        it('detects proper Base58 prefix', () => {
+        it('detects proper Base58 prefix', async () => {
             assert(athenaPrefix.base58 === calculatedPrefix.base58);
         });
 
-        it('detects proper decimal prefix', () => {
+        it('detects proper decimal prefix', async () => {
             assert(athenaPrefix.decimal === calculatedPrefix.decimal);
         });
 
@@ -332,49 +327,49 @@ describe('SubWallets', async () => {
         await Address.generateSubwallet(baseWallet.spend.privateKey, 65)
     ];
 
-    it('creates subwallets', () => {
+    it('creates subwallets', async () => {
         assert((subWallets[0]) && (subWallets[1]) && (subWallets[2]) && (subWallets[3]) && (subWallets[4]));
     });
 
-    it('Subwallet #0 matches base wallet', () => {
+    it('Subwallet #0 matches base wallet', async () => {
         assert(baseWallet.spend.privateKey, subWallets[0].spend.privateKey);
     });
 
-    it('SubWallets #1 is correct', () => {
+    it('SubWallets #1 is correct', async () => {
         assert(subWallets[1].spend.privateKey === 'c55cbe4fd1c49dca5958fa1c7b9212c2dbf3fd5bfec84de741d434056e298600');
     });
 
-    it('SubWallets #2 is correct', () => {
+    it('SubWallets #2 is correct', async () => {
         assert(subWallets[2].spend.privateKey === '9813c40428ed9b380a2f72bac1374a9d3852a974b0527e003cbc93afab764d01');
     });
 
-    it('SubWallets #64 is correct', () => {
+    it('SubWallets #64 is correct', async () => {
         assert(subWallets[3].spend.privateKey === '29c2afed13271e2bb3321c2483356fd8798f2709af4de3906b6627ec71727108');
     });
 
-    it('SubWallets #65 is correct', () => {
+    it('SubWallets #65 is correct', async () => {
         assert(subWallets[4].spend.privateKey === '0c6b5fff72260832558e35c38e690072503211af065056862288dc7fd992350a');
     });
 
-    it('Subwallet #0 does not match any other subwallets', () => {
+    it('Subwallet #0 does not match any other subwallets', async () => {
         for (let i = 1; i < subWallets.length; i++) {
             assert(subWallets[0].spend.privateKey !== subWallets[i].spend.privateKey);
         }
     });
 
-    it('Subwallet #1 does not match any other subwallets', () => {
+    it('Subwallet #1 does not match any other subwallets', async () => {
         for (let i = 2; i < subWallets.length; i++) {
             assert(subWallets[1].spend.privateKey !== subWallets[i].spend.privateKey);
         }
     });
 
-    it('Subwallet #2 does not match any other subwallets', () => {
+    it('Subwallet #2 does not match any other subwallets', async () => {
         for (let i = 3; i < subWallets.length; i++) {
             assert(subWallets[2].spend.privateKey !== subWallets[i].spend.privateKey);
         }
     });
 
-    it('Subwallet #64 does not match any other subwallets', () => {
+    it('Subwallet #64 does not match any other subwallets', async () => {
         for (let i = 4; i < subWallets.length; i++) {
             assert(subWallets[3].spend.privateKey !== subWallets[i].spend.privateKey);
         }
@@ -469,8 +464,8 @@ describe('Transactions', async function () {
             assert(publicSpendKey2 === walletPublicSpendKey);
         });
 
-        it('scan output (no match)', () => {
-            return cnUtil.isOurTransactionOutput(
+        it('scan output (no match)', async () => {
+            await cnUtil.isOurTransactionOutput(
                 txPublicKey,
                 {
                     key: 'aae1b90b4d0a7debb417d91b7f7aa8fdfd80c42ebc6757e1449fd1618a5a3ff1',
@@ -480,16 +475,12 @@ describe('Transactions', async function () {
                 },
                 walletPrivateViewKey,
                 walletPublicSpendKey)
-                .then(() => {
-                    assert(false);
-                })
-                .catch(() => {
-                    assert(true);
-                });
+                .then(() => assert(false))
+                .catch(() => assert(true));
         });
 
-        it('scan output (match)', () => {
-            return cnUtil.isOurTransactionOutput(
+        it('scan output (match)', async () => {
+            await cnUtil.isOurTransactionOutput(
                 txPublicKey,
                 {
                     key: 'bb55bef919d1c9f74b5b52a8a6995a1dc4af4c0bb8824f5dc889012bc748173d',
@@ -511,41 +502,37 @@ describe('Transactions', async function () {
         const ourOutputIndex = 2;
         const expectedKeyImage = '5997cf23543ce2e05c327297a47f26e710af868344859a6f8d65683d8a2498b0';
 
-        it('generate keyImage', () => {
-            return cnUtil.generateKeyImage(txPublicKey, walletPrivateViewKey, walletPublicSpendKey, walletPrivateSpendKey, ourOutputIndex)
-                .then(keyImage => {
-                    assert(keyImage.keyImage === expectedKeyImage);
-                });
+        it('generate keyImage', async () => {
+            const result = await cnUtil.generateKeyImage(txPublicKey, walletPrivateViewKey, walletPublicSpendKey, walletPrivateSpendKey, ourOutputIndex);
+            assert(result.keyImage === expectedKeyImage);
         });
 
-        it('generate keyImage primitive', () => {
-            return cnUtil.generateKeyImagePrimitive(walletPublicSpendKey, walletPrivateSpendKey, ourOutputIndex, derivation)
-                .then(keyImagePrimitive => {
-                    assert(keyImagePrimitive.keyImage === expectedKeyImage);
-                });
+        it('generate keyImage primitive', async () => {
+            const result = await cnUtil.generateKeyImagePrimitive(walletPublicSpendKey, walletPrivateSpendKey, ourOutputIndex, derivation);
+            assert(result.keyImage === expectedKeyImage);
         });
     });
 
-    describe('Input Offsets', () => {
+    describe('Input Offsets', async () => {
         const idx = ['53984', '403047', '1533859', '1595598'];
         const expectedIdx = ['53984', '349063', '1130812', '61739'];
         const calculatedRelativeOffsets = cnUtil.absoluteToRelativeOffsets(idx);
         const calculatedAbsoluteOffsets = cnUtil.relativeToAbsoluteOffsets(calculatedRelativeOffsets);
 
-        it('absolute to relative offsets', () => {
+        it('absolute to relative offsets', async () => {
             for (let i = 0; i < expectedIdx.length; i++) {
                 assert(parseInt(expectedIdx[i], 10) === calculatedRelativeOffsets[i]);
             }
         });
 
-        it('relative to absolute offsets', () => {
+        it('relative to absolute offsets', async () => {
             for (let i = 0; i < idx.length; i++) {
                 assert(parseInt(idx[i], 10) === calculatedAbsoluteOffsets[i]);
             }
         });
     });
 
-    describe('Creation', () => {
+    describe('Creation', async () => {
         it('generate a transaction', async function () {
             const madeOutputs = await cnUtil.generateTransactionOutputs('TRTLv3nzumGSpRsZWxkcbDhiVEfy9rAgX3X9b7z8XQAy9gwjB6cwr6BJ3P52a6TQUSfA4eXf3Avwz7W89J4doLuigLjUzQjvRqX', 90);
             const txPublicKey = '3b0cc2b066812e6b9fcc42a797dc3c723a7344b604fd4be0b22e06254ff57f94';
@@ -577,7 +564,7 @@ describe('Transactions', async function () {
                 }
             ]];
 
-            return cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, undefined, 0);
+            await cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, undefined, 0);
         });
 
         it('generate a fusion transaction', async function () {
@@ -621,7 +608,7 @@ describe('Transactions', async function () {
                 randomOutputs.push(randomOutput);
             }
 
-            return cnUtil.createTransaction(madeOutputs, inputs, randomOutputs, 3, 0, undefined, 0);
+            await cnUtil.createTransaction(madeOutputs, inputs, randomOutputs, 3, 0, undefined, 0);
         });
 
         it('generate a transaction with arbitrary data payload', async function () {
@@ -657,7 +644,7 @@ describe('Transactions', async function () {
 
             const message = { msg: '001100010010011110100001101101110011', paradoxResolution: true };
 
-            return cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, '', 0, message)
+            await cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, '', 0, message)
                 .then(tx => {
                     const data = JSON.parse(tx.extraData.toString());
 
@@ -716,7 +703,7 @@ describe('Transactions', async function () {
                 }
             ]];
 
-            return cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, paymentId, 0)
+            await cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, paymentId, 0)
                 .then(tx => {
                     assert(tx.paymentId === paymentId);
                     assert(tx.toString().indexOf(paymentId) !== -1);
@@ -755,7 +742,7 @@ describe('Transactions', async function () {
                 }
             ]];
 
-            return cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, '', 0)
+            await cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, '', 0)
                 .then(tx => {
                     assert(tx.paymentId === paymentId);
                     assert(tx.toString().indexOf(paymentId) !== -1);
@@ -794,7 +781,7 @@ describe('Transactions', async function () {
                 }
             ]];
 
-            return cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, paymentId, 0)
+            await cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, paymentId, 0)
                 .then(tx => {
                     assert(tx.paymentId === paymentId);
                     assert(tx.toString().indexOf(paymentId) !== -1);
@@ -842,7 +829,7 @@ describe('Transactions', async function () {
                 randomOutputs.push(randomOutput);
             }
 
-            return cnUtil.createTransaction(madeOutputs, inputs, randomOutputs, 3, 0, '', 0)
+            await cnUtil.createTransaction(madeOutputs, inputs, randomOutputs, 3, 0, '', 0)
                 .then(() => {
                     assert(false);
                 })
@@ -892,7 +879,7 @@ describe('Transactions', async function () {
                 randomOutputs.push(randomOutput);
             }
 
-            return cnUtil.createTransaction(madeOutputs, inputs, randomOutputs, 3, 0, '', 0)
+            await cnUtil.createTransaction(madeOutputs, inputs, randomOutputs, 3, 0, '', 0)
                 .then(() => {
                     assert(false);
                 })
@@ -932,7 +919,7 @@ describe('Transactions', async function () {
                 }
             ]];
 
-            return cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 10, '', 0)
+            await cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 10, '', 0)
                 .then(() => {
                     assert(false);
                 })
@@ -983,7 +970,7 @@ describe('Transactions', async function () {
                 }
             ]];
 
-            return cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 7500, '', 0)
+            await cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 7500, '', 0)
                 .then(() => {
                     assert(false);
                 })
@@ -1029,7 +1016,7 @@ describe('Transactions', async function () {
                 random: '5a4f86e32ab8533a7073eff7e321394a8751ab2b2f6e3219733eb5ccdb37974e8e67e9b95a285d3fffff862e6c1fbe281212d4bea1594f05824471f98ea76e51622c79c0f88ac8e3ffdfa9225a72973eabe0db8d5ce93034f67d7f334bfe74771e6b59e1d90b6539cc53482fe34a8de0ce7eb2875329ec7069b73a8cfe87dd33eeeffd38aa84c96d2e5878e0b17410c81c581a2c88c09a908953c2ef442efe26708ed0fdd7612f23b0002421193e4cceb6838e1b9fb2da8776ff3cbd414fcec5c8fe7bbbd9d011326317bc063a8fda6b4116622cca752732ec0574f2010caff279d369d0de930c9ad14e9f87b0697429d2ebedfe5bc4b909d5e31319eacfd24998739315efdfca2d06dee1297c51130d989f904583f80f92ce5b167a435b43d1a5ab3730a9fa55020c2374dbf2fa4e89b3e0e911acd86591c3129050cda4651292a38628be548e27f74f0453146ebff3479ab6031a8eeb4c83e027f935972b993a52df953ffdb14530a561fc4b05eb3c0af2cf913730815ec1b1ee79f4acbdea46b220e9571080ccbe684ea777611c743bdb4848b26d04ab877f1293f160bc1811ab5077a63c0838550e7fe3584f2ac5a11f87952580f522ac8bb44b8f96c3f0bb71b0ca8eeba64eb761ae9f6c671117a1391a5ad56a43f3f6483a9c4438c6f8cb53163754296469c40b5764e258240c0f8ce1f8b91b1a0f3a60a5794b55bf04c68aa616ea59cfbda4a79929af254c1b581ce65592a4814830dd72c125e6d834298fc96348b5be20129f15b61f8bb38c8f6766a097b03a4fa010eb26a7a3844f6813e97b413eb1dd3d36192b6f147fc7cded87ed3fa0c75d3551d9a86e92f92f5b0b5cb87d46c8fe7ff84ef73ceafb8ada54f08718333c4afa948f982649178b6832345f6368d42f4828739925b4b0b75930279157fb91498d7f37153402f48527e9eebc87e6cd5638da4af41be019df3592da344bb0bfa1919f54bcc25764c3f521cbb15f3e6cee84f1a9004884a5828ea7c5518a365c23535a604471a33da3b906c360b7b63b722cbbc4fc9f42891e157257390db6dd5c3176442eb087fd38fd69c1fa14ff40189ff036c2d85e5e19963d82f877a1b419b7627eedd1d7fdad07aa001bd31e71aa07329a4814b8c39a1ef741baffaa60c67095a2eeea9b5c9ec34dc13aa7748f7f5ac42793861f59ac2ce612341a6807256e8154734b98b15ee9d814c777e788f9008ed009b98550c472016836235517a4d13195af3aef51f277993fee9e0cde6fa843903e78b151d7298cf04f59350db1203423a455b3c20d571b7a2c0251fe345781b2d365e5fccae4ae3a0e25e6e3d15f00eef15ac8095ad0c1c0cda119b4bb19dd67b717619564143f08d106dd22686b37b0c4f29f6b70572996170755ed16157a13ce1468ee15a127cf6d19caa176aa47f67f4f13ad3e'
             };
 
-            return cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 10, '', 0, message)
+            await cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 10, '', 0, message)
                 .then(() => {
                     assert(false);
                 })
@@ -1071,13 +1058,9 @@ describe('Transactions', async function () {
                 }
             ]];
 
-            return cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 10, '', 0)
-                .then(() => {
-                    assert(false);
-                })
-                .catch(() => {
-                    assert(true);
-                });
+            await cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 10, '', 0)
+                .then(() => assert(false))
+                .catch(() => assert(true));
         });
 
         it('fail to generate transaction when payment ID does not match payment ID in integrated address', async function () {
@@ -1112,9 +1095,9 @@ describe('Transactions', async function () {
                 }
             ]];
 
-            return cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, paymentId, 0)
-                .then(() => { assert(false); })
-                .catch(() => { assert(true); });
+            await cnUtil.createTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, paymentId, 0)
+                .then(() => assert(false))
+                .catch(() => assert(true));
         });
 
         it('fail to generate transaction using two destinations with differing payment IDs', async function () {
@@ -1149,9 +1132,9 @@ describe('Transactions', async function () {
                 }
             ]];
 
-            return cnUtil.createTransaction(madeOutputs.concat(madeOutputs2), [madeInput], randomOutputs, 3, 1000, '', 0)
-                .then(() => { assert(false); })
-                .catch(() => { assert(true); });
+            await cnUtil.createTransaction(madeOutputs.concat(madeOutputs2), [madeInput], randomOutputs, 3, 1000, '', 0)
+                .then(() => assert(false))
+                .catch(() => assert(true));
         });
     });
 
@@ -1187,7 +1170,7 @@ describe('Transactions', async function () {
                 }
             ]];
 
-            return cnUtil.prepareTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, undefined, 0);
+            await cnUtil.prepareTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, undefined, 0);
         });
 
         it('prepare a transaction - precomputed K', async function () {
@@ -1260,7 +1243,7 @@ describe('Transactions', async function () {
 
             const prep = await cnUtil.prepareTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, undefined, 0);
 
-            return cnUtil.completeTransaction(prep, walletPrivateSpendKey);
+            await cnUtil.completeTransaction(prep, walletPrivateSpendKey);
         });
 
         it('complete a transaction - precomputed K', async function () {
@@ -1297,7 +1280,7 @@ describe('Transactions', async function () {
 
             const prep = await cnUtil.prepareTransaction(madeOutputs, [madeInput], randomOutputs, 3, 1000, undefined, 0, undefined, keys.privateKey);
 
-            return cnUtil.completeTransaction(prep, walletPrivateSpendKey);
+            await cnUtil.completeTransaction(prep, walletPrivateSpendKey);
         });
     });
 
