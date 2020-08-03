@@ -168,7 +168,8 @@ class LedgerDevice extends events_1.EventEmitter {
     }
     /**
      * Retrieves the public keys from the connected ledger device
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     getPublicKeys(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -181,7 +182,8 @@ class LedgerDevice extends events_1.EventEmitter {
     }
     /**
      * Retrieves the private view key from the connected ledger device
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     getPrivateViewKey(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -195,7 +197,8 @@ class LedgerDevice extends events_1.EventEmitter {
      * may result in a complete loss of funds as the private spend key
      * should normally remain on the device and never leave
      *
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     getPrivateSpendKey(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -232,7 +235,8 @@ class LedgerDevice extends events_1.EventEmitter {
     }
     /**
      * Gets the public wallet address from the connected device
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     getAddress(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -245,7 +249,8 @@ class LedgerDevice extends events_1.EventEmitter {
      * @param tx_public_key the transaction public key
      * @param output_index the index of the given output in the transaction
      * @param output_key the key of the given output in the transaction
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     generateKeyImage(tx_public_key, output_index, output_key, confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -273,7 +278,8 @@ class LedgerDevice extends events_1.EventEmitter {
      * @param output_key the key of the given output in the transaction of the input used
      * @param k the random scalar returned by preparing the signatures before completion
      * @param signature the incomplete ring signature for the given input
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     completeRingSignature(tx_public_key, output_index, output_key, k, signature, confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -311,7 +317,8 @@ class LedgerDevice extends events_1.EventEmitter {
      * @param tx_prefix_hash our transaction prefix hash
      * @param input_keys the ring participant keys (mixins + us)
      * @param real_output_index the index of the real output in the input_keys
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     generateRingSignatures(tx_public_key, output_index, output_key, tx_prefix_hash, input_keys, real_output_index, confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -365,7 +372,8 @@ class LedgerDevice extends events_1.EventEmitter {
      * Generates a signature of the message digest using the private spend key stored
      * on the ledger device without revealing the private spend key
      * @param message_digest the message digest (hash)
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     generateSignature(message_digest, confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -385,7 +393,8 @@ class LedgerDevice extends events_1.EventEmitter {
      * Generates the transaction key derivation using the private view key stored
      * on the ledger device
      * @param tx_public_key the transactions public key
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     generateKeyDerivation(tx_public_key, confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -402,7 +411,8 @@ class LedgerDevice extends events_1.EventEmitter {
      * Generates the public ephemeral of the given output in a transaction
      * @param derivation the key derivation
      * @param output_index the index of the output in the transaction
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     derivePublicKey(derivation, output_index, confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -423,7 +433,8 @@ class LedgerDevice extends events_1.EventEmitter {
      * Generates the private ephemeral of the given output in a transaction
      * @param derivation the key derivation
      * @param output_index the index of the output in the transaction
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     deriveSecretKey(derivation, output_index, confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -526,7 +537,8 @@ class LedgerDevice extends events_1.EventEmitter {
     /**
      * Exchanges an APDU with the connected device
      * @param command the command to send
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      * @param data any data that must be included in the payload for the given command
      */
     exchange(command, confirm = true, data) {

@@ -18,7 +18,8 @@ const Address_1 = require("./Address");
 const Types_1 = require("./Types");
 const bytestream_helper_1 = require("bytestream-helper");
 /** @ignore */
-const TransactionVersion2Suffix = 'bc36789e7a1e281436464229828f817d6612f7b477d66591ff96a9e064bcc98a0000000000000000000000000000000000000000000000000000000000000000';
+const TransactionVersion2Suffix = 'bc36789e7a1e281436464229828f817d6612f7b477d66591ff96a9e064bcc98a' +
+    '0000000000000000000000000000000000000000000000000000000000000000';
 /**
  * Represents a TurtleCoin Transaction
  */

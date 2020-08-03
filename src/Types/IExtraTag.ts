@@ -404,53 +404,53 @@ export namespace ExtraTag {
                 let totalLength = Common.varintLength(tag);
 
                 switch (tag) {
-                case ExtraNonceTag.NonceTagType.PAYMENT_ID:
-                    totalLength += SIZES.KEY;
-                    if (!seen.paymentId && reader.unreadBytes >= totalLength) {
-                        try {
-                            tags.push(ExtraNonceTag.ExtraNoncePaymentId.from(reader.bytes(33)));
-                            seen.paymentId = true;
-                        } catch (e) {
-                            reader.skip();
-                        }
-                    } else {
-                        reader.skip();
-                    }
-                    break;
-                case ExtraNonceTag.NonceTagType.EXTRA_DATA:
-                    if (!seen.data && reader.unreadBytes >= 1) {
-                        let dataLength = 0;
-
-                        try {
-                            dataLength = reader.varint(true).toJSNumber();
-                            if (dataLength > reader.unreadBytes) {
-                                reader.skip();
-                                continue;
-                            }
-                        } catch {
-                            reader.skip();
-                            continue;
-                        }
-
-                        totalLength += Common.varintLength(dataLength) + dataLength;
-
-                        if (reader.unreadBytes >= totalLength) {
+                    case ExtraNonceTag.NonceTagType.PAYMENT_ID:
+                        totalLength += SIZES.KEY;
+                        if (!seen.paymentId && reader.unreadBytes >= totalLength) {
                             try {
-                                tags.push(ExtraNonceTag.ExtraNonceData.from(reader.bytes(totalLength)));
-                                seen.data = true;
+                                tags.push(ExtraNonceTag.ExtraNoncePaymentId.from(reader.bytes(33)));
+                                seen.paymentId = true;
                             } catch (e) {
                                 reader.skip();
                             }
                         } else {
                             reader.skip();
                         }
-                    } else {
+                        break;
+                    case ExtraNonceTag.NonceTagType.EXTRA_DATA:
+                        if (!seen.data && reader.unreadBytes >= 1) {
+                            let dataLength = 0;
+
+                            try {
+                                dataLength = reader.varint(true).toJSNumber();
+                                if (dataLength > reader.unreadBytes) {
+                                    reader.skip();
+                                    continue;
+                                }
+                            } catch {
+                                reader.skip();
+                                continue;
+                            }
+
+                            totalLength += Common.varintLength(dataLength) + dataLength;
+
+                            if (reader.unreadBytes >= totalLength) {
+                                try {
+                                    tags.push(ExtraNonceTag.ExtraNonceData.from(reader.bytes(totalLength)));
+                                    seen.data = true;
+                                } catch (e) {
+                                    reader.skip();
+                                }
+                            } else {
+                                reader.skip();
+                            }
+                        } else {
+                            reader.skip();
+                        }
+                        break;
+                    default:
                         reader.skip();
-                    }
-                    break;
-                default:
-                    reader.skip();
-                    break;
+                        break;
                 }
             }
 

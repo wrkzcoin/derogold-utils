@@ -61,7 +61,9 @@ export namespace ED25519 {
                     we are probably looking to generate the deterministic view key for the
                     specified private spend key */
                 if (iterations && iterations === 1) {
-                    const temp = await TurtleCoinCrypto.cn_fast_hash(pair.m_privateKey);
+                    const temp = await TurtleCoinCrypto.cn_fast_hash(
+                        pair.m_privateKey);
+
                     await pair.setPrivateKey(temp);
                 }
 

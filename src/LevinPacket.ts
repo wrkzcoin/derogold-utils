@@ -99,45 +99,45 @@ export class LevinPacket {
     public set command (command: LevinProtocol.CommandType) {
         if (this.m_command !== command) {
             switch (command) {
-            case LevinProtocol.CommandType.HANDSHAKE:
-                this.payload = new Handshake();
-                break;
-            case LevinProtocol.CommandType.TIMEDSYNC:
-                this.payload = new TimedSync();
-                break;
-            case LevinProtocol.CommandType.PING:
-                this.payload = new Ping();
-                break;
-            case LevinProtocol.CommandType.NEW_BLOCK:
-                this.payload = new NewBlock();
-                break;
-            case LevinProtocol.CommandType.NEW_TRANSACTIONS:
-                this.payload = new NewTransactions();
-                break;
-            case LevinProtocol.CommandType.REQUEST_GET_OBJECTS:
-                this.payload = new RequestGetObjects();
-                break;
-            case LevinProtocol.CommandType.RESPONSE_GET_OBJECTS:
-                this.payload = new ResponseGetObjects();
-                break;
-            case LevinProtocol.CommandType.REQUEST_CHAIN:
-                this.payload = new RequestChain();
-                break;
-            case LevinProtocol.CommandType.RESPONSE_CHAIN_ENTRY:
-                this.payload = new ResponseChain();
-                break;
-            case LevinProtocol.CommandType.REQUEST_TX_POOL:
-                this.payload = new RequestTXPool();
-                break;
-            case LevinProtocol.CommandType.LITE_BLOCK:
-                this.payload = new LiteBlock();
-                break;
-            case LevinProtocol.CommandType.MISSING_TRANSACTIONS:
-                this.payload = new MissingTransactions();
-                break;
-            case LevinProtocol.CommandType.RESERVED:
-            default:
-                throw new Error('Unknown command type: ' + command);
+                case LevinProtocol.CommandType.HANDSHAKE:
+                    this.payload = new Handshake();
+                    break;
+                case LevinProtocol.CommandType.TIMEDSYNC:
+                    this.payload = new TimedSync();
+                    break;
+                case LevinProtocol.CommandType.PING:
+                    this.payload = new Ping();
+                    break;
+                case LevinProtocol.CommandType.NEW_BLOCK:
+                    this.payload = new NewBlock();
+                    break;
+                case LevinProtocol.CommandType.NEW_TRANSACTIONS:
+                    this.payload = new NewTransactions();
+                    break;
+                case LevinProtocol.CommandType.REQUEST_GET_OBJECTS:
+                    this.payload = new RequestGetObjects();
+                    break;
+                case LevinProtocol.CommandType.RESPONSE_GET_OBJECTS:
+                    this.payload = new ResponseGetObjects();
+                    break;
+                case LevinProtocol.CommandType.REQUEST_CHAIN:
+                    this.payload = new RequestChain();
+                    break;
+                case LevinProtocol.CommandType.RESPONSE_CHAIN_ENTRY:
+                    this.payload = new ResponseChain();
+                    break;
+                case LevinProtocol.CommandType.REQUEST_TX_POOL:
+                    this.payload = new RequestTXPool();
+                    break;
+                case LevinProtocol.CommandType.LITE_BLOCK:
+                    this.payload = new LiteBlock();
+                    break;
+                case LevinProtocol.CommandType.MISSING_TRANSACTIONS:
+                    this.payload = new MissingTransactions();
+                    break;
+                case LevinProtocol.CommandType.RESERVED:
+                default:
+                    throw new Error('Unknown command type: ' + command);
             }
 
             this.m_command = command;
@@ -223,45 +223,45 @@ export class LevinPacket {
         const payload = reader.bytes(bodyLength);
 
         switch (result.command) {
-        case LevinProtocol.CommandType.HANDSHAKE:
-            result.payload = Handshake.from(payload);
-            break;
-        case LevinProtocol.CommandType.TIMEDSYNC:
-            result.payload = TimedSync.from(payload);
-            break;
-        case LevinProtocol.CommandType.PING:
-            result.payload = Ping.from(payload);
-            break;
-        case LevinProtocol.CommandType.NEW_BLOCK:
-            result.payload = await NewBlock.from(payload);
-            break;
-        case LevinProtocol.CommandType.NEW_TRANSACTIONS:
-            result.payload = await NewTransactions.from(payload);
-            break;
-        case LevinProtocol.CommandType.REQUEST_GET_OBJECTS:
-            result.payload = RequestGetObjects.from(payload);
-            break;
-        case LevinProtocol.CommandType.RESPONSE_GET_OBJECTS:
-            result.payload = await ResponseGetObjects.from(payload);
-            break;
-        case LevinProtocol.CommandType.REQUEST_CHAIN:
-            result.payload = RequestChain.from(payload);
-            break;
-        case LevinProtocol.CommandType.RESPONSE_CHAIN_ENTRY:
-            result.payload = ResponseChain.from(payload);
-            break;
-        case LevinProtocol.CommandType.REQUEST_TX_POOL:
-            result.payload = RequestTXPool.from(payload);
-            break;
-        case LevinProtocol.CommandType.LITE_BLOCK:
-            result.payload = await LiteBlock.from(payload);
-            break;
-        case LevinProtocol.CommandType.MISSING_TRANSACTIONS:
-            result.payload = MissingTransactions.from(payload);
-            break;
-        case LevinProtocol.CommandType.RESERVED:
-        default:
-            throw new Error('Unknown command type: ' + result.command);
+            case LevinProtocol.CommandType.HANDSHAKE:
+                result.payload = Handshake.from(payload);
+                break;
+            case LevinProtocol.CommandType.TIMEDSYNC:
+                result.payload = TimedSync.from(payload);
+                break;
+            case LevinProtocol.CommandType.PING:
+                result.payload = Ping.from(payload);
+                break;
+            case LevinProtocol.CommandType.NEW_BLOCK:
+                result.payload = await NewBlock.from(payload);
+                break;
+            case LevinProtocol.CommandType.NEW_TRANSACTIONS:
+                result.payload = await NewTransactions.from(payload);
+                break;
+            case LevinProtocol.CommandType.REQUEST_GET_OBJECTS:
+                result.payload = RequestGetObjects.from(payload);
+                break;
+            case LevinProtocol.CommandType.RESPONSE_GET_OBJECTS:
+                result.payload = await ResponseGetObjects.from(payload);
+                break;
+            case LevinProtocol.CommandType.REQUEST_CHAIN:
+                result.payload = RequestChain.from(payload);
+                break;
+            case LevinProtocol.CommandType.RESPONSE_CHAIN_ENTRY:
+                result.payload = ResponseChain.from(payload);
+                break;
+            case LevinProtocol.CommandType.REQUEST_TX_POOL:
+                result.payload = RequestTXPool.from(payload);
+                break;
+            case LevinProtocol.CommandType.LITE_BLOCK:
+                result.payload = await LiteBlock.from(payload);
+                break;
+            case LevinProtocol.CommandType.MISSING_TRANSACTIONS:
+                result.payload = MissingTransactions.from(payload);
+                break;
+            case LevinProtocol.CommandType.RESERVED:
+            default:
+                throw new Error('Unknown command type: ' + result.command);
         }
 
         return result;
@@ -282,45 +282,45 @@ export class LevinPacket {
     constructor (command?: LevinProtocol.CommandType) {
         if (command) {
             switch (command) {
-            case LevinProtocol.CommandType.HANDSHAKE:
-                this.payload = new Handshake();
-                break;
-            case LevinProtocol.CommandType.TIMEDSYNC:
-                this.payload = new TimedSync();
-                break;
-            case LevinProtocol.CommandType.PING:
-                this.payload = new Ping();
-                break;
-            case LevinProtocol.CommandType.NEW_BLOCK:
-                this.payload = new NewBlock();
-                break;
-            case LevinProtocol.CommandType.NEW_TRANSACTIONS:
-                this.payload = new NewTransactions();
-                break;
-            case LevinProtocol.CommandType.REQUEST_GET_OBJECTS:
-                this.payload = new RequestGetObjects();
-                break;
-            case LevinProtocol.CommandType.RESPONSE_GET_OBJECTS:
-                this.payload = new ResponseGetObjects();
-                break;
-            case LevinProtocol.CommandType.REQUEST_CHAIN:
-                this.payload = new RequestChain();
-                break;
-            case LevinProtocol.CommandType.RESPONSE_CHAIN_ENTRY:
-                this.payload = new ResponseChain();
-                break;
-            case LevinProtocol.CommandType.REQUEST_TX_POOL:
-                this.payload = new RequestTXPool();
-                break;
-            case LevinProtocol.CommandType.LITE_BLOCK:
-                this.payload = new LiteBlock();
-                break;
-            case LevinProtocol.CommandType.MISSING_TRANSACTIONS:
-                this.payload = new MissingTransactions();
-                break;
-            case LevinProtocol.CommandType.RESERVED:
-            default:
-                throw new Error('Unknown command type: ' + command);
+                case LevinProtocol.CommandType.HANDSHAKE:
+                    this.payload = new Handshake();
+                    break;
+                case LevinProtocol.CommandType.TIMEDSYNC:
+                    this.payload = new TimedSync();
+                    break;
+                case LevinProtocol.CommandType.PING:
+                    this.payload = new Ping();
+                    break;
+                case LevinProtocol.CommandType.NEW_BLOCK:
+                    this.payload = new NewBlock();
+                    break;
+                case LevinProtocol.CommandType.NEW_TRANSACTIONS:
+                    this.payload = new NewTransactions();
+                    break;
+                case LevinProtocol.CommandType.REQUEST_GET_OBJECTS:
+                    this.payload = new RequestGetObjects();
+                    break;
+                case LevinProtocol.CommandType.RESPONSE_GET_OBJECTS:
+                    this.payload = new ResponseGetObjects();
+                    break;
+                case LevinProtocol.CommandType.REQUEST_CHAIN:
+                    this.payload = new RequestChain();
+                    break;
+                case LevinProtocol.CommandType.RESPONSE_CHAIN_ENTRY:
+                    this.payload = new ResponseChain();
+                    break;
+                case LevinProtocol.CommandType.REQUEST_TX_POOL:
+                    this.payload = new RequestTXPool();
+                    break;
+                case LevinProtocol.CommandType.LITE_BLOCK:
+                    this.payload = new LiteBlock();
+                    break;
+                case LevinProtocol.CommandType.MISSING_TRANSACTIONS:
+                    this.payload = new MissingTransactions();
+                    break;
+                case LevinProtocol.CommandType.RESERVED:
+                default:
+                    throw new Error('Unknown command type: ' + command);
             }
 
             this.command = command;

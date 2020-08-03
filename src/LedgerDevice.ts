@@ -184,7 +184,8 @@ export class LedgerDevice extends EventEmitter {
 
     /**
      * Retrieves the public keys from the connected ledger device
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     public async getPublicKeys (confirm = true): Promise<{ spend: string, view: string }> {
         const result = await this.exchange(LedgerWalletTypes.CMD.PUBLIC_KEYS, confirm);
@@ -197,7 +198,8 @@ export class LedgerDevice extends EventEmitter {
 
     /**
      * Retrieves the private view key from the connected ledger device
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     public async getPrivateViewKey (confirm = true): Promise<string> {
         const result = await this.exchange(LedgerWalletTypes.CMD.VIEW_SECRET_KEY, confirm);
@@ -211,7 +213,8 @@ export class LedgerDevice extends EventEmitter {
      * may result in a complete loss of funds as the private spend key
      * should normally remain on the device and never leave
      *
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     public async getPrivateSpendKey (confirm = true): Promise<string> {
         const result = await this.exchange(LedgerWalletTypes.CMD.SPEND_ESECRET_KEY, confirm);
@@ -251,7 +254,8 @@ export class LedgerDevice extends EventEmitter {
 
     /**
      * Gets the public wallet address from the connected device
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     public async getAddress (confirm = true): Promise<string> {
         const result = await this.exchange(LedgerWalletTypes.CMD.ADDRESS, confirm);
@@ -264,7 +268,8 @@ export class LedgerDevice extends EventEmitter {
      * @param tx_public_key the transaction public key
      * @param output_index the index of the given output in the transaction
      * @param output_key the key of the given output in the transaction
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     public async generateKeyImage (
         tx_public_key: string,
@@ -304,7 +309,8 @@ export class LedgerDevice extends EventEmitter {
      * @param output_key the key of the given output in the transaction of the input used
      * @param k the random scalar returned by preparing the signatures before completion
      * @param signature the incomplete ring signature for the given input
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     public async completeRingSignature (
         tx_public_key: string,
@@ -360,7 +366,8 @@ export class LedgerDevice extends EventEmitter {
      * @param tx_prefix_hash our transaction prefix hash
      * @param input_keys the ring participant keys (mixins + us)
      * @param real_output_index the index of the real output in the input_keys
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     public async generateRingSignatures (
         tx_public_key: string,
@@ -440,7 +447,8 @@ export class LedgerDevice extends EventEmitter {
      * Generates a signature of the message digest using the private spend key stored
      * on the ledger device without revealing the private spend key
      * @param message_digest the message digest (hash)
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     public async generateSignature (
         message_digest: string,
@@ -467,7 +475,8 @@ export class LedgerDevice extends EventEmitter {
      * Generates the transaction key derivation using the private view key stored
      * on the ledger device
      * @param tx_public_key the transactions public key
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     public async generateKeyDerivation (
         tx_public_key: string,
@@ -490,7 +499,8 @@ export class LedgerDevice extends EventEmitter {
      * Generates the public ephemeral of the given output in a transaction
      * @param derivation the key derivation
      * @param output_index the index of the output in the transaction
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     public async derivePublicKey (
         derivation: string,
@@ -520,7 +530,8 @@ export class LedgerDevice extends EventEmitter {
      * Generates the private ephemeral of the given output in a transaction
      * @param derivation the key derivation
      * @param output_index the index of the output in the transaction
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      */
     public async deriveSecretKey (
         derivation: string,
@@ -661,7 +672,8 @@ export class LedgerDevice extends EventEmitter {
     /**
      * Exchanges an APDU with the connected device
      * @param command the command to send
-     * @param confirm whether the device will prompt the user to confirm their actions (to disable, must be running a DEBUG build)
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
      * @param data any data that must be included in the payload for the given command
      */
     private async exchange (command: LedgerWalletTypes.CMD, confirm = true, data?: Buffer): Promise<Reader> {

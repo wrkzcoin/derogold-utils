@@ -21,39 +21,39 @@ export namespace Interfaces {
 
         underivePublicKey?: (derivation: string,
                              outputIndex: number,
-                             outputKey: string) => string;
+                             outputKey: string) => Promise<string>;
 
         derivePublicKey?: (derivation: string,
                            outputIndex: number,
-                           publicKey: string) => string;
+                           publicKey: string) => Promise<string>;
 
         deriveSecretKey?: (derivation: string,
                            outputIndex: number,
-                           privateKey: string) => string;
+                           privateKey: string) => Promise<string>;
 
         generateKeyImage?: (transactionPublicKey: string,
                             privateViewKey: string,
                             publicSpendKey: string,
                             privateSpendKey: string,
-                            outputIndex: number) => string;
+                            outputIndex: number) => Promise<string>;
 
-        secretKeyToPublicKey?: (privateKey: string) => string;
+        secretKeyToPublicKey?: (privateKey: string) => Promise<string>;
 
-        cn_fast_hash?: (input: string) => string;
+        cn_fast_hash?: (input: string) => Promise<string>;
 
-        generateRingSignatures?: (transactionPrefixHash: string,
+        generateRingSignatures?: (transactionPrefixHash: Promise<boolean>,
                                   keyImage: string,
                                   inputKeys: string[],
                                   privateKey: string,
-                                  realIndex: number) => string[];
+                                  realIndex: number) => Promise<string[]>;
 
         checkRingSignatures?: (transactionPrefixHash: string,
                                keyImage: string,
                                publicKeys: string[],
-                               signatures: string[]) => boolean;
+                               signatures: string[]) => Promise<boolean>;
 
         generateKeyDerivation?: (transactionPublicKey: string,
-                                 privateViewKey: string) => string;
+                                 privateViewKey: string) => Promise<string>;
 
         checkSignature?: (digestHash: string,
                           publicKey: string,
@@ -61,6 +61,6 @@ export namespace Interfaces {
 
         generateSignature?: (digestHash: string,
                              publicKey: string,
-                             privateKey: string) => [boolean, string];
+                             privateKey: string) => Promise<[boolean, string]>;
     }
 }

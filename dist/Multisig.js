@@ -80,12 +80,11 @@ class Multisig {
                 throw new Error('Not all participants have been loaded');
             }
             const keys = this.m_participant_keys;
-            this.m_multisig_keys.forEach((key) => {
-                if (key.publicKey.length !== 0 &&
-                    keys.indexOf(key.publicKey) === -1) {
+            for (const key of this.m_multisig_keys) {
+                if (key.publicKey.length !== 0 && keys.indexOf(key.publicKey) === -1) {
                     keys.push(key.publicKey);
                 }
-            });
+            }
             return Types_1.TurtleCoinCrypto.calculateSharedPublicKey(keys);
         });
     }
@@ -216,7 +215,7 @@ class Multisig {
                 result.m_multisig_keys.push(yield KeyPair.from(undefined, key));
                 result.m_wallet_multisig_keys.push(yield KeyPair.from(undefined, key));
             }
-            if (!Types_1.TurtleCoinCrypto.checkScalar(sharedPrivateViewKey)) {
+            if (!(yield Types_1.TurtleCoinCrypto.checkScalar(sharedPrivateViewKey))) {
                 throw new Error('Private view key is not a valid private key');
             }
             result.m_view_keys.push(sharedPrivateViewKey);
@@ -265,7 +264,7 @@ class Multisig {
      */
     addParticipant(publicSpendKeys, privateViewKey) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (privateViewKey && !Types_1.TurtleCoinCrypto.checkScalar(privateViewKey)) {
+            if (privateViewKey && !(yield Types_1.TurtleCoinCrypto.checkScalar(privateViewKey))) {
                 throw new Error('Private view key is not a valid private key');
             }
             if (Array.isArray(publicSpendKeys) && publicSpendKeys.length > 1 && privateViewKey) {
@@ -274,19 +273,19 @@ class Multisig {
             if (!Array.isArray(publicSpendKeys)) {
                 publicSpendKeys = [publicSpendKeys];
             }
-            publicSpendKeys.forEach((key) => {
-                if (!Types_1.TurtleCoinCrypto.checkKey(key)) {
+            for (const key of publicSpendKeys) {
+                if (!(yield Types_1.TurtleCoinCrypto.checkKey(key))) {
                     throw new Error('Found an invalid public spend key in the list');
                 }
-            });
+            }
             if (privateViewKey && this.m_view_keys.indexOf(privateViewKey) === -1) {
                 this.m_view_keys.push(privateViewKey);
             }
-            publicSpendKeys.forEach((key) => {
+            for (const key of publicSpendKeys) {
                 if (this.m_participant_keys.indexOf(key) === -1) {
                     this.m_participant_keys.push(key);
                 }
-            });
+            }
             this.m_currentParticipants++;
         });
     }

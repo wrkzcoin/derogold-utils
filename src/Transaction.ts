@@ -16,7 +16,8 @@ import {
 import { Reader, Writer } from 'bytestream-helper';
 
 /** @ignore */
-const TransactionVersion2Suffix = 'bc36789e7a1e281436464229828f817d6612f7b477d66591ff96a9e064bcc98a0000000000000000000000000000000000000000000000000000000000000000';
+const TransactionVersion2Suffix = 'bc36789e7a1e281436464229828f817d6612f7b477d66591ff96a9e064bcc98a' +
+    '0000000000000000000000000000000000000000000000000000000000000000';
 
 /** @ignore */
 interface Cache {
@@ -420,24 +421,24 @@ export class Transaction {
             const type = reader.uint8_t().toJSNumber();
 
             switch (type) {
-            case TransactionInputs.InputType.COINBASE: {
-                const blockIndex = reader.varint().toJSNumber();
-                result.inputs.push(new TransactionInputs.CoinbaseInput(blockIndex));
-            }
-                break;
-            case TransactionInputs.InputType.KEY: {
-                const amount = reader.varint();
-                const keyOffsets: BigInteger.BigInteger[] = [];
-                const keyOffsetsLength = reader.varint().toJSNumber();
-                for (let j = 0; j < keyOffsetsLength; j++) {
-                    keyOffsets.push(reader.varint());
+                case TransactionInputs.InputType.COINBASE: {
+                    const blockIndex = reader.varint().toJSNumber();
+                    result.inputs.push(new TransactionInputs.CoinbaseInput(blockIndex));
                 }
-                const keyImage = reader.hash();
-                result.inputs.push(new TransactionInputs.KeyInput(amount, keyOffsets, keyImage));
-            }
-                break;
-            default:
-                throw new Error('Unknown input type');
+                    break;
+                case TransactionInputs.InputType.KEY: {
+                    const amount = reader.varint();
+                    const keyOffsets: BigInteger.BigInteger[] = [];
+                    const keyOffsetsLength = reader.varint().toJSNumber();
+                    for (let j = 0; j < keyOffsetsLength; j++) {
+                        keyOffsets.push(reader.varint());
+                    }
+                    const keyImage = reader.hash();
+                    result.inputs.push(new TransactionInputs.KeyInput(amount, keyOffsets, keyImage));
+                }
+                    break;
+                default:
+                    throw new Error('Unknown input type');
             }
         }
 
@@ -732,160 +733,160 @@ function readExtra (data: Buffer): ExtraTag.IExtraTag[] {
         let totalLength = Common.varintLength(tag);
 
         switch (tag) {
-        case ExtraTag.ExtraTagType.PADDING:
-            if (!seen.padding) {
-                try {
-                    tags.push(ExtraTag.ExtraPadding.from(reader.bytes(totalLength)));
-                    seen.padding = true;
-                } catch (e) {
+            case ExtraTag.ExtraTagType.PADDING:
+                if (!seen.padding) {
+                    try {
+                        tags.push(ExtraTag.ExtraPadding.from(reader.bytes(totalLength)));
+                        seen.padding = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
+                } else {
                     reader.skip();
                 }
-            } else {
-                reader.skip();
-            }
-            break;
-        case ExtraTag.ExtraTagType.PUBKEY:
-            totalLength += 32;
-            if (!seen.publicKey && reader.unreadBytes >= totalLength) {
-                try {
-                    tags.push(ExtraTag.ExtraPublicKey.from(reader.bytes(totalLength)));
-                    seen.publicKey = true;
-                } catch (e) {
+                break;
+            case ExtraTag.ExtraTagType.PUBKEY:
+                totalLength += 32;
+                if (!seen.publicKey && reader.unreadBytes >= totalLength) {
+                    try {
+                        tags.push(ExtraTag.ExtraPublicKey.from(reader.bytes(totalLength)));
+                        seen.publicKey = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
+                } else {
                     reader.skip();
                 }
-            } else {
-                reader.skip();
-            }
-            break;
-        case ExtraTag.ExtraTagType.NONCE:
-            if (!seen.nonce && reader.unreadBytes >= 1) {
-                const tmpReader = new Reader(reader.unreadBuffer);
-                tmpReader.skip(totalLength);
+                break;
+            case ExtraTag.ExtraTagType.NONCE:
+                if (!seen.nonce && reader.unreadBytes >= 1) {
+                    const tmpReader = new Reader(reader.unreadBuffer);
+                    tmpReader.skip(totalLength);
 
-                let nonceLength = 0;
-                try {
-                    nonceLength = tmpReader.varint().toJSNumber();
-                    if (nonceLength > reader.unreadBytes) {
+                    let nonceLength = 0;
+                    try {
+                        nonceLength = tmpReader.varint().toJSNumber();
+                        if (nonceLength > reader.unreadBytes) {
+                            reader.skip();
+                            continue;
+                        }
+                    } catch {
                         reader.skip();
                         continue;
                     }
-                } catch {
+
+                    totalLength += Common.varintLength(nonceLength) + nonceLength;
+
+                    try {
+                        tags.push(ExtraTag.ExtraNonce.from(reader.bytes(totalLength)));
+                        seen.nonce = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
+                } else {
                     reader.skip();
-                    continue;
                 }
+                break;
+            case ExtraTag.ExtraTagType.MERGED_MINING:
+                if (!seen.mergedMining && reader.unreadBytes >= 1) {
+                    const tmpReader = new Reader(reader.unreadBuffer);
+                    tmpReader.skip(totalLength);
 
-                totalLength += Common.varintLength(nonceLength) + nonceLength;
-
-                try {
-                    tags.push(ExtraTag.ExtraNonce.from(reader.bytes(totalLength)));
-                    seen.nonce = true;
-                } catch (e) {
-                    reader.skip();
-                }
-            } else {
-                reader.skip();
-            }
-            break;
-        case ExtraTag.ExtraTagType.MERGED_MINING:
-            if (!seen.mergedMining && reader.unreadBytes >= 1) {
-                const tmpReader = new Reader(reader.unreadBuffer);
-                tmpReader.skip(totalLength);
-
-                let mmLength = 0;
-                try {
-                    mmLength = tmpReader.varint().toJSNumber();
-                    if (mmLength > reader.unreadBytes) {
+                    let mmLength = 0;
+                    try {
+                        mmLength = tmpReader.varint().toJSNumber();
+                        if (mmLength > reader.unreadBytes) {
+                            reader.skip();
+                            continue;
+                        }
+                    } catch {
                         reader.skip();
                         continue;
                     }
-                } catch {
-                    reader.skip();
-                    continue;
-                }
 
-                totalLength += Common.varintLength(mmLength) + mmLength;
+                    totalLength += Common.varintLength(mmLength) + mmLength;
 
-                try {
-                    tags.push(ExtraTag.ExtraMergedMining.from(reader.bytes(totalLength)));
-                    seen.mergedMining = true;
-                } catch (e) {
+                    try {
+                        tags.push(ExtraTag.ExtraMergedMining.from(reader.bytes(totalLength)));
+                        seen.mergedMining = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
+                } else {
                     reader.skip();
                 }
-            } else {
-                reader.skip();
-            }
-            break;
-        case ExtraTag.ExtraTagType.TRANSACTION_PRIVATE_KEY:
-            totalLength += 32;
-            if (!seen.transactionPrivateKey && reader.unreadBytes >= totalLength) {
-                try {
-                    tags.push(ExtraTag.ExtraTransactionPrivateKey.from(reader.bytes(totalLength)));
-                    seen.transactionPrivateKey = true;
-                } catch (e) {
+                break;
+            case ExtraTag.ExtraTagType.TRANSACTION_PRIVATE_KEY:
+                totalLength += 32;
+                if (!seen.transactionPrivateKey && reader.unreadBytes >= totalLength) {
+                    try {
+                        tags.push(ExtraTag.ExtraTransactionPrivateKey.from(reader.bytes(totalLength)));
+                        seen.transactionPrivateKey = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
+                } else {
                     reader.skip();
                 }
-            } else {
-                reader.skip();
-            }
-            break;
-        case ExtraTag.ExtraTagType.RECIPIENT_PUBLIC_VIEW_KEY:
-            totalLength += 32;
-            if (!seen.recipientPublicViewKey && reader.unreadBytes >= totalLength) {
-                try {
-                    tags.push(ExtraTag.ExtraRecipientPublicViewKey.from(reader.bytes(totalLength)));
-                    seen.recipientPublicViewKey = true;
-                } catch (e) {
+                break;
+            case ExtraTag.ExtraTagType.RECIPIENT_PUBLIC_VIEW_KEY:
+                totalLength += 32;
+                if (!seen.recipientPublicViewKey && reader.unreadBytes >= totalLength) {
+                    try {
+                        tags.push(ExtraTag.ExtraRecipientPublicViewKey.from(reader.bytes(totalLength)));
+                        seen.recipientPublicViewKey = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
+                } else {
                     reader.skip();
                 }
-            } else {
-                reader.skip();
-            }
-            break;
-        case ExtraTag.ExtraTagType.RECIPIENT_PUBLIC_SPEND_KEY:
-            totalLength += 32;
-            if (!seen.recipientPublicSpendKey && reader.unreadBytes >= totalLength) {
-                try {
-                    tags.push(ExtraTag.ExtraRecipientPublicSpendKey.from(reader.bytes(totalLength)));
-                    seen.recipientPublicSpendKey = true;
-                } catch (e) {
+                break;
+            case ExtraTag.ExtraTagType.RECIPIENT_PUBLIC_SPEND_KEY:
+                totalLength += 32;
+                if (!seen.recipientPublicSpendKey && reader.unreadBytes >= totalLength) {
+                    try {
+                        tags.push(ExtraTag.ExtraRecipientPublicSpendKey.from(reader.bytes(totalLength)));
+                        seen.recipientPublicSpendKey = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
+                } else {
                     reader.skip();
                 }
-            } else {
-                reader.skip();
-            }
-            break;
-        case ExtraTag.ExtraTagType.POOL_NONCE:
-            if (!seen.poolNonce) {
-                const tmpReader = new Reader(reader.unreadBuffer);
-                tmpReader.skip(totalLength);
+                break;
+            case ExtraTag.ExtraTagType.POOL_NONCE:
+                if (!seen.poolNonce) {
+                    const tmpReader = new Reader(reader.unreadBuffer);
+                    tmpReader.skip(totalLength);
 
-                let nonceLength = 0;
-                try {
-                    nonceLength = tmpReader.varint().toJSNumber();
-                    if (nonceLength > reader.unreadBytes) {
+                    let nonceLength = 0;
+                    try {
+                        nonceLength = tmpReader.varint().toJSNumber();
+                        if (nonceLength > reader.unreadBytes) {
+                            reader.skip();
+                            continue;
+                        }
+                    } catch {
                         reader.skip();
                         continue;
                     }
-                } catch {
-                    reader.skip();
-                    continue;
-                }
 
-                totalLength += Common.varintLength(nonceLength) + nonceLength;
+                    totalLength += Common.varintLength(nonceLength) + nonceLength;
 
-                try {
-                    tags.push(ExtraTag.ExtraPoolNonce.from(reader.bytes(totalLength)));
-                    seen.nonce = true;
-                } catch (e) {
+                    try {
+                        tags.push(ExtraTag.ExtraPoolNonce.from(reader.bytes(totalLength)));
+                        seen.nonce = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
+                } else {
                     reader.skip();
                 }
-            } else {
+                break;
+            default:
                 reader.skip();
-            }
-            break;
-        default:
-            reader.skip();
-            break;
+                break;
         }
     }
 

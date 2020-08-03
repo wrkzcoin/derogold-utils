@@ -493,7 +493,7 @@ class CryptoNote {
             }
             const tx = new Transaction_1.Transaction();
             tx.unlockTime = Types_1.BigInteger(unlockTime);
-            tx.addPublicKey(transactionOutputs.transactionKeys.publicKey);
+            yield tx.addPublicKey(transactionOutputs.transactionKeys.publicKey);
             tx.transactionKeys = transactionOutputs.transactionKeys;
             if (integratedPaymentId) {
                 tx.addPaymentId(integratedPaymentId);

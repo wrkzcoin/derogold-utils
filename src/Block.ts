@@ -544,19 +544,19 @@ async function getBlockPoWHash (data: Buffer, majorVersion: number): Promise<str
     const blob = data.toString('hex');
 
     switch (majorVersion) {
-    case 1:
-    case 2:
-    case 3:
-        return TurtleCoinCrypto.cn_slow_hash_v0(blob);
-    case 4:
-        return TurtleCoinCrypto.cn_lite_slow_hash_v1(blob);
-    case 5:
-        return TurtleCoinCrypto.cn_turtle_lite_slow_hash_v2(blob);
-    case 6:
-        return TurtleCoinCrypto.chukwa_slow_hash_v1(blob);
-    case 7:
-        return TurtleCoinCrypto.chukwa_slow_hash_v2(blob);
-    default:
-        throw new Error('Unhandled major block version');
+        case 1:
+        case 2:
+        case 3:
+            return TurtleCoinCrypto.cn_slow_hash_v0(blob);
+        case 4:
+            return TurtleCoinCrypto.cn_lite_slow_hash_v1(blob);
+        case 5:
+            return TurtleCoinCrypto.cn_turtle_lite_slow_hash_v2(blob);
+        case 6:
+            return TurtleCoinCrypto.chukwa_slow_hash_v1(blob);
+        case 7:
+            return TurtleCoinCrypto.chukwa_slow_hash_v2(blob);
+        default:
+            throw new Error('Unhandled major block version');
     }
 }
