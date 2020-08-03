@@ -75,6 +75,29 @@ export class Transaction {
     }
 
     /**
+     * Calculates the transaction fingerprint if the transaction
+     * is a coinbase transaction and it contains the information
+     * necessary to do so
+     */
+    public async fingerprint (): Promise<string | undefined> {
+        if (!this.isCoinbase) {
+            return;
+        }
+
+        if (!this.recipientPublicViewKey || !this.recipientPublicSpendKey) {
+            return;
+        }
+
+        const writer = new Writer();
+
+        writer.hash(this.recipientPublicSpendKey);
+
+        writer.hash(this.recipientPublicViewKey);
+
+        return TurtleCoinCrypto.cn_fast_hash(writer.blob);
+    }
+
+    /**
      * Returns the recipient address if this is a coinbase
      * transaction and the information is available
      */
