@@ -10,6 +10,16 @@ export declare namespace LedgerWalletTypes {
         P1_CONFIRM = 1,
         INS = 224
     }
+    enum TransactionState {
+        INACTIVE = 0,
+        READY = 1,
+        RECEIVING_INPUTS = 2,
+        INPUTS_RECEIVED = 3,
+        RECEIVING_OUTPUTS = 4,
+        OUTPUTS_RECEIVED = 5,
+        PREFIX_READY = 6,
+        COMPLETE = 7
+    }
     /**
      * Represents the APDU command types available in the TurtleCoin application
      * for ledger hardware wallets
@@ -35,6 +45,16 @@ export declare namespace LedgerWalletTypes {
         GENERATE_KEY_DERIVATION = 96,
         DERIVE_PUBLIC_KEY = 97,
         DERIVE_SECRET_KEY = 98,
+        TX_STATE = 112,
+        TX_START = 113,
+        TX_START_INPUT_LOAD = 114,
+        TX_LOAD_INPUT = 115,
+        TX_START_OUTPUT_LOAD = 116,
+        TX_LOAD_OUTPUT = 117,
+        TX_FINALIZE_TX_PREFIX = 118,
+        TX_SIGN = 119,
+        TX_DUMP = 120,
+        TX_RESET = 121,
         RESET_KEYS = 255
     }
     /**
@@ -248,6 +268,66 @@ export declare class LedgerDevice extends EventEmitter {
      * @param confirm
      */
     resetKeys(confirm?: boolean): Promise<void>;
+    /**
+     * Retrieves the current state of the transaction construction process on the ledger device
+     */
+    transactionState(): Promise<LedgerWalletTypes.TransactionState>;
+    /**
+     * Resets the transaction state of the transaction construction process on the ledger device
+     */
+    resetTransaction(): Promise<void>;
+    /**
+     * Starts a new transaction construction on the ledger device
+     * @param unlock_time the unlock time (or block) of the transaction
+     * @param input_count the number of inputs that will be included in the transaction
+     * @param output_count the number of outputs that will be included in the transaction
+     * @param tx_public_key the transaction public key
+     * @param payment_id the transaction payment id if one needs to be included
+     */
+    startTransaction(unlock_time: number | undefined, input_count: number | undefined, output_count: number | undefined, tx_public_key: string, payment_id?: string): Promise<void>;
+    /**
+     * Signals to the ledger that we are ready to start loading transaction inputs
+     */
+    startTransactionInputLoad(): Promise<void>;
+    /**
+     * Load a transaction input to the transaction construction process
+     * @param input_tx_public_key the transaction public key of the input
+     * @param input_output_index the output index of the transaction of the input
+     * @param amount the amount of the input
+     * @param public_keys the ring participant keys
+     * @param offsets the RELATIVE offsets of the ring participant keys
+     * @param real_output_index the index in the public_keys of the real output being spent
+     */
+    loadTransactionInput(input_tx_public_key: string, input_output_index: number, amount: number, public_keys: string[], offsets: number[], real_output_index: number): Promise<void>;
+    /**
+     * Signals to the ledger that we are ready to start loading transaction outputs
+     */
+    startTransactionOutputLoad(): Promise<void>;
+    /**
+     * Load a transaction output to the transaction construction process
+     * @param amount the amount of the output
+     * @param output_key the output key
+     */
+    loadTransactionOutput(amount: number, output_key: string): Promise<void>;
+    /**
+     * Finalizes a transaction prefix
+     */
+    finalizeTransactionPrefix(): Promise<void>;
+    /**
+     * Instructs the ledger device to sign the transaction we have constructed
+     */
+    signTransaction(): Promise<{
+        hash: string;
+        length: number;
+    }>;
+    /**
+     * Exports the completed full transaction that we constructed from the ledger device
+     * this method requires that you keep track of what you have exported thus far as
+     * we have to chunk the data due to the I/O buffer limitations of the ledger device
+     * @param start_offset the starting offset
+     * @param end_offset the ending offset
+     */
+    dumpTransaction(start_offset: number, end_offset: number): Promise<Buffer>;
     /**
      * Exchanges an APDU with the connected device
      * @param command the command to send

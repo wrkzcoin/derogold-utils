@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LedgerDevice = exports.LedgerWalletTypes = void 0;
 const bytestream_helper_1 = require("bytestream-helper");
 const events_1 = require("events");
+/** @ignore */
+const config = require('../config.json');
 var LedgerWalletTypes;
 (function (LedgerWalletTypes) {
     /** @ignore */
@@ -25,6 +27,17 @@ var LedgerWalletTypes;
         APDU[APDU["P1_CONFIRM"] = 1] = "P1_CONFIRM";
         APDU[APDU["INS"] = 224] = "INS";
     })(APDU = LedgerWalletTypes.APDU || (LedgerWalletTypes.APDU = {}));
+    let TransactionState;
+    (function (TransactionState) {
+        TransactionState[TransactionState["INACTIVE"] = 0] = "INACTIVE";
+        TransactionState[TransactionState["READY"] = 1] = "READY";
+        TransactionState[TransactionState["RECEIVING_INPUTS"] = 2] = "RECEIVING_INPUTS";
+        TransactionState[TransactionState["INPUTS_RECEIVED"] = 3] = "INPUTS_RECEIVED";
+        TransactionState[TransactionState["RECEIVING_OUTPUTS"] = 4] = "RECEIVING_OUTPUTS";
+        TransactionState[TransactionState["OUTPUTS_RECEIVED"] = 5] = "OUTPUTS_RECEIVED";
+        TransactionState[TransactionState["PREFIX_READY"] = 6] = "PREFIX_READY";
+        TransactionState[TransactionState["COMPLETE"] = 7] = "COMPLETE";
+    })(TransactionState = LedgerWalletTypes.TransactionState || (LedgerWalletTypes.TransactionState = {}));
     /**
      * Represents the APDU command types available in the TurtleCoin application
      * for ledger hardware wallets
@@ -51,6 +64,16 @@ var LedgerWalletTypes;
         CMD[CMD["GENERATE_KEY_DERIVATION"] = 96] = "GENERATE_KEY_DERIVATION";
         CMD[CMD["DERIVE_PUBLIC_KEY"] = 97] = "DERIVE_PUBLIC_KEY";
         CMD[CMD["DERIVE_SECRET_KEY"] = 98] = "DERIVE_SECRET_KEY";
+        CMD[CMD["TX_STATE"] = 112] = "TX_STATE";
+        CMD[CMD["TX_START"] = 113] = "TX_START";
+        CMD[CMD["TX_START_INPUT_LOAD"] = 114] = "TX_START_INPUT_LOAD";
+        CMD[CMD["TX_LOAD_INPUT"] = 115] = "TX_LOAD_INPUT";
+        CMD[CMD["TX_START_OUTPUT_LOAD"] = 116] = "TX_START_OUTPUT_LOAD";
+        CMD[CMD["TX_LOAD_OUTPUT"] = 117] = "TX_LOAD_OUTPUT";
+        CMD[CMD["TX_FINALIZE_TX_PREFIX"] = 118] = "TX_FINALIZE_TX_PREFIX";
+        CMD[CMD["TX_SIGN"] = 119] = "TX_SIGN";
+        CMD[CMD["TX_DUMP"] = 120] = "TX_DUMP";
+        CMD[CMD["TX_RESET"] = 121] = "TX_RESET";
         CMD[CMD["RESET_KEYS"] = 255] = "RESET_KEYS";
     })(CMD = LedgerWalletTypes.CMD || (LedgerWalletTypes.CMD = {}));
     /**
@@ -532,6 +555,195 @@ class LedgerDevice extends events_1.EventEmitter {
     resetKeys(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.exchange(LedgerWalletTypes.CMD.RESET_KEYS, confirm);
+        });
+    }
+    /**
+     * Retrieves the current state of the transaction construction process on the ledger device
+     */
+    transactionState() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.exchange(LedgerWalletTypes.CMD.TX_STATE, undefined);
+            return result.uint8_t().toJSNumber();
+        });
+    }
+    /**
+     * Resets the transaction state of the transaction construction process on the ledger device
+     */
+    resetTransaction() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.exchange(LedgerWalletTypes.CMD.TX_RESET, undefined);
+        });
+    }
+    /**
+     * Starts a new transaction construction on the ledger device
+     * @param unlock_time the unlock time (or block) of the transaction
+     * @param input_count the number of inputs that will be included in the transaction
+     * @param output_count the number of outputs that will be included in the transaction
+     * @param tx_public_key the transaction public key
+     * @param payment_id the transaction payment id if one needs to be included
+     */
+    startTransaction(unlock_time = 0, input_count = 0, output_count = 0, tx_public_key, payment_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (input_count > 90 || input_count < 0) {
+                throw new RangeError('input_count not in range');
+            }
+            if (output_count > 90 || output_count < 0) {
+                throw new RangeError('output_count not in range');
+            }
+            if (!isHex64(tx_public_key)) {
+                throw new Error('Malformed tx_public_key supplied');
+            }
+            if (payment_id) {
+                if (!isHex64(payment_id)) {
+                    throw new Error('Malformed payment_id supplied');
+                }
+            }
+            const writer = new bytestream_helper_1.Writer();
+            writer.uint64_t(unlock_time, true);
+            writer.uint8_t(input_count);
+            writer.uint8_t(output_count);
+            writer.hash(tx_public_key);
+            if (payment_id) {
+                writer.uint8_t(1);
+                writer.hash(payment_id);
+            }
+            else {
+                writer.uint8_t(0);
+            }
+            yield this.exchange(LedgerWalletTypes.CMD.TX_START, undefined, writer.buffer);
+        });
+    }
+    /**
+     * Signals to the ledger that we are ready to start loading transaction inputs
+     */
+    startTransactionInputLoad() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.exchange(LedgerWalletTypes.CMD.TX_START_INPUT_LOAD, undefined);
+        });
+    }
+    /**
+     * Load a transaction input to the transaction construction process
+     * @param input_tx_public_key the transaction public key of the input
+     * @param input_output_index the output index of the transaction of the input
+     * @param amount the amount of the input
+     * @param public_keys the ring participant keys
+     * @param offsets the RELATIVE offsets of the ring participant keys
+     * @param real_output_index the index in the public_keys of the real output being spent
+     */
+    loadTransactionInput(input_tx_public_key, input_output_index, amount, public_keys, offsets, real_output_index) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!isHex64(input_tx_public_key)) {
+                throw new Error('Malformed input_tx_public_key');
+            }
+            if (input_output_index > 255 || input_output_index < 0) {
+                throw new RangeError('input_output_index out of range');
+            }
+            if (amount > config.maximumOutputAmount || amount < 0) {
+                throw new RangeError('amount out of range');
+            }
+            if (public_keys.length !== 4) {
+                throw new Error('Must supply four (4) public_key values');
+            }
+            for (const key of public_keys) {
+                if (!isHex64(key)) {
+                    throw new Error('Malformed public_key supplied');
+                }
+            }
+            if (offsets.length !== 4) {
+                throw new Error('Must supply four (4) offset values');
+            }
+            for (const offset of offsets) {
+                if (offset < 0 || offset > 4294967295) {
+                    throw new RangeError('offset value out of range');
+                }
+            }
+            if (real_output_index > 3 || real_output_index < 0) {
+                throw new RangeError('real_output_index out of range');
+            }
+            const writer = new bytestream_helper_1.Writer();
+            writer.hash(input_tx_public_key);
+            writer.uint8_t(input_output_index);
+            writer.uint64_t(amount, true);
+            for (const key of public_keys) {
+                writer.hash(key);
+            }
+            for (const offset of offsets) {
+                writer.uint32_t(offset, true);
+            }
+            writer.uint8_t(real_output_index);
+            yield this.exchange(LedgerWalletTypes.CMD.TX_LOAD_INPUT, undefined, writer.buffer);
+        });
+    }
+    /**
+     * Signals to the ledger that we are ready to start loading transaction outputs
+     */
+    startTransactionOutputLoad() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.exchange(LedgerWalletTypes.CMD.TX_START_OUTPUT_LOAD, undefined);
+        });
+    }
+    /**
+     * Load a transaction output to the transaction construction process
+     * @param amount the amount of the output
+     * @param output_key the output key
+     */
+    loadTransactionOutput(amount, output_key) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (amount < 0 || amount > config.maximumOutputAmount) {
+                throw new Error('amount out of range');
+            }
+            if (!isHex64(output_key)) {
+                throw new Error('Malformed output_key supplied');
+            }
+            const writer = new bytestream_helper_1.Writer();
+            writer.uint64_t(amount, true);
+            writer.hash(output_key);
+            yield this.exchange(LedgerWalletTypes.CMD.TX_LOAD_OUTPUT, undefined, writer.buffer);
+        });
+    }
+    /**
+     * Finalizes a transaction prefix
+     */
+    finalizeTransactionPrefix() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.exchange(LedgerWalletTypes.CMD.TX_FINALIZE_TX_PREFIX, undefined);
+        });
+    }
+    /**
+     * Instructs the ledger device to sign the transaction we have constructed
+     */
+    signTransaction() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.exchange(LedgerWalletTypes.CMD.TX_SIGN, undefined);
+            return {
+                hash: result.hash(),
+                length: result.uint16_t(true).toJSNumber()
+            };
+        });
+    }
+    /**
+     * Exports the completed full transaction that we constructed from the ledger device
+     * this method requires that you keep track of what you have exported thus far as
+     * we have to chunk the data due to the I/O buffer limitations of the ledger device
+     * @param start_offset the starting offset
+     * @param end_offset the ending offset
+     */
+    dumpTransaction(start_offset, end_offset) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (start_offset < 0 || start_offset > 38400) {
+                throw new RangeError('start_offset out of range');
+            }
+            if (end_offset < 0 || end_offset > 38400 || end_offset < start_offset) {
+                throw new RangeError('end_offset out of range');
+            }
+            if ((end_offset - start_offset) > 500) {
+                throw new RangeError('total offset range is out of range');
+            }
+            const writer = new bytestream_helper_1.Writer();
+            writer.uint16_t(start_offset, true);
+            writer.uint16_t(end_offset, true);
+            const result = yield this.exchange(LedgerWalletTypes.CMD.TX_DUMP, undefined, writer.buffer);
+            return result.unreadBuffer;
         });
     }
     /**

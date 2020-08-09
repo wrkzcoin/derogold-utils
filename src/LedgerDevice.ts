@@ -6,6 +6,9 @@ import Transport from '@ledgerhq/hw-transport';
 import { Reader, Writer } from 'bytestream-helper';
 import { EventEmitter } from 'events';
 
+/** @ignore */
+const config = require('../config.json');
+
 export namespace LedgerWalletTypes {
     /** @ignore */
     export enum APDU {
@@ -13,6 +16,17 @@ export namespace LedgerWalletTypes {
         P1_NON_CONFIRM = 0x00,
         P1_CONFIRM = 0x01,
         INS = 0xe0
+    }
+
+    export enum TransactionState {
+        INACTIVE = 0x00,
+        READY= 0x01,
+        RECEIVING_INPUTS = 0x02,
+        INPUTS_RECEIVED = 0x03,
+        RECEIVING_OUTPUTS = 0x04,
+        OUTPUTS_RECEIVED = 0x05,
+        PREFIX_READY = 0x06,
+        COMPLETE = 0x07,
     }
 
     /**
@@ -40,6 +54,16 @@ export namespace LedgerWalletTypes {
         GENERATE_KEY_DERIVATION = 0x60,
         DERIVE_PUBLIC_KEY = 0x61,
         DERIVE_SECRET_KEY = 0x62,
+        TX_STATE = 0x70,
+        TX_START = 0x71,
+        TX_START_INPUT_LOAD = 0x72,
+        TX_LOAD_INPUT = 0x73,
+        TX_START_OUTPUT_LOAD = 0x74,
+        TX_LOAD_OUTPUT = 0x75,
+        TX_FINALIZE_TX_PREFIX = 0x76,
+        TX_SIGN = 0x77,
+        TX_DUMP = 0x78,
+        TX_RESET = 0x79,
         RESET_KEYS = 0xff
     }
 
@@ -667,6 +691,243 @@ export class LedgerDevice extends EventEmitter {
         confirm = true
     ): Promise<void> {
         await this.exchange(LedgerWalletTypes.CMD.RESET_KEYS, confirm);
+    }
+
+    /**
+     * Retrieves the current state of the transaction construction process on the ledger device
+     */
+    public async transactionState (): Promise<LedgerWalletTypes.TransactionState> {
+        const result = await this.exchange(LedgerWalletTypes.CMD.TX_STATE, undefined);
+
+        return result.uint8_t().toJSNumber();
+    }
+
+    /**
+     * Resets the transaction state of the transaction construction process on the ledger device
+     */
+    public async resetTransaction (): Promise<void> {
+        await this.exchange(LedgerWalletTypes.CMD.TX_RESET, undefined);
+    }
+
+    /**
+     * Starts a new transaction construction on the ledger device
+     * @param unlock_time the unlock time (or block) of the transaction
+     * @param input_count the number of inputs that will be included in the transaction
+     * @param output_count the number of outputs that will be included in the transaction
+     * @param tx_public_key the transaction public key
+     * @param payment_id the transaction payment id if one needs to be included
+     */
+    public async startTransaction (
+        unlock_time = 0,
+        input_count = 0,
+        output_count = 0,
+        tx_public_key: string,
+        payment_id?: string
+    ): Promise<void> {
+        if (input_count > 90 || input_count < 0) {
+            throw new RangeError('input_count not in range');
+        }
+
+        if (output_count > 90 || output_count < 0) {
+            throw new RangeError('output_count not in range');
+        }
+
+        if (!isHex64(tx_public_key)) {
+            throw new Error('Malformed tx_public_key supplied');
+        }
+
+        if (payment_id) {
+            if (!isHex64(payment_id)) {
+                throw new Error('Malformed payment_id supplied');
+            }
+        }
+
+        const writer = new Writer();
+
+        writer.uint64_t(unlock_time, true);
+
+        writer.uint8_t(input_count);
+
+        writer.uint8_t(output_count);
+
+        writer.hash(tx_public_key);
+
+        if (payment_id) {
+            writer.uint8_t(1);
+
+            writer.hash(payment_id);
+        } else {
+            writer.uint8_t(0);
+        }
+
+        await this.exchange(LedgerWalletTypes.CMD.TX_START, undefined, writer.buffer);
+    }
+
+    /**
+     * Signals to the ledger that we are ready to start loading transaction inputs
+     */
+    public async startTransactionInputLoad (): Promise<void> {
+        await this.exchange(LedgerWalletTypes.CMD.TX_START_INPUT_LOAD, undefined);
+    }
+
+    /**
+     * Load a transaction input to the transaction construction process
+     * @param input_tx_public_key the transaction public key of the input
+     * @param input_output_index the output index of the transaction of the input
+     * @param amount the amount of the input
+     * @param public_keys the ring participant keys
+     * @param offsets the RELATIVE offsets of the ring participant keys
+     * @param real_output_index the index in the public_keys of the real output being spent
+     */
+    public async loadTransactionInput (
+        input_tx_public_key: string,
+        input_output_index: number,
+        amount: number,
+        public_keys: string[],
+        offsets: number[],
+        real_output_index: number
+    ): Promise<void> {
+        if (!isHex64(input_tx_public_key)) {
+            throw new Error('Malformed input_tx_public_key');
+        }
+
+        if (input_output_index > 255 || input_output_index < 0) {
+            throw new RangeError('input_output_index out of range');
+        }
+
+        if (amount > config.maximumOutputAmount || amount < 0) {
+            throw new RangeError('amount out of range');
+        }
+
+        if (public_keys.length !== 4) {
+            throw new Error('Must supply four (4) public_key values');
+        }
+
+        for (const key of public_keys) {
+            if (!isHex64(key)) {
+                throw new Error('Malformed public_key supplied');
+            }
+        }
+
+        if (offsets.length !== 4) {
+            throw new Error('Must supply four (4) offset values');
+        }
+
+        for (const offset of offsets) {
+            if (offset < 0 || offset > 4294967295) {
+                throw new RangeError('offset value out of range');
+            }
+        }
+
+        if (real_output_index > 3 || real_output_index < 0) {
+            throw new RangeError('real_output_index out of range');
+        }
+
+        const writer = new Writer();
+
+        writer.hash(input_tx_public_key);
+
+        writer.uint8_t(input_output_index);
+
+        writer.uint64_t(amount, true);
+
+        for (const key of public_keys) {
+            writer.hash(key);
+        }
+
+        for (const offset of offsets) {
+            writer.uint32_t(offset, true);
+        }
+
+        writer.uint8_t(real_output_index);
+
+        await this.exchange(LedgerWalletTypes.CMD.TX_LOAD_INPUT, undefined, writer.buffer);
+    }
+
+    /**
+     * Signals to the ledger that we are ready to start loading transaction outputs
+     */
+    public async startTransactionOutputLoad (): Promise<void> {
+        await this.exchange(LedgerWalletTypes.CMD.TX_START_OUTPUT_LOAD, undefined);
+    }
+
+    /**
+     * Load a transaction output to the transaction construction process
+     * @param amount the amount of the output
+     * @param output_key the output key
+     */
+    public async loadTransactionOutput (
+        amount: number,
+        output_key: string
+    ): Promise<void> {
+        if (amount < 0 || amount > config.maximumOutputAmount) {
+            throw new Error('amount out of range');
+        }
+
+        if (!isHex64(output_key)) {
+            throw new Error('Malformed output_key supplied');
+        }
+
+        const writer = new Writer();
+
+        writer.uint64_t(amount, true);
+
+        writer.hash(output_key);
+
+        await this.exchange(LedgerWalletTypes.CMD.TX_LOAD_OUTPUT, undefined, writer.buffer);
+    }
+
+    /**
+     * Finalizes a transaction prefix
+     */
+    public async finalizeTransactionPrefix (): Promise<void> {
+        await this.exchange(LedgerWalletTypes.CMD.TX_FINALIZE_TX_PREFIX, undefined);
+    }
+
+    /**
+     * Instructs the ledger device to sign the transaction we have constructed
+     */
+    public async signTransaction (): Promise<{hash: string, length: number}> {
+        const result = await this.exchange(LedgerWalletTypes.CMD.TX_SIGN, undefined);
+
+        return {
+            hash: result.hash(),
+            length: result.uint16_t(true).toJSNumber()
+        };
+    }
+
+    /**
+     * Exports the completed full transaction that we constructed from the ledger device
+     * this method requires that you keep track of what you have exported thus far as
+     * we have to chunk the data due to the I/O buffer limitations of the ledger device
+     * @param start_offset the starting offset
+     * @param end_offset the ending offset
+     */
+    public async dumpTransaction (
+        start_offset: number,
+        end_offset: number
+    ): Promise<Buffer> {
+        if (start_offset < 0 || start_offset > 38400) {
+            throw new RangeError('start_offset out of range');
+        }
+
+        if (end_offset < 0 || end_offset > 38400 || end_offset < start_offset) {
+            throw new RangeError('end_offset out of range');
+        }
+
+        if ((end_offset - start_offset) > 500) {
+            throw new RangeError('total offset range is out of range');
+        }
+
+        const writer = new Writer();
+
+        writer.uint16_t(start_offset, true);
+
+        writer.uint16_t(end_offset, true);
+
+        const result = await this.exchange(LedgerWalletTypes.CMD.TX_DUMP, undefined, writer.buffer);
+
+        return result.unreadBuffer;
     }
 
     /**
