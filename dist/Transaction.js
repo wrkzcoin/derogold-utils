@@ -73,6 +73,25 @@ class Transaction {
         return false;
     }
     /**
+     * Calculates the transaction fingerprint if the transaction
+     * is a coinbase transaction and it contains the information
+     * necessary to do so
+     */
+    fingerprint() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.isCoinbase) {
+                return;
+            }
+            if (!this.recipientPublicViewKey || !this.recipientPublicSpendKey) {
+                return;
+            }
+            const writer = new bytestream_helper_1.Writer();
+            writer.hash(this.recipientPublicSpendKey);
+            writer.hash(this.recipientPublicViewKey);
+            return Types_1.TurtleCoinCrypto.cn_fast_hash(writer.blob);
+        });
+    }
+    /**
      * Returns the recipient address if this is a coinbase
      * transaction and the information is available
      */

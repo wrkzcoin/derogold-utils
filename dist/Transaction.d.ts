@@ -25,6 +25,12 @@ export declare class Transaction {
      */
     get isCoinbase(): boolean;
     /**
+     * Calculates the transaction fingerprint if the transaction
+     * is a coinbase transaction and it contains the information
+     * necessary to do so
+     */
+    fingerprint(): Promise<string | undefined>;
+    /**
      * Returns the recipient address if this is a coinbase
      * transaction and the information is available
      */
