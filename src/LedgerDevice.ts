@@ -705,8 +705,10 @@ export class LedgerDevice extends EventEmitter {
     /**
      * Resets the transaction state of the transaction construction process on the ledger device
      */
-    public async resetTransaction (): Promise<void> {
-        await this.exchange(LedgerWalletTypes.CMD.TX_RESET, undefined);
+    public async resetTransaction (
+        confirm: true
+    ): Promise<void> {
+        await this.exchange(LedgerWalletTypes.CMD.TX_RESET, confirm);
     }
 
     /**
@@ -887,8 +889,10 @@ export class LedgerDevice extends EventEmitter {
     /**
      * Instructs the ledger device to sign the transaction we have constructed
      */
-    public async signTransaction (): Promise<{hash: string, length: number}> {
-        const result = await this.exchange(LedgerWalletTypes.CMD.TX_SIGN, undefined);
+    public async signTransaction (
+        confirm = true
+    ): Promise<{hash: string, length: number}> {
+        const result = await this.exchange(LedgerWalletTypes.CMD.TX_SIGN, confirm);
 
         return {
             hash: result.hash(),

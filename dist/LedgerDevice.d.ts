@@ -275,7 +275,7 @@ export declare class LedgerDevice extends EventEmitter {
     /**
      * Resets the transaction state of the transaction construction process on the ledger device
      */
-    resetTransaction(): Promise<void>;
+    resetTransaction(confirm: true): Promise<void>;
     /**
      * Starts a new transaction construction on the ledger device
      * @param unlock_time the unlock time (or block) of the transaction
@@ -316,7 +316,7 @@ export declare class LedgerDevice extends EventEmitter {
     /**
      * Instructs the ledger device to sign the transaction we have constructed
      */
-    signTransaction(): Promise<{
+    signTransaction(confirm?: boolean): Promise<{
         hash: string;
         length: number;
     }>;

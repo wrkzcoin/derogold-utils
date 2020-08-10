@@ -569,9 +569,9 @@ class LedgerDevice extends events_1.EventEmitter {
     /**
      * Resets the transaction state of the transaction construction process on the ledger device
      */
-    resetTransaction() {
+    resetTransaction(confirm) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.exchange(LedgerWalletTypes.CMD.TX_RESET, undefined);
+            yield this.exchange(LedgerWalletTypes.CMD.TX_RESET, confirm);
         });
     }
     /**
@@ -712,9 +712,9 @@ class LedgerDevice extends events_1.EventEmitter {
     /**
      * Instructs the ledger device to sign the transaction we have constructed
      */
-    signTransaction() {
+    signTransaction(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.exchange(LedgerWalletTypes.CMD.TX_SIGN, undefined);
+            const result = yield this.exchange(LedgerWalletTypes.CMD.TX_SIGN, confirm);
             return {
                 hash: result.hash(),
                 length: result.uint16_t(true).toJSNumber()
