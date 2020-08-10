@@ -569,7 +569,7 @@ class LedgerDevice extends events_1.EventEmitter {
     /**
      * Resets the transaction state of the transaction construction process on the ledger device
      */
-    resetTransaction(confirm) {
+    resetTransaction(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.exchange(LedgerWalletTypes.CMD.TX_RESET, confirm);
         });

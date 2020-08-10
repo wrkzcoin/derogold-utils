@@ -706,7 +706,7 @@ export class LedgerDevice extends EventEmitter {
      * Resets the transaction state of the transaction construction process on the ledger device
      */
     public async resetTransaction (
-        confirm: true
+        confirm = true
     ): Promise<void> {
         await this.exchange(LedgerWalletTypes.CMD.TX_RESET, confirm);
     }
