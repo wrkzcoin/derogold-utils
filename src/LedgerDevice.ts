@@ -5,6 +5,7 @@
 import Transport from '@ledgerhq/hw-transport';
 import { Reader, Writer } from 'bytestream-helper';
 import { EventEmitter } from 'events';
+import { Transaction } from './Transaction';
 
 /** @ignore */
 const config = require('../config.json');
@@ -902,24 +903,28 @@ export class LedgerDevice extends EventEmitter {
 
     /**
      * Exports the completed full transaction that we constructed from the ledger device
-     * this method requires that you keep track of what you have exported thus far as
-     * we have to chunk the data due to the I/O buffer limitations of the ledger device
-     * @param start_offset the starting offset
+     * @param tx_size the starting offset
      */
-    public async dumpTransaction (
-        start_offset: number
-    ): Promise<Buffer> {
-        if (start_offset < 0 || start_offset >= 38400) {
-            throw new RangeError('start_offset out of range');
+    public async retrieveTransaction (
+        tx_size: number
+    ): Promise<Transaction> {
+        if (tx_size < 0 || tx_size > 38400) {
+            throw new RangeError('tx_size out of range');
         }
 
-        const writer = new Writer();
+        const response = new Writer();
 
-        writer.uint16_t(start_offset, true);
+        while (response.length !== tx_size) {
+            const writer = new Writer();
 
-        const result = await this.exchange(LedgerWalletTypes.CMD.TX_DUMP, undefined, writer.buffer);
+            writer.uint16_t(response.length, true);
 
-        return result.unreadBuffer;
+            const result = await this.exchange(LedgerWalletTypes.CMD.TX_DUMP, undefined, writer.buffer);
+
+            response.write(result);
+        }
+
+        return Transaction.from(response.buffer);
     }
 
     /**

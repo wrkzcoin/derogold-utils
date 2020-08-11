@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LedgerDevice = exports.LedgerWalletTypes = void 0;
 const bytestream_helper_1 = require("bytestream-helper");
 const events_1 = require("events");
+const Transaction_1 = require("./Transaction");
 /** @ignore */
 const config = require('../config.json');
 var LedgerWalletTypes;
@@ -723,19 +724,21 @@ class LedgerDevice extends events_1.EventEmitter {
     }
     /**
      * Exports the completed full transaction that we constructed from the ledger device
-     * this method requires that you keep track of what you have exported thus far as
-     * we have to chunk the data due to the I/O buffer limitations of the ledger device
-     * @param start_offset the starting offset
+     * @param tx_size the starting offset
      */
-    dumpTransaction(start_offset) {
+    retrieveTransaction(tx_size) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (start_offset < 0 || start_offset >= 38400) {
-                throw new RangeError('start_offset out of range');
+            if (tx_size < 0 || tx_size > 38400) {
+                throw new RangeError('tx_size out of range');
             }
-            const writer = new bytestream_helper_1.Writer();
-            writer.uint16_t(start_offset, true);
-            const result = yield this.exchange(LedgerWalletTypes.CMD.TX_DUMP, undefined, writer.buffer);
-            return result.unreadBuffer;
+            const response = new bytestream_helper_1.Writer();
+            while (response.length !== tx_size) {
+                const writer = new bytestream_helper_1.Writer();
+                writer.uint16_t(response.length, true);
+                const result = yield this.exchange(LedgerWalletTypes.CMD.TX_DUMP, undefined, writer.buffer);
+                response.write(result);
+            }
+            return Transaction_1.Transaction.from(response.buffer);
         });
     }
     /**

@@ -2,6 +2,7 @@
 /// <reference types="node" />
 import Transport from '@ledgerhq/hw-transport';
 import { EventEmitter } from 'events';
+import { Transaction } from './Transaction';
 export declare namespace LedgerWalletTypes {
     /** @ignore */
     enum APDU {
@@ -322,11 +323,9 @@ export declare class LedgerDevice extends EventEmitter {
     }>;
     /**
      * Exports the completed full transaction that we constructed from the ledger device
-     * this method requires that you keep track of what you have exported thus far as
-     * we have to chunk the data due to the I/O buffer limitations of the ledger device
-     * @param start_offset the starting offset
+     * @param tx_size the starting offset
      */
-    dumpTransaction(start_offset: number): Promise<Buffer>;
+    retrieveTransaction(tx_size: number): Promise<Transaction>;
     /**
      * Exchanges an APDU with the connected device
      * @param command the command to send
