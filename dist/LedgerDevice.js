@@ -717,7 +717,7 @@ class LedgerDevice extends events_1.EventEmitter {
             const result = yield this.exchange(LedgerWalletTypes.CMD.TX_SIGN, confirm);
             return {
                 hash: result.hash(),
-                length: result.uint16_t(true).toJSNumber()
+                size: result.uint16_t(true).toJSNumber()
             };
         });
     }
@@ -726,22 +726,14 @@ class LedgerDevice extends events_1.EventEmitter {
      * this method requires that you keep track of what you have exported thus far as
      * we have to chunk the data due to the I/O buffer limitations of the ledger device
      * @param start_offset the starting offset
-     * @param end_offset the ending offset
      */
-    dumpTransaction(start_offset, end_offset) {
+    dumpTransaction(start_offset) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (start_offset < 0 || start_offset > 38400) {
+            if (start_offset < 0 || start_offset >= 38400) {
                 throw new RangeError('start_offset out of range');
-            }
-            if (end_offset < 0 || end_offset > 38400 || end_offset < start_offset) {
-                throw new RangeError('end_offset out of range');
-            }
-            if ((end_offset - start_offset) > 500) {
-                throw new RangeError('total offset range is out of range');
             }
             const writer = new bytestream_helper_1.Writer();
             writer.uint16_t(start_offset, true);
-            writer.uint16_t(end_offset, true);
             const result = yield this.exchange(LedgerWalletTypes.CMD.TX_DUMP, undefined, writer.buffer);
             return result.unreadBuffer;
         });

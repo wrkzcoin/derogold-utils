@@ -318,16 +318,15 @@ export declare class LedgerDevice extends EventEmitter {
      */
     signTransaction(confirm?: boolean): Promise<{
         hash: string;
-        length: number;
+        size: number;
     }>;
     /**
      * Exports the completed full transaction that we constructed from the ledger device
      * this method requires that you keep track of what you have exported thus far as
      * we have to chunk the data due to the I/O buffer limitations of the ledger device
      * @param start_offset the starting offset
-     * @param end_offset the ending offset
      */
-    dumpTransaction(start_offset: number, end_offset: number): Promise<Buffer>;
+    dumpTransaction(start_offset: number): Promise<Buffer>;
     /**
      * Exchanges an APDU with the connected device
      * @param command the command to send
