@@ -323,9 +323,8 @@ export declare class LedgerDevice extends EventEmitter {
     }>;
     /**
      * Exports the completed full transaction that we constructed from the ledger device
-     * @param tx_size the starting offset
      */
-    retrieveTransaction(tx_size: number): Promise<Transaction>;
+    retrieveTransaction(): Promise<Transaction>;
     /**
      * Exchanges an APDU with the connected device
      * @param command the command to send

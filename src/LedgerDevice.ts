@@ -903,23 +903,21 @@ export class LedgerDevice extends EventEmitter {
 
     /**
      * Exports the completed full transaction that we constructed from the ledger device
-     * @param tx_size the starting offset
      */
-    public async retrieveTransaction (
-        tx_size: number
-    ): Promise<Transaction> {
-        if (tx_size < 0 || tx_size > 38400) {
-            throw new RangeError('tx_size out of range');
-        }
-
+    public async retrieveTransaction (): Promise<Transaction> {
         const response = new Writer();
 
-        while (response.length !== tx_size) {
+        while (response.length < config.maximumLedgerTransactionSize) {
             const writer = new Writer();
 
             writer.uint16_t(response.length, true);
 
             const result = await this.exchange(LedgerWalletTypes.CMD.TX_DUMP, undefined, writer.buffer);
+
+            // if we didn't receive any more data, then break out of the loop
+            if (result.unreadBytes === 0) {
+                break;
+            }
 
             response.write(result.unreadBuffer);
         }

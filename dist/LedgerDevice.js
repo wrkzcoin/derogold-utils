@@ -724,18 +724,18 @@ class LedgerDevice extends events_1.EventEmitter {
     }
     /**
      * Exports the completed full transaction that we constructed from the ledger device
-     * @param tx_size the starting offset
      */
-    retrieveTransaction(tx_size) {
+    retrieveTransaction() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (tx_size < 0 || tx_size > 38400) {
-                throw new RangeError('tx_size out of range');
-            }
             const response = new bytestream_helper_1.Writer();
-            while (response.length !== tx_size) {
+            while (response.length < config.maximumLedgerTransactionSize) {
                 const writer = new bytestream_helper_1.Writer();
                 writer.uint16_t(response.length, true);
                 const result = yield this.exchange(LedgerWalletTypes.CMD.TX_DUMP, undefined, writer.buffer);
+                // if we didn't receive any more data, then break out of the loop
+                if (result.unreadBytes === 0) {
+                    break;
+                }
                 response.write(result.unreadBuffer);
             }
             return Transaction_1.Transaction.from(response.buffer);
