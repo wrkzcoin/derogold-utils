@@ -921,7 +921,7 @@ export class LedgerDevice extends EventEmitter {
 
             const result = await this.exchange(LedgerWalletTypes.CMD.TX_DUMP, undefined, writer.buffer);
 
-            response.write(result);
+            response.write(result.unreadBuffer);
         }
 
         return Transaction.from(response.buffer);

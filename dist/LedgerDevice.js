@@ -736,7 +736,7 @@ class LedgerDevice extends events_1.EventEmitter {
                 const writer = new bytestream_helper_1.Writer();
                 writer.uint16_t(response.length, true);
                 const result = yield this.exchange(LedgerWalletTypes.CMD.TX_DUMP, undefined, writer.buffer);
-                response.write(result);
+                response.write(result.unreadBuffer);
             }
             return Transaction_1.Transaction.from(response.buffer);
         });
