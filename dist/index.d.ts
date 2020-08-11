@@ -7,7 +7,7 @@ export { BlockTemplate } from './BlockTemplate';
 export { Crypto } from 'turtlecoin-crypto';
 export { CryptoNote } from './CryptoNote';
 export { Interfaces } from './Types/ITransaction';
-export { LedgerDevice } from './LedgerDevice';
+export { LedgerDevice, LedgerWalletTypes } from './LedgerDevice';
 export { LevinPacket, LevinProtocol } from './LevinPacket';
 export { LevinPayloads } from './Types/LevinPayloads';
 export { Multisig } from './Multisig';
