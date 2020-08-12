@@ -5,7 +5,7 @@
 import Transport from '@ledgerhq/hw-transport';
 import { Reader, Writer } from 'bytestream-helper';
 import { EventEmitter } from 'events';
-import { Transaction } from './Transaction';
+import { Address, KeyPair, Keys, Transaction } from './';
 
 /** @ignore */
 const config = require('../config.json');
@@ -212,13 +212,14 @@ export class LedgerDevice extends EventEmitter {
      * @param confirm whether the device will prompt the user to confirm their actions
      *        (to disable, must be running a DEBUG build)
      */
-    public async getPublicKeys (confirm = true): Promise<{ spend: string, view: string }> {
+    public async getPublicKeys (confirm = true): Promise<Keys> {
         const result = await this.exchange(LedgerWalletTypes.CMD.PUBLIC_KEYS, confirm);
 
-        return {
-            spend: result.hash(),
-            view: result.hash()
-        };
+        const spend = await KeyPair.from(result.hash());
+
+        const view = await KeyPair.from(result.hash());
+
+        return Keys.from(spend, view);
     }
 
     /**
@@ -226,10 +227,10 @@ export class LedgerDevice extends EventEmitter {
      * @param confirm whether the device will prompt the user to confirm their actions
      *        (to disable, must be running a DEBUG build)
      */
-    public async getPrivateViewKey (confirm = true): Promise<string> {
+    public async getPrivateViewKey (confirm = true): Promise<KeyPair> {
         const result = await this.exchange(LedgerWalletTypes.CMD.VIEW_SECRET_KEY, confirm);
 
-        return result.hash();
+        return KeyPair.from(undefined, result.hash());
     }
 
     /**
@@ -241,17 +242,17 @@ export class LedgerDevice extends EventEmitter {
      * @param confirm whether the device will prompt the user to confirm their actions
      *        (to disable, must be running a DEBUG build)
      */
-    public async getPrivateSpendKey (confirm = true): Promise<string> {
+    public async getPrivateSpendKey (confirm = true): Promise<KeyPair> {
         const result = await this.exchange(LedgerWalletTypes.CMD.SPEND_ESECRET_KEY, confirm);
 
-        return result.hash();
+        return KeyPair.from(undefined, result.hash());
     }
 
     /**
      * Calculates the public key for the given private key
      * @param private_key the private key
      */
-    public async privateToPublic (private_key: string): Promise<string> {
+    public async privateToPublic (private_key: string): Promise<KeyPair> {
         if (!isHex64(private_key)) {
             throw new Error('Malformed private_key supplied');
         }
@@ -262,19 +263,16 @@ export class LedgerDevice extends EventEmitter {
 
         const result = await this.exchange(LedgerWalletTypes.CMD.PRIVATE_TO_PUBLIC, undefined, writer.buffer);
 
-        return result.hash();
+        return KeyPair.from(result.hash());
     }
 
     /**
      * Generates a random key pair on the connected device
      */
-    public async getRandomKeyPair (): Promise<{ public: string, private: string }> {
+    public async getRandomKeyPair (): Promise<KeyPair> {
         const result = await this.exchange(LedgerWalletTypes.CMD.RANDOM_KEY_PAIR);
 
-        return {
-            public: result.hash(),
-            private: result.hash()
-        };
+        return KeyPair.from(result.hash(), result.hash());
     }
 
     /**
@@ -282,10 +280,10 @@ export class LedgerDevice extends EventEmitter {
      * @param confirm whether the device will prompt the user to confirm their actions
      *        (to disable, must be running a DEBUG build)
      */
-    public async getAddress (confirm = true): Promise<string> {
+    public async getAddress (confirm = true): Promise<Address> {
         const result = await this.exchange(LedgerWalletTypes.CMD.ADDRESS, confirm);
 
-        return result.unreadBuffer.toString();
+        return Address.fromAddress(result.unreadBuffer.toString());
     }
 
     /**
@@ -531,7 +529,7 @@ export class LedgerDevice extends EventEmitter {
         derivation: string,
         output_index: number,
         confirm = true
-    ): Promise<string> {
+    ): Promise<KeyPair> {
         if (!isHex64(derivation)) {
             throw new Error('Malformed derivation supplied');
         }
@@ -548,7 +546,7 @@ export class LedgerDevice extends EventEmitter {
 
         const result = await this.exchange(LedgerWalletTypes.CMD.DERIVE_PUBLIC_KEY, confirm, writer.buffer);
 
-        return result.hash();
+        return KeyPair.from(result.hash());
     }
 
     /**
@@ -562,7 +560,7 @@ export class LedgerDevice extends EventEmitter {
         derivation: string,
         output_index: number,
         confirm = true
-    ): Promise<string> {
+    ): Promise<KeyPair> {
         if (!isHex64(derivation)) {
             throw new Error('Malformed derivation supplied');
         }
@@ -579,7 +577,7 @@ export class LedgerDevice extends EventEmitter {
 
         const result = await this.exchange(LedgerWalletTypes.CMD.DERIVE_SECRET_KEY, confirm, writer.buffer);
 
-        return result.hash();
+        return KeyPair.from(undefined, result.hash());
     }
 
     /**
