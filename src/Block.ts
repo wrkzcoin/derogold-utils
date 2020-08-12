@@ -305,7 +305,7 @@ export class Block {
 
             const p_extra = reader.bytes(p_extraLength);
 
-            block.m_parentBlock.minerTransaction.parseExtra(p_extra);
+            await block.m_parentBlock.minerTransaction.parseExtra(p_extra);
 
             if (block.m_parentBlock.minerTransaction.version >= 2) {
                 block.m_parentBlock.minerTransaction.ignoredField = reader.varint().toJSNumber();
@@ -352,7 +352,7 @@ export class Block {
 
         const extra = reader.bytes(extraLength);
 
-        block.m_minerTransaction.parseExtra(extra);
+        await block.m_minerTransaction.parseExtra(extra);
 
         const txnCount = reader.varint().toJSNumber();
 
