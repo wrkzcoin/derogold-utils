@@ -201,6 +201,8 @@ describe('Cryptography', async function () {
 });
 
 describe('Wallets', async function () {
+    this.timeout(30000);
+
     const rawSeed = 'dd0c02d3202634821b4d9d91b63d919725f5c3e97e803f3512e52fb0dc2aab0c';
     const rawMnemonic = [
         'teeming', 'taken', 'piano', 'ramped', 'vegan',
@@ -351,7 +353,9 @@ describe('Wallets', async function () {
     });
 });
 
-describe('SubWallets', async () => {
+describe('SubWallets', async function () {
+    this.timeout(30000);
+
     let baseWallet: Address;
     let subWallets: Address[] = [];
 
@@ -1609,8 +1613,6 @@ describe('Blocks', async function () {
     });
 
     describe('Hashing', async function () {
-        this.timeout(30000);
-
         interface IBlock {
             block: string;
             hash: string;
@@ -1624,9 +1626,7 @@ describe('Blocks', async function () {
             const testBlock = await Block.from(block.block);
 
             describe('Test block v' + testBlock.majorVersion + '.' + testBlock.minorVersion + ' #' + testBlock.height,
-                function () {
-                    this.timeout(30000);
-
+                async () => {
                     it('serialization works', async () => {
                         assert(await testBlock.toString() === block.block);
                     });
@@ -1647,7 +1647,9 @@ describe('Blocks', async function () {
     });
 });
 
-describe('Peer-to-Peer', async () => {
+describe('Peer-to-Peer', async function () {
+    this.timeout(30000);
+
     describe('1001: COMMAND_HANDSHAKE', async () => {
         it('Request', async () => {
             const raw = require('./levin_packets.json').COMMAND_HANDSHAKE;
