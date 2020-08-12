@@ -3,7 +3,7 @@
 // Please see the included LICENSE file for more information.
 
 import { Reader, Writer } from 'bytestream-helper';
-import { ExtraNonceTag, TurtleCoinCrypto } from '../Types';
+import { ExtraNonceTag } from '../Types';
 import { Common } from '../Common';
 
 /** @ignore */
@@ -181,11 +181,7 @@ export namespace ExtraTag {
          * @param publicKey the public key to be stored in the field
          */
         constructor (publicKey: string) {
-            if (TurtleCoinCrypto.checkKey(publicKey)) {
-                this.m_publicKey = publicKey;
-            } else {
-                throw new Error('invalid publicKey supplied');
-            }
+            this.m_publicKey = publicKey;
         }
 
         /**
@@ -584,11 +580,7 @@ export namespace ExtraTag {
          * @param privateKey the public key to be stored in the field
          */
         constructor (privateKey: string) {
-            if (TurtleCoinCrypto.checkScalar(privateKey)) {
-                this.m_privateKey = privateKey;
-            } else {
-                throw new Error('invalid private key supplied');
-            }
+            this.m_privateKey = privateKey;
         }
 
         /**
@@ -670,11 +662,7 @@ export namespace ExtraTag {
          * @param publicKey the public key to be stored in the field
          */
         constructor (publicKey: string) {
-            if (TurtleCoinCrypto.checkKey(publicKey)) {
-                this.m_publicKey = publicKey;
-            } else {
-                throw new Error('invalid public key supplied');
-            }
+            this.m_publicKey = publicKey;
         }
 
         /**
@@ -756,11 +744,7 @@ export namespace ExtraTag {
          * @param publicKey the public key to be stored in the field
          */
         constructor (publicKey: string) {
-            if (TurtleCoinCrypto.checkKey(publicKey)) {
-                this.m_publicKey = publicKey;
-            } else {
-                throw new Error('invalid public key supplied');
-            }
+            this.m_publicKey = publicKey;
         }
 
         /**
