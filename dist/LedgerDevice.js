@@ -1,5 +1,5 @@
 "use strict";
-// Copyright (c) 2018-2020, The TurtleCoin Developers
+// Copyright (c) 2020, The TurtleCoin Developers
 //
 // Please see the included LICENSE file for more information.
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -12,96 +12,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LedgerDevice = exports.LedgerWalletTypes = void 0;
+exports.LedgerDevice = void 0;
 const bytestream_helper_1 = require("bytestream-helper");
 const events_1 = require("events");
-const Transaction_1 = require("./Transaction");
+const _1 = require("./");
+const Ledger_1 = require("./Types/Ledger");
 /** @ignore */
 const config = require('../config.json');
-var LedgerWalletTypes;
-(function (LedgerWalletTypes) {
-    /** @ignore */
-    let APDU;
-    (function (APDU) {
-        APDU[APDU["P2"] = 0] = "P2";
-        APDU[APDU["P1_NON_CONFIRM"] = 0] = "P1_NON_CONFIRM";
-        APDU[APDU["P1_CONFIRM"] = 1] = "P1_CONFIRM";
-        APDU[APDU["INS"] = 224] = "INS";
-    })(APDU = LedgerWalletTypes.APDU || (LedgerWalletTypes.APDU = {}));
-    let TransactionState;
-    (function (TransactionState) {
-        TransactionState[TransactionState["INACTIVE"] = 0] = "INACTIVE";
-        TransactionState[TransactionState["READY"] = 1] = "READY";
-        TransactionState[TransactionState["RECEIVING_INPUTS"] = 2] = "RECEIVING_INPUTS";
-        TransactionState[TransactionState["INPUTS_RECEIVED"] = 3] = "INPUTS_RECEIVED";
-        TransactionState[TransactionState["RECEIVING_OUTPUTS"] = 4] = "RECEIVING_OUTPUTS";
-        TransactionState[TransactionState["OUTPUTS_RECEIVED"] = 5] = "OUTPUTS_RECEIVED";
-        TransactionState[TransactionState["PREFIX_READY"] = 6] = "PREFIX_READY";
-        TransactionState[TransactionState["COMPLETE"] = 7] = "COMPLETE";
-    })(TransactionState = LedgerWalletTypes.TransactionState || (LedgerWalletTypes.TransactionState = {}));
-    /**
-     * Represents the APDU command types available in the TurtleCoin application
-     * for ledger hardware wallets
-     */
-    let CMD;
-    (function (CMD) {
-        CMD[CMD["VERSION"] = 1] = "VERSION";
-        CMD[CMD["DEBUG"] = 2] = "DEBUG";
-        CMD[CMD["IDENT"] = 5] = "IDENT";
-        CMD[CMD["PUBLIC_KEYS"] = 16] = "PUBLIC_KEYS";
-        CMD[CMD["VIEW_SECRET_KEY"] = 17] = "VIEW_SECRET_KEY";
-        CMD[CMD["SPEND_ESECRET_KEY"] = 18] = "SPEND_ESECRET_KEY";
-        CMD[CMD["CHECK_KEY"] = 22] = "CHECK_KEY";
-        CMD[CMD["CHECK_SCALAR"] = 23] = "CHECK_SCALAR";
-        CMD[CMD["PRIVATE_TO_PUBLIC"] = 24] = "PRIVATE_TO_PUBLIC";
-        CMD[CMD["RANDOM_KEY_PAIR"] = 25] = "RANDOM_KEY_PAIR";
-        CMD[CMD["ADDRESS"] = 48] = "ADDRESS";
-        CMD[CMD["GENERATE_KEY_IMAGE"] = 64] = "GENERATE_KEY_IMAGE";
-        CMD[CMD["GENERATE_RING_SIGNATURES"] = 80] = "GENERATE_RING_SIGNATURES";
-        CMD[CMD["COMPLETE_RING_SIGNATURE"] = 81] = "COMPLETE_RING_SIGNATURE";
-        CMD[CMD["CHECK_RING_SIGNATURES"] = 82] = "CHECK_RING_SIGNATURES";
-        CMD[CMD["GENERATE_SIGNATURE"] = 85] = "GENERATE_SIGNATURE";
-        CMD[CMD["CHECK_SIGNATURE"] = 86] = "CHECK_SIGNATURE";
-        CMD[CMD["GENERATE_KEY_DERIVATION"] = 96] = "GENERATE_KEY_DERIVATION";
-        CMD[CMD["DERIVE_PUBLIC_KEY"] = 97] = "DERIVE_PUBLIC_KEY";
-        CMD[CMD["DERIVE_SECRET_KEY"] = 98] = "DERIVE_SECRET_KEY";
-        CMD[CMD["TX_STATE"] = 112] = "TX_STATE";
-        CMD[CMD["TX_START"] = 113] = "TX_START";
-        CMD[CMD["TX_START_INPUT_LOAD"] = 114] = "TX_START_INPUT_LOAD";
-        CMD[CMD["TX_LOAD_INPUT"] = 115] = "TX_LOAD_INPUT";
-        CMD[CMD["TX_START_OUTPUT_LOAD"] = 116] = "TX_START_OUTPUT_LOAD";
-        CMD[CMD["TX_LOAD_OUTPUT"] = 117] = "TX_LOAD_OUTPUT";
-        CMD[CMD["TX_FINALIZE_TX_PREFIX"] = 118] = "TX_FINALIZE_TX_PREFIX";
-        CMD[CMD["TX_SIGN"] = 119] = "TX_SIGN";
-        CMD[CMD["TX_DUMP"] = 120] = "TX_DUMP";
-        CMD[CMD["TX_RESET"] = 121] = "TX_RESET";
-        CMD[CMD["RESET_KEYS"] = 255] = "RESET_KEYS";
-    })(CMD = LedgerWalletTypes.CMD || (LedgerWalletTypes.CMD = {}));
-    /**
-     * Represents the possible errors returned by the application
-     * on the ledger device
-     */
-    let ErrorCode;
-    (function (ErrorCode) {
-        ErrorCode[ErrorCode["OK"] = 36864] = "OK";
-        ErrorCode[ErrorCode["ERR_OP_NOT_PERMITTED"] = 16384] = "ERR_OP_NOT_PERMITTED";
-        ErrorCode[ErrorCode["ERR_OP_USER_REQUIRED"] = 16385] = "ERR_OP_USER_REQUIRED";
-        ErrorCode[ErrorCode["ERR_UNKNOWN_ERROR"] = 17476] = "ERR_UNKNOWN_ERROR";
-        ErrorCode[ErrorCode["ERR_VARINT_DATA_RANGE"] = 24576] = "ERR_VARINT_DATA_RANGE";
-        ErrorCode[ErrorCode["ERR_PRIVATE_SPEND"] = 37888] = "ERR_PRIVATE_SPEND";
-        ErrorCode[ErrorCode["ERR_PRIVATE_VIEW"] = 37889] = "ERR_PRIVATE_VIEW";
-        ErrorCode[ErrorCode["ERR_RESET_KEYS"] = 37890] = "ERR_RESET_KEYS";
-        ErrorCode[ErrorCode["ERR_ADDRESS"] = 37968] = "ERR_ADDRESS";
-        ErrorCode[ErrorCode["ERR_KEY_DERIVATION"] = 38144] = "ERR_KEY_DERIVATION";
-        ErrorCode[ErrorCode["ERR_DERIVE_PUBKEY"] = 38145] = "ERR_DERIVE_PUBKEY";
-        ErrorCode[ErrorCode["ERR_PUBKEY_MISMATCH"] = 38146] = "ERR_PUBKEY_MISMATCH";
-        ErrorCode[ErrorCode["ERR_DERIVE_SECKEY"] = 38147] = "ERR_DERIVE_SECKEY";
-        ErrorCode[ErrorCode["ERR_KECCAK"] = 38148] = "ERR_KECCAK";
-        ErrorCode[ErrorCode["ERR_COMPLETE_RING_SIG"] = 38149] = "ERR_COMPLETE_RING_SIG";
-        ErrorCode[ErrorCode["ERR_GENERATE_KEY_IMAGE"] = 38150] = "ERR_GENERATE_KEY_IMAGE";
-        ErrorCode[ErrorCode["ERR_SECKEY_TO_PUBKEY"] = 38151] = "ERR_SECKEY_TO_PUBKEY";
-    })(ErrorCode = LedgerWalletTypes.ErrorCode || (LedgerWalletTypes.ErrorCode = {}));
-})(LedgerWalletTypes = exports.LedgerWalletTypes || (exports.LedgerWalletTypes = {}));
 /**
  * An easy to use interface that uses a Ledger HW transport to communicate with
  * the TurtleCoin application running on a ledger device.
@@ -133,7 +50,7 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     getVersion() {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.exchange(LedgerWalletTypes.CMD.VERSION);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.VERSION);
             return {
                 major: result.uint8_t().toJSNumber(),
                 minor: result.uint8_t().toJSNumber(),
@@ -146,7 +63,7 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     isDebug() {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.exchange(LedgerWalletTypes.CMD.DEBUG);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.DEBUG);
             return (result.uint8_t().toJSNumber() === 1);
         });
     }
@@ -156,7 +73,7 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     getIdent() {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.exchange(LedgerWalletTypes.CMD.IDENT);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.IDENT);
             return result.unreadBuffer.toString('hex');
         });
     }
@@ -171,7 +88,7 @@ class LedgerDevice extends events_1.EventEmitter {
             }
             const writer = new bytestream_helper_1.Writer();
             writer.hash(key);
-            const result = yield this.exchange(LedgerWalletTypes.CMD.CHECK_KEY, undefined, writer.buffer);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.CHECK_KEY, undefined, writer.buffer);
             return (result.uint8_t().toJSNumber() === 1);
         });
     }
@@ -186,7 +103,7 @@ class LedgerDevice extends events_1.EventEmitter {
             }
             const writer = new bytestream_helper_1.Writer();
             writer.hash(scalar);
-            const result = yield this.exchange(LedgerWalletTypes.CMD.CHECK_SCALAR, undefined, writer.buffer);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.CHECK_SCALAR, undefined, writer.buffer);
             return (result.uint8_t().toJSNumber() === 1);
         });
     }
@@ -197,11 +114,10 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     getPublicKeys(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.exchange(LedgerWalletTypes.CMD.PUBLIC_KEYS, confirm);
-            return {
-                spend: result.hash(),
-                view: result.hash()
-            };
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.PUBLIC_KEYS, confirm);
+            const spend = yield _1.KeyPair.from(result.hash());
+            const view = yield _1.KeyPair.from(result.hash());
+            return _1.Keys.from(spend, view);
         });
     }
     /**
@@ -211,8 +127,8 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     getPrivateViewKey(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.exchange(LedgerWalletTypes.CMD.VIEW_SECRET_KEY, confirm);
-            return result.hash();
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.VIEW_SECRET_KEY, confirm);
+            return _1.KeyPair.from(undefined, result.hash());
         });
     }
     /**
@@ -226,8 +142,8 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     getPrivateSpendKey(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.exchange(LedgerWalletTypes.CMD.SPEND_ESECRET_KEY, confirm);
-            return result.hash();
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.SPEND_ESECRET_KEY, confirm);
+            return _1.KeyPair.from(undefined, result.hash());
         });
     }
     /**
@@ -241,8 +157,8 @@ class LedgerDevice extends events_1.EventEmitter {
             }
             const writer = new bytestream_helper_1.Writer();
             writer.hash(private_key);
-            const result = yield this.exchange(LedgerWalletTypes.CMD.PRIVATE_TO_PUBLIC, undefined, writer.buffer);
-            return result.hash();
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.PRIVATE_TO_PUBLIC, undefined, writer.buffer);
+            return _1.KeyPair.from(result.hash());
         });
     }
     /**
@@ -250,11 +166,8 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     getRandomKeyPair() {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.exchange(LedgerWalletTypes.CMD.RANDOM_KEY_PAIR);
-            return {
-                public: result.hash(),
-                private: result.hash()
-            };
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.RANDOM_KEY_PAIR);
+            return _1.KeyPair.from(result.hash(), result.hash());
         });
     }
     /**
@@ -264,8 +177,8 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     getAddress(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.exchange(LedgerWalletTypes.CMD.ADDRESS, confirm);
-            return result.unreadBuffer.toString();
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.ADDRESS, confirm);
+            return _1.Address.fromAddress(result.unreadBuffer.toString());
         });
     }
     /**
@@ -291,7 +204,7 @@ class LedgerDevice extends events_1.EventEmitter {
             writer.hash(tx_public_key);
             writer.uint32_t(output_index, true);
             writer.hash(output_key);
-            const result = yield this.exchange(LedgerWalletTypes.CMD.GENERATE_KEY_IMAGE, confirm, writer.buffer);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.GENERATE_KEY_IMAGE, confirm, writer.buffer);
             return result.hash();
         });
     }
@@ -328,7 +241,7 @@ class LedgerDevice extends events_1.EventEmitter {
             writer.hash(output_key);
             writer.hash(k);
             writer.hex(signature);
-            const result = yield this.exchange(LedgerWalletTypes.CMD.COMPLETE_RING_SIGNATURE, confirm, writer.buffer);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.COMPLETE_RING_SIGNATURE, confirm, writer.buffer);
             return result.hex(64);
         });
     }
@@ -379,7 +292,7 @@ class LedgerDevice extends events_1.EventEmitter {
                 writer.hash(input);
             }
             writer.uint32_t(real_output_index, true);
-            const result = yield this.exchange(LedgerWalletTypes.CMD.GENERATE_RING_SIGNATURES, confirm, writer.buffer);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.GENERATE_RING_SIGNATURES, confirm, writer.buffer);
             if (result.length % 64 !== 0) {
                 throw new Error('Data returned does not appear to be a set of signatures');
             }
@@ -406,7 +319,7 @@ class LedgerDevice extends events_1.EventEmitter {
             }
             const writer = new bytestream_helper_1.Writer();
             writer.hash(message_digest);
-            const result = yield this.exchange(LedgerWalletTypes.CMD.GENERATE_SIGNATURE, confirm, writer.buffer);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.GENERATE_SIGNATURE, confirm, writer.buffer);
             if (result.length !== 64) {
                 throw new Error('Data returned does not appear to be a signature');
             }
@@ -427,7 +340,7 @@ class LedgerDevice extends events_1.EventEmitter {
             }
             const writer = new bytestream_helper_1.Writer();
             writer.hash(tx_public_key);
-            const result = yield this.exchange(LedgerWalletTypes.CMD.GENERATE_KEY_DERIVATION, confirm, writer.buffer);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.GENERATE_KEY_DERIVATION, confirm, writer.buffer);
             return result.hash();
         });
     }
@@ -449,8 +362,8 @@ class LedgerDevice extends events_1.EventEmitter {
             const writer = new bytestream_helper_1.Writer();
             writer.hash(derivation);
             writer.uint32_t(output_index, true);
-            const result = yield this.exchange(LedgerWalletTypes.CMD.DERIVE_PUBLIC_KEY, confirm, writer.buffer);
-            return result.hash();
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.DERIVE_PUBLIC_KEY, confirm, writer.buffer);
+            return _1.KeyPair.from(result.hash());
         });
     }
     /**
@@ -471,8 +384,8 @@ class LedgerDevice extends events_1.EventEmitter {
             const writer = new bytestream_helper_1.Writer();
             writer.hash(derivation);
             writer.uint32_t(output_index, true);
-            const result = yield this.exchange(LedgerWalletTypes.CMD.DERIVE_SECRET_KEY, confirm, writer.buffer);
-            return result.hash();
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.DERIVE_SECRET_KEY, confirm, writer.buffer);
+            return _1.KeyPair.from(undefined, result.hash());
         });
     }
     /**
@@ -496,7 +409,7 @@ class LedgerDevice extends events_1.EventEmitter {
             writer.hash(message_digest);
             writer.hash(public_key);
             writer.hex(signature);
-            const result = yield this.exchange(LedgerWalletTypes.CMD.CHECK_SIGNATURE, undefined, writer.buffer);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.CHECK_SIGNATURE, undefined, writer.buffer);
             return (result.uint8_t().toJSNumber() === 1);
         });
     }
@@ -544,7 +457,7 @@ class LedgerDevice extends events_1.EventEmitter {
             for (const sig of signatures) {
                 writer.hex(sig);
             }
-            const result = yield this.exchange(LedgerWalletTypes.CMD.CHECK_RING_SIGNATURES, undefined, writer.buffer);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.CHECK_RING_SIGNATURES, undefined, writer.buffer);
             return (result.uint8_t().toJSNumber() === 1);
         });
     }
@@ -555,7 +468,7 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     resetKeys(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.exchange(LedgerWalletTypes.CMD.RESET_KEYS, confirm);
+            yield this.exchange(Ledger_1.LedgerTypes.Command.RESET_KEYS, confirm);
         });
     }
     /**
@@ -563,7 +476,7 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     transactionState() {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.exchange(LedgerWalletTypes.CMD.TX_STATE, undefined);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.TX_STATE, undefined);
             return result.uint8_t().toJSNumber();
         });
     }
@@ -572,7 +485,7 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     resetTransaction(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.exchange(LedgerWalletTypes.CMD.TX_RESET, confirm);
+            yield this.exchange(Ledger_1.LedgerTypes.Command.TX_RESET, confirm);
         });
     }
     /**
@@ -611,7 +524,7 @@ class LedgerDevice extends events_1.EventEmitter {
             else {
                 writer.uint8_t(0);
             }
-            yield this.exchange(LedgerWalletTypes.CMD.TX_START, undefined, writer.buffer);
+            yield this.exchange(Ledger_1.LedgerTypes.Command.TX_START, undefined, writer.buffer);
         });
     }
     /**
@@ -619,7 +532,7 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     startTransactionInputLoad() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.exchange(LedgerWalletTypes.CMD.TX_START_INPUT_LOAD, undefined);
+            yield this.exchange(Ledger_1.LedgerTypes.Command.TX_START_INPUT_LOAD, undefined);
         });
     }
     /**
@@ -672,7 +585,7 @@ class LedgerDevice extends events_1.EventEmitter {
                 writer.uint32_t(offset, true);
             }
             writer.uint8_t(real_output_index);
-            yield this.exchange(LedgerWalletTypes.CMD.TX_LOAD_INPUT, undefined, writer.buffer);
+            yield this.exchange(Ledger_1.LedgerTypes.Command.TX_LOAD_INPUT, undefined, writer.buffer);
         });
     }
     /**
@@ -680,7 +593,7 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     startTransactionOutputLoad() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.exchange(LedgerWalletTypes.CMD.TX_START_OUTPUT_LOAD, undefined);
+            yield this.exchange(Ledger_1.LedgerTypes.Command.TX_START_OUTPUT_LOAD, undefined);
         });
     }
     /**
@@ -699,7 +612,7 @@ class LedgerDevice extends events_1.EventEmitter {
             const writer = new bytestream_helper_1.Writer();
             writer.uint64_t(amount, true);
             writer.hash(output_key);
-            yield this.exchange(LedgerWalletTypes.CMD.TX_LOAD_OUTPUT, undefined, writer.buffer);
+            yield this.exchange(Ledger_1.LedgerTypes.Command.TX_LOAD_OUTPUT, undefined, writer.buffer);
         });
     }
     /**
@@ -707,7 +620,7 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     finalizeTransactionPrefix() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.exchange(LedgerWalletTypes.CMD.TX_FINALIZE_TX_PREFIX, undefined);
+            yield this.exchange(Ledger_1.LedgerTypes.Command.TX_FINALIZE_TX_PREFIX, undefined);
         });
     }
     /**
@@ -715,7 +628,7 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     signTransaction(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.exchange(LedgerWalletTypes.CMD.TX_SIGN, confirm);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.TX_SIGN, confirm);
             return {
                 hash: result.hash(),
                 size: result.uint16_t(true).toJSNumber()
@@ -731,14 +644,14 @@ class LedgerDevice extends events_1.EventEmitter {
             while (response.length < config.maximumLedgerTransactionSize) {
                 const writer = new bytestream_helper_1.Writer();
                 writer.uint16_t(response.length, true);
-                const result = yield this.exchange(LedgerWalletTypes.CMD.TX_DUMP, undefined, writer.buffer);
+                const result = yield this.exchange(Ledger_1.LedgerTypes.Command.TX_DUMP, undefined, writer.buffer);
                 // if we didn't receive any more data, then break out of the loop
                 if (result.unreadBytes === 0) {
                     break;
                 }
                 response.write(result.unreadBuffer);
             }
-            return Transaction_1.Transaction.from(response.buffer);
+            return _1.Transaction.from(response.buffer);
         });
     }
     /**
@@ -751,17 +664,17 @@ class LedgerDevice extends events_1.EventEmitter {
     exchange(command, confirm = true, data) {
         return __awaiter(this, void 0, void 0, function* () {
             const writer = new bytestream_helper_1.Writer();
-            writer.uint8_t(LedgerWalletTypes.APDU.INS);
+            writer.uint8_t(Ledger_1.LedgerTypes.APDU.INS);
             writer.uint8_t(command);
             if (confirm) {
-                writer.uint8_t(LedgerWalletTypes.APDU.P1_CONFIRM);
+                writer.uint8_t(Ledger_1.LedgerTypes.APDU.P1_CONFIRM);
             }
             else {
-                writer.uint8_t(LedgerWalletTypes.APDU.P1_NON_CONFIRM);
+                writer.uint8_t(Ledger_1.LedgerTypes.APDU.P1_NON_CONFIRM);
             }
-            writer.uint8_t(LedgerWalletTypes.APDU.P2);
+            writer.uint8_t(Ledger_1.LedgerTypes.APDU.P2);
             if (data) {
-                if (data.length > (512 - 6)) {
+                if (data.length > (config.maximumLedgerAPDUPayloadSize - 6)) {
                     throw new Error('Data payload exceeds maximum size');
                 }
                 writer.uint16_t(data.length, true);
@@ -777,11 +690,11 @@ class LedgerDevice extends events_1.EventEmitter {
             const response = new bytestream_helper_1.Reader(result.slice(0, result.length - code.length));
             const reader = new bytestream_helper_1.Reader(code);
             let errCode = reader.uint16_t(true).toJSNumber();
-            if (errCode !== LedgerWalletTypes.ErrorCode.OK) {
+            if (errCode !== Ledger_1.LedgerTypes.ErrorCode.OK) {
                 if (response.length >= 2) {
                     errCode = response.uint16_t(true).toJSNumber();
                 }
-                throw new Error('Could not complete request: ' + errCode);
+                throw new Ledger_1.LedgerTypes.LedgerError(errCode, 'Could not complete request');
             }
             return response;
         });

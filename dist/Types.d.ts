@@ -17,5 +17,6 @@ export * from './Types/ED25519';
 export * from './Types/ITransaction';
 export * from './Types/MultisigInterfaces';
 export * from './Types/ICryptoNote';
+export * from './Types/Ledger';
 export { PortableStorage, StorageType } from './Types/PortableStorage';
 export { BigInteger };

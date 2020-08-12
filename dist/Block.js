@@ -270,7 +270,7 @@ class Block {
                 }
                 const p_extraLength = reader.varint().toJSNumber();
                 const p_extra = reader.bytes(p_extraLength);
-                block.m_parentBlock.minerTransaction.parseExtra(p_extra);
+                yield block.m_parentBlock.minerTransaction.parseExtra(p_extra);
                 if (block.m_parentBlock.minerTransaction.version >= 2) {
                     block.m_parentBlock.minerTransaction.ignoredField = reader.varint().toJSNumber();
                 }
@@ -304,7 +304,7 @@ class Block {
             }
             const extraLength = reader.varint().toJSNumber();
             const extra = reader.bytes(extraLength);
-            block.m_minerTransaction.parseExtra(extra);
+            yield block.m_minerTransaction.parseExtra(extra);
             const txnCount = reader.varint().toJSNumber();
             for (let i = 0; i < txnCount; i++) {
                 block.m_transactions.push(reader.hash());

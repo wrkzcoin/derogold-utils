@@ -104,12 +104,7 @@ var ExtraTag;
         constructor(publicKey) {
             this.m_tag = ExtraTagType.PUBKEY;
             this.m_publicKey = '';
-            if (Types_1.TurtleCoinCrypto.checkKey(publicKey)) {
-                this.m_publicKey = publicKey;
-            }
-            else {
-                throw new Error('invalid publicKey supplied');
-            }
+            this.m_publicKey = publicKey;
         }
         /**
          * The tag type of the field
@@ -445,12 +440,7 @@ var ExtraTag;
         constructor(privateKey) {
             this.m_tag = ExtraTagType.TRANSACTION_PRIVATE_KEY;
             this.m_privateKey = '';
-            if (Types_1.TurtleCoinCrypto.checkScalar(privateKey)) {
-                this.m_privateKey = privateKey;
-            }
-            else {
-                throw new Error('invalid private key supplied');
-            }
+            this.m_privateKey = privateKey;
         }
         /**
          * The tag type of the field
@@ -518,12 +508,7 @@ var ExtraTag;
         constructor(publicKey) {
             this.m_tag = ExtraTagType.RECIPIENT_PUBLIC_VIEW_KEY;
             this.m_publicKey = '';
-            if (Types_1.TurtleCoinCrypto.checkKey(publicKey)) {
-                this.m_publicKey = publicKey;
-            }
-            else {
-                throw new Error('invalid public key supplied');
-            }
+            this.m_publicKey = publicKey;
         }
         /**
          * The tag type of the field
@@ -591,12 +576,7 @@ var ExtraTag;
         constructor(publicKey) {
             this.m_tag = ExtraTagType.RECIPIENT_PUBLIC_SPEND_KEY;
             this.m_publicKey = '';
-            if (Types_1.TurtleCoinCrypto.checkKey(publicKey)) {
-                this.m_publicKey = publicKey;
-            }
-            else {
-                throw new Error('invalid public key supplied');
-            }
+            this.m_publicKey = publicKey;
         }
         /**
          * The tag type of the field

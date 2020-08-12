@@ -35,6 +35,7 @@ __exportStar(require("./Types/ED25519"), exports);
 __exportStar(require("./Types/ITransaction"), exports);
 __exportStar(require("./Types/MultisigInterfaces"), exports);
 __exportStar(require("./Types/ICryptoNote"), exports);
+__exportStar(require("./Types/Ledger"), exports);
 var PortableStorage_1 = require("./Types/PortableStorage");
 Object.defineProperty(exports, "PortableStorage", { enumerable: true, get: function () { return PortableStorage_1.PortableStorage; } });
 Object.defineProperty(exports, "StorageType", { enumerable: true, get: function () { return PortableStorage_1.StorageType; } });

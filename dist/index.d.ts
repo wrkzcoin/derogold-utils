@@ -7,7 +7,7 @@ export { BlockTemplate } from './BlockTemplate';
 export { Crypto } from 'turtlecoin-crypto';
 export { CryptoNote } from './CryptoNote';
 export { Interfaces } from './Types/ITransaction';
-export { LedgerDevice, LedgerWalletTypes } from './LedgerDevice';
+export { LedgerDevice } from './LedgerDevice';
 export { LevinPacket, LevinProtocol } from './LevinPacket';
 export { LevinPayloads } from './Types/LevinPayloads';
 export { Multisig } from './Multisig';
@@ -27,7 +27,13 @@ import KeyPair = Types.ED25519.KeyPair;
 /** @ignore */
 import Keys = Types.ED25519.Keys;
 /** @ignore */
-export { KeyInput, KeyOutput, KeyPair, Keys, TransactionInputs, TransactionOutputs };
+import LedgerError = Types.LedgerTypes.LedgerError;
+/** @ignore */
+import LedgerTransactionState = Types.LedgerTypes.TransactionState;
+/** @ignore */
+import LedgerErrorCode = Types.LedgerTypes.ErrorCode;
+/** @ignore */
+export { KeyInput, KeyOutput, KeyPair, Keys, TransactionInputs, TransactionOutputs, LedgerError, LedgerTransactionState, LedgerErrorCode };
 /**
  * Executes the callback method upon the given event
  * @param event

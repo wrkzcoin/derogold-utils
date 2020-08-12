@@ -3,7 +3,7 @@
 //
 // Please see the included LICENSE file for more information.
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.on = exports.TransactionOutputs = exports.TransactionInputs = exports.Keys = exports.KeyPair = exports.KeyOutput = exports.KeyInput = void 0;
+exports.on = exports.LedgerErrorCode = exports.LedgerTransactionState = exports.LedgerError = exports.TransactionOutputs = exports.TransactionInputs = exports.Keys = exports.KeyPair = exports.KeyOutput = exports.KeyInput = void 0;
 const turtlecoin_crypto_1 = require("turtlecoin-crypto");
 /** @ignore */
 const Types = require("./Types");
@@ -21,7 +21,6 @@ var CryptoNote_1 = require("./CryptoNote");
 Object.defineProperty(exports, "CryptoNote", { enumerable: true, get: function () { return CryptoNote_1.CryptoNote; } });
 var LedgerDevice_1 = require("./LedgerDevice");
 Object.defineProperty(exports, "LedgerDevice", { enumerable: true, get: function () { return LedgerDevice_1.LedgerDevice; } });
-Object.defineProperty(exports, "LedgerWalletTypes", { enumerable: true, get: function () { return LedgerDevice_1.LedgerWalletTypes; } });
 var LevinPacket_1 = require("./LevinPacket");
 Object.defineProperty(exports, "LevinPacket", { enumerable: true, get: function () { return LevinPacket_1.LevinPacket; } });
 Object.defineProperty(exports, "LevinProtocol", { enumerable: true, get: function () { return LevinPacket_1.LevinProtocol; } });
@@ -53,6 +52,15 @@ exports.KeyPair = KeyPair;
 /** @ignore */
 var Keys = Types.ED25519.Keys;
 exports.Keys = Keys;
+/** @ignore */
+var LedgerError = Types.LedgerTypes.LedgerError;
+exports.LedgerError = LedgerError;
+/** @ignore */
+var LedgerTransactionState = Types.LedgerTypes.TransactionState;
+exports.LedgerTransactionState = LedgerTransactionState;
+/** @ignore */
+var LedgerErrorCode = Types.LedgerTypes.ErrorCode;
+exports.LedgerErrorCode = LedgerErrorCode;
 /**
  * Executes the callback method upon the given event
  * @param event

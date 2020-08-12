@@ -2,86 +2,8 @@
 /// <reference types="node" />
 import Transport from '@ledgerhq/hw-transport';
 import { EventEmitter } from 'events';
-import { Transaction } from './Transaction';
-export declare namespace LedgerWalletTypes {
-    /** @ignore */
-    enum APDU {
-        P2 = 0,
-        P1_NON_CONFIRM = 0,
-        P1_CONFIRM = 1,
-        INS = 224
-    }
-    enum TransactionState {
-        INACTIVE = 0,
-        READY = 1,
-        RECEIVING_INPUTS = 2,
-        INPUTS_RECEIVED = 3,
-        RECEIVING_OUTPUTS = 4,
-        OUTPUTS_RECEIVED = 5,
-        PREFIX_READY = 6,
-        COMPLETE = 7
-    }
-    /**
-     * Represents the APDU command types available in the TurtleCoin application
-     * for ledger hardware wallets
-     */
-    enum CMD {
-        VERSION = 1,
-        DEBUG = 2,
-        IDENT = 5,
-        PUBLIC_KEYS = 16,
-        VIEW_SECRET_KEY = 17,
-        SPEND_ESECRET_KEY = 18,
-        CHECK_KEY = 22,
-        CHECK_SCALAR = 23,
-        PRIVATE_TO_PUBLIC = 24,
-        RANDOM_KEY_PAIR = 25,
-        ADDRESS = 48,
-        GENERATE_KEY_IMAGE = 64,
-        GENERATE_RING_SIGNATURES = 80,
-        COMPLETE_RING_SIGNATURE = 81,
-        CHECK_RING_SIGNATURES = 82,
-        GENERATE_SIGNATURE = 85,
-        CHECK_SIGNATURE = 86,
-        GENERATE_KEY_DERIVATION = 96,
-        DERIVE_PUBLIC_KEY = 97,
-        DERIVE_SECRET_KEY = 98,
-        TX_STATE = 112,
-        TX_START = 113,
-        TX_START_INPUT_LOAD = 114,
-        TX_LOAD_INPUT = 115,
-        TX_START_OUTPUT_LOAD = 116,
-        TX_LOAD_OUTPUT = 117,
-        TX_FINALIZE_TX_PREFIX = 118,
-        TX_SIGN = 119,
-        TX_DUMP = 120,
-        TX_RESET = 121,
-        RESET_KEYS = 255
-    }
-    /**
-     * Represents the possible errors returned by the application
-     * on the ledger device
-     */
-    enum ErrorCode {
-        OK = 36864,
-        ERR_OP_NOT_PERMITTED = 16384,
-        ERR_OP_USER_REQUIRED = 16385,
-        ERR_UNKNOWN_ERROR = 17476,
-        ERR_VARINT_DATA_RANGE = 24576,
-        ERR_PRIVATE_SPEND = 37888,
-        ERR_PRIVATE_VIEW = 37889,
-        ERR_RESET_KEYS = 37890,
-        ERR_ADDRESS = 37968,
-        ERR_KEY_DERIVATION = 38144,
-        ERR_DERIVE_PUBKEY = 38145,
-        ERR_PUBKEY_MISMATCH = 38146,
-        ERR_DERIVE_SECKEY = 38147,
-        ERR_KECCAK = 38148,
-        ERR_COMPLETE_RING_SIG = 38149,
-        ERR_GENERATE_KEY_IMAGE = 38150,
-        ERR_SECKEY_TO_PUBKEY = 38151
-    }
-}
+import { Address, KeyPair, Keys, Transaction } from './';
+import { LedgerTypes } from './Types/Ledger';
 /**
  * An easy to use interface that uses a Ledger HW transport to communicate with
  * the TurtleCoin application running on a ledger device.
@@ -144,16 +66,13 @@ export declare class LedgerDevice extends EventEmitter {
      * @param confirm whether the device will prompt the user to confirm their actions
      *        (to disable, must be running a DEBUG build)
      */
-    getPublicKeys(confirm?: boolean): Promise<{
-        spend: string;
-        view: string;
-    }>;
+    getPublicKeys(confirm?: boolean): Promise<Keys>;
     /**
      * Retrieves the private view key from the connected ledger device
      * @param confirm whether the device will prompt the user to confirm their actions
      *        (to disable, must be running a DEBUG build)
      */
-    getPrivateViewKey(confirm?: boolean): Promise<string>;
+    getPrivateViewKey(confirm?: boolean): Promise<KeyPair>;
     /**
      * Retrieves the private spend key from the connected ledger device
      * !! WARNING !! Retrieving the private spend key from the device
@@ -163,25 +82,22 @@ export declare class LedgerDevice extends EventEmitter {
      * @param confirm whether the device will prompt the user to confirm their actions
      *        (to disable, must be running a DEBUG build)
      */
-    getPrivateSpendKey(confirm?: boolean): Promise<string>;
+    getPrivateSpendKey(confirm?: boolean): Promise<KeyPair>;
     /**
      * Calculates the public key for the given private key
      * @param private_key the private key
      */
-    privateToPublic(private_key: string): Promise<string>;
+    privateToPublic(private_key: string): Promise<KeyPair>;
     /**
      * Generates a random key pair on the connected device
      */
-    getRandomKeyPair(): Promise<{
-        public: string;
-        private: string;
-    }>;
+    getRandomKeyPair(): Promise<KeyPair>;
     /**
      * Gets the public wallet address from the connected device
      * @param confirm whether the device will prompt the user to confirm their actions
      *        (to disable, must be running a DEBUG build)
      */
-    getAddress(confirm?: boolean): Promise<string>;
+    getAddress(confirm?: boolean): Promise<Address>;
     /**
      * Generates a key image on the device using the supplied parameters
      * @param tx_public_key the transaction public key
@@ -238,7 +154,7 @@ export declare class LedgerDevice extends EventEmitter {
      * @param confirm whether the device will prompt the user to confirm their actions
      *        (to disable, must be running a DEBUG build)
      */
-    derivePublicKey(derivation: string, output_index: number, confirm?: boolean): Promise<string>;
+    derivePublicKey(derivation: string, output_index: number, confirm?: boolean): Promise<KeyPair>;
     /**
      * Generates the private ephemeral of the given output in a transaction
      * @param derivation the key derivation
@@ -246,7 +162,7 @@ export declare class LedgerDevice extends EventEmitter {
      * @param confirm whether the device will prompt the user to confirm their actions
      *        (to disable, must be running a DEBUG build)
      */
-    deriveSecretKey(derivation: string, output_index: number, confirm?: boolean): Promise<string>;
+    deriveSecretKey(derivation: string, output_index: number, confirm?: boolean): Promise<KeyPair>;
     /**
      * Checks a given signature using the supplied public key for validity
      * @param message_digest the message digest (hash)
@@ -272,7 +188,7 @@ export declare class LedgerDevice extends EventEmitter {
     /**
      * Retrieves the current state of the transaction construction process on the ledger device
      */
-    transactionState(): Promise<LedgerWalletTypes.TransactionState>;
+    transactionState(): Promise<LedgerTypes.TransactionState>;
     /**
      * Resets the transaction state of the transaction construction process on the ledger device
      */

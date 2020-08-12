@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020, The TurtleCoin Developers
+// Copyright (c) 2020, The TurtleCoin Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -6,92 +6,10 @@ import Transport from '@ledgerhq/hw-transport';
 import { Reader, Writer } from 'bytestream-helper';
 import { EventEmitter } from 'events';
 import { Address, KeyPair, Keys, Transaction } from './';
+import { LedgerTypes } from './Types/Ledger';
 
 /** @ignore */
 const config = require('../config.json');
-
-export namespace LedgerWalletTypes {
-    /** @ignore */
-    export enum APDU {
-        P2 = 0x00,
-        P1_NON_CONFIRM = 0x00,
-        P1_CONFIRM = 0x01,
-        INS = 0xe0
-    }
-
-    export enum TransactionState {
-        INACTIVE = 0x00,
-        READY= 0x01,
-        RECEIVING_INPUTS = 0x02,
-        INPUTS_RECEIVED = 0x03,
-        RECEIVING_OUTPUTS = 0x04,
-        OUTPUTS_RECEIVED = 0x05,
-        PREFIX_READY = 0x06,
-        COMPLETE = 0x07,
-    }
-
-    /**
-     * Represents the APDU command types available in the TurtleCoin application
-     * for ledger hardware wallets
-     */
-    export enum CMD {
-        VERSION = 0x01,
-        DEBUG = 0x02,
-        IDENT = 0x05,
-        PUBLIC_KEYS = 0x10,
-        VIEW_SECRET_KEY = 0x11,
-        SPEND_ESECRET_KEY = 0x12,
-        CHECK_KEY = 0x16,
-        CHECK_SCALAR = 0x17,
-        PRIVATE_TO_PUBLIC= 0x18,
-        RANDOM_KEY_PAIR = 0x19,
-        ADDRESS = 0x30,
-        GENERATE_KEY_IMAGE = 0x40,
-        GENERATE_RING_SIGNATURES = 0x50,
-        COMPLETE_RING_SIGNATURE = 0x51,
-        CHECK_RING_SIGNATURES = 0x52,
-        GENERATE_SIGNATURE = 0x55,
-        CHECK_SIGNATURE = 0x56,
-        GENERATE_KEY_DERIVATION = 0x60,
-        DERIVE_PUBLIC_KEY = 0x61,
-        DERIVE_SECRET_KEY = 0x62,
-        TX_STATE = 0x70,
-        TX_START = 0x71,
-        TX_START_INPUT_LOAD = 0x72,
-        TX_LOAD_INPUT = 0x73,
-        TX_START_OUTPUT_LOAD = 0x74,
-        TX_LOAD_OUTPUT = 0x75,
-        TX_FINALIZE_TX_PREFIX = 0x76,
-        TX_SIGN = 0x77,
-        TX_DUMP = 0x78,
-        TX_RESET = 0x79,
-        RESET_KEYS = 0xff
-    }
-
-    /**
-     * Represents the possible errors returned by the application
-     * on the ledger device
-     */
-    export enum ErrorCode {
-        OK = 0x9000,
-        ERR_OP_NOT_PERMITTED = 0x4000,
-        ERR_OP_USER_REQUIRED = 0x4001,
-        ERR_UNKNOWN_ERROR = 0x4444,
-        ERR_VARINT_DATA_RANGE = 0x6000,
-        ERR_PRIVATE_SPEND = 0x9400,
-        ERR_PRIVATE_VIEW = 0x9401,
-        ERR_RESET_KEYS = 0x9402,
-        ERR_ADDRESS = 0x9450,
-        ERR_KEY_DERIVATION = 0x9500,
-        ERR_DERIVE_PUBKEY = 0x9501,
-        ERR_PUBKEY_MISMATCH = 0x9502,
-        ERR_DERIVE_SECKEY = 0x9503,
-        ERR_KECCAK = 0x9504,
-        ERR_COMPLETE_RING_SIG = 0x9505,
-        ERR_GENERATE_KEY_IMAGE = 0x9506,
-        ERR_SECKEY_TO_PUBKEY = 0x9507
-    }
-}
 
 /**
  * An easy to use interface that uses a Ledger HW transport to communicate with
@@ -143,7 +61,7 @@ export class LedgerDevice extends EventEmitter {
      * on the ledger device
      */
     public async getVersion (): Promise<{ major: number, minor: number, patch: number }> {
-        const result = await this.exchange(LedgerWalletTypes.CMD.VERSION);
+        const result = await this.exchange(LedgerTypes.Command.VERSION);
 
         return {
             major: result.uint8_t().toJSNumber(),
@@ -156,7 +74,7 @@ export class LedgerDevice extends EventEmitter {
      * Returns if the application running on the ledger is a debug build
      */
     public async isDebug (): Promise<boolean> {
-        const result = await this.exchange(LedgerWalletTypes.CMD.DEBUG);
+        const result = await this.exchange(LedgerTypes.Command.DEBUG);
 
         return (result.uint8_t().toJSNumber() === 1);
     }
@@ -166,7 +84,7 @@ export class LedgerDevice extends EventEmitter {
      * running on the ledger device
      */
     public async getIdent (): Promise<string> {
-        const result = await this.exchange(LedgerWalletTypes.CMD.IDENT);
+        const result = await this.exchange(LedgerTypes.Command.IDENT);
 
         return result.unreadBuffer.toString('hex');
     }
@@ -184,7 +102,7 @@ export class LedgerDevice extends EventEmitter {
 
         writer.hash(key);
 
-        const result = await this.exchange(LedgerWalletTypes.CMD.CHECK_KEY, undefined, writer.buffer);
+        const result = await this.exchange(LedgerTypes.Command.CHECK_KEY, undefined, writer.buffer);
 
         return (result.uint8_t().toJSNumber() === 1);
     }
@@ -202,7 +120,7 @@ export class LedgerDevice extends EventEmitter {
 
         writer.hash(scalar);
 
-        const result = await this.exchange(LedgerWalletTypes.CMD.CHECK_SCALAR, undefined, writer.buffer);
+        const result = await this.exchange(LedgerTypes.Command.CHECK_SCALAR, undefined, writer.buffer);
 
         return (result.uint8_t().toJSNumber() === 1);
     }
@@ -213,7 +131,7 @@ export class LedgerDevice extends EventEmitter {
      *        (to disable, must be running a DEBUG build)
      */
     public async getPublicKeys (confirm = true): Promise<Keys> {
-        const result = await this.exchange(LedgerWalletTypes.CMD.PUBLIC_KEYS, confirm);
+        const result = await this.exchange(LedgerTypes.Command.PUBLIC_KEYS, confirm);
 
         const spend = await KeyPair.from(result.hash());
 
@@ -228,7 +146,7 @@ export class LedgerDevice extends EventEmitter {
      *        (to disable, must be running a DEBUG build)
      */
     public async getPrivateViewKey (confirm = true): Promise<KeyPair> {
-        const result = await this.exchange(LedgerWalletTypes.CMD.VIEW_SECRET_KEY, confirm);
+        const result = await this.exchange(LedgerTypes.Command.VIEW_SECRET_KEY, confirm);
 
         return KeyPair.from(undefined, result.hash());
     }
@@ -243,7 +161,7 @@ export class LedgerDevice extends EventEmitter {
      *        (to disable, must be running a DEBUG build)
      */
     public async getPrivateSpendKey (confirm = true): Promise<KeyPair> {
-        const result = await this.exchange(LedgerWalletTypes.CMD.SPEND_ESECRET_KEY, confirm);
+        const result = await this.exchange(LedgerTypes.Command.SPEND_ESECRET_KEY, confirm);
 
         return KeyPair.from(undefined, result.hash());
     }
@@ -261,7 +179,7 @@ export class LedgerDevice extends EventEmitter {
 
         writer.hash(private_key);
 
-        const result = await this.exchange(LedgerWalletTypes.CMD.PRIVATE_TO_PUBLIC, undefined, writer.buffer);
+        const result = await this.exchange(LedgerTypes.Command.PRIVATE_TO_PUBLIC, undefined, writer.buffer);
 
         return KeyPair.from(result.hash());
     }
@@ -270,7 +188,7 @@ export class LedgerDevice extends EventEmitter {
      * Generates a random key pair on the connected device
      */
     public async getRandomKeyPair (): Promise<KeyPair> {
-        const result = await this.exchange(LedgerWalletTypes.CMD.RANDOM_KEY_PAIR);
+        const result = await this.exchange(LedgerTypes.Command.RANDOM_KEY_PAIR);
 
         return KeyPair.from(result.hash(), result.hash());
     }
@@ -281,7 +199,7 @@ export class LedgerDevice extends EventEmitter {
      *        (to disable, must be running a DEBUG build)
      */
     public async getAddress (confirm = true): Promise<Address> {
-        const result = await this.exchange(LedgerWalletTypes.CMD.ADDRESS, confirm);
+        const result = await this.exchange(LedgerTypes.Command.ADDRESS, confirm);
 
         return Address.fromAddress(result.unreadBuffer.toString());
     }
@@ -320,7 +238,7 @@ export class LedgerDevice extends EventEmitter {
 
         writer.hash(output_key);
 
-        const result = await this.exchange(LedgerWalletTypes.CMD.GENERATE_KEY_IMAGE, confirm, writer.buffer);
+        const result = await this.exchange(LedgerTypes.Command.GENERATE_KEY_IMAGE, confirm, writer.buffer);
 
         return result.hash();
     }
@@ -375,7 +293,7 @@ export class LedgerDevice extends EventEmitter {
 
         writer.hex(signature);
 
-        const result = await this.exchange(LedgerWalletTypes.CMD.COMPLETE_RING_SIGNATURE, confirm, writer.buffer);
+        const result = await this.exchange(LedgerTypes.Command.COMPLETE_RING_SIGNATURE, confirm, writer.buffer);
 
         return result.hex(64);
     }
@@ -449,7 +367,7 @@ export class LedgerDevice extends EventEmitter {
 
         writer.uint32_t(real_output_index, true);
 
-        const result = await this.exchange(LedgerWalletTypes.CMD.GENERATE_RING_SIGNATURES, confirm, writer.buffer);
+        const result = await this.exchange(LedgerTypes.Command.GENERATE_RING_SIGNATURES, confirm, writer.buffer);
 
         if (result.length % 64 !== 0) {
             throw new Error('Data returned does not appear to be a set of signatures');
@@ -485,7 +403,7 @@ export class LedgerDevice extends EventEmitter {
 
         writer.hash(message_digest);
 
-        const result = await this.exchange(LedgerWalletTypes.CMD.GENERATE_SIGNATURE, confirm, writer.buffer);
+        const result = await this.exchange(LedgerTypes.Command.GENERATE_SIGNATURE, confirm, writer.buffer);
 
         if (result.length !== 64) {
             throw new Error('Data returned does not appear to be a signature');
@@ -513,7 +431,7 @@ export class LedgerDevice extends EventEmitter {
 
         writer.hash(tx_public_key);
 
-        const result = await this.exchange(LedgerWalletTypes.CMD.GENERATE_KEY_DERIVATION, confirm, writer.buffer);
+        const result = await this.exchange(LedgerTypes.Command.GENERATE_KEY_DERIVATION, confirm, writer.buffer);
 
         return result.hash();
     }
@@ -544,7 +462,7 @@ export class LedgerDevice extends EventEmitter {
 
         writer.uint32_t(output_index, true);
 
-        const result = await this.exchange(LedgerWalletTypes.CMD.DERIVE_PUBLIC_KEY, confirm, writer.buffer);
+        const result = await this.exchange(LedgerTypes.Command.DERIVE_PUBLIC_KEY, confirm, writer.buffer);
 
         return KeyPair.from(result.hash());
     }
@@ -575,7 +493,7 @@ export class LedgerDevice extends EventEmitter {
 
         writer.uint32_t(output_index, true);
 
-        const result = await this.exchange(LedgerWalletTypes.CMD.DERIVE_SECRET_KEY, confirm, writer.buffer);
+        const result = await this.exchange(LedgerTypes.Command.DERIVE_SECRET_KEY, confirm, writer.buffer);
 
         return KeyPair.from(undefined, result.hash());
     }
@@ -611,7 +529,7 @@ export class LedgerDevice extends EventEmitter {
 
         writer.hex(signature);
 
-        const result = await this.exchange(LedgerWalletTypes.CMD.CHECK_SIGNATURE, undefined, writer.buffer);
+        const result = await this.exchange(LedgerTypes.Command.CHECK_SIGNATURE, undefined, writer.buffer);
 
         return (result.uint8_t().toJSNumber() === 1);
     }
@@ -676,7 +594,7 @@ export class LedgerDevice extends EventEmitter {
             writer.hex(sig);
         }
 
-        const result = await this.exchange(LedgerWalletTypes.CMD.CHECK_RING_SIGNATURES, undefined, writer.buffer);
+        const result = await this.exchange(LedgerTypes.Command.CHECK_RING_SIGNATURES, undefined, writer.buffer);
 
         return (result.uint8_t().toJSNumber() === 1);
     }
@@ -689,14 +607,14 @@ export class LedgerDevice extends EventEmitter {
     public async resetKeys (
         confirm = true
     ): Promise<void> {
-        await this.exchange(LedgerWalletTypes.CMD.RESET_KEYS, confirm);
+        await this.exchange(LedgerTypes.Command.RESET_KEYS, confirm);
     }
 
     /**
      * Retrieves the current state of the transaction construction process on the ledger device
      */
-    public async transactionState (): Promise<LedgerWalletTypes.TransactionState> {
-        const result = await this.exchange(LedgerWalletTypes.CMD.TX_STATE, undefined);
+    public async transactionState (): Promise<LedgerTypes.TransactionState> {
+        const result = await this.exchange(LedgerTypes.Command.TX_STATE, undefined);
 
         return result.uint8_t().toJSNumber();
     }
@@ -707,7 +625,7 @@ export class LedgerDevice extends EventEmitter {
     public async resetTransaction (
         confirm = true
     ): Promise<void> {
-        await this.exchange(LedgerWalletTypes.CMD.TX_RESET, confirm);
+        await this.exchange(LedgerTypes.Command.TX_RESET, confirm);
     }
 
     /**
@@ -761,14 +679,14 @@ export class LedgerDevice extends EventEmitter {
             writer.uint8_t(0);
         }
 
-        await this.exchange(LedgerWalletTypes.CMD.TX_START, undefined, writer.buffer);
+        await this.exchange(LedgerTypes.Command.TX_START, undefined, writer.buffer);
     }
 
     /**
      * Signals to the ledger that we are ready to start loading transaction inputs
      */
     public async startTransactionInputLoad (): Promise<void> {
-        await this.exchange(LedgerWalletTypes.CMD.TX_START_INPUT_LOAD, undefined);
+        await this.exchange(LedgerTypes.Command.TX_START_INPUT_LOAD, undefined);
     }
 
     /**
@@ -842,14 +760,14 @@ export class LedgerDevice extends EventEmitter {
 
         writer.uint8_t(real_output_index);
 
-        await this.exchange(LedgerWalletTypes.CMD.TX_LOAD_INPUT, undefined, writer.buffer);
+        await this.exchange(LedgerTypes.Command.TX_LOAD_INPUT, undefined, writer.buffer);
     }
 
     /**
      * Signals to the ledger that we are ready to start loading transaction outputs
      */
     public async startTransactionOutputLoad (): Promise<void> {
-        await this.exchange(LedgerWalletTypes.CMD.TX_START_OUTPUT_LOAD, undefined);
+        await this.exchange(LedgerTypes.Command.TX_START_OUTPUT_LOAD, undefined);
     }
 
     /**
@@ -875,14 +793,14 @@ export class LedgerDevice extends EventEmitter {
 
         writer.hash(output_key);
 
-        await this.exchange(LedgerWalletTypes.CMD.TX_LOAD_OUTPUT, undefined, writer.buffer);
+        await this.exchange(LedgerTypes.Command.TX_LOAD_OUTPUT, undefined, writer.buffer);
     }
 
     /**
      * Finalizes a transaction prefix
      */
     public async finalizeTransactionPrefix (): Promise<void> {
-        await this.exchange(LedgerWalletTypes.CMD.TX_FINALIZE_TX_PREFIX, undefined);
+        await this.exchange(LedgerTypes.Command.TX_FINALIZE_TX_PREFIX, undefined);
     }
 
     /**
@@ -891,7 +809,7 @@ export class LedgerDevice extends EventEmitter {
     public async signTransaction (
         confirm = true
     ): Promise<{hash: string, size: number}> {
-        const result = await this.exchange(LedgerWalletTypes.CMD.TX_SIGN, confirm);
+        const result = await this.exchange(LedgerTypes.Command.TX_SIGN, confirm);
 
         return {
             hash: result.hash(),
@@ -910,7 +828,7 @@ export class LedgerDevice extends EventEmitter {
 
             writer.uint16_t(response.length, true);
 
-            const result = await this.exchange(LedgerWalletTypes.CMD.TX_DUMP, undefined, writer.buffer);
+            const result = await this.exchange(LedgerTypes.Command.TX_DUMP, undefined, writer.buffer);
 
             // if we didn't receive any more data, then break out of the loop
             if (result.unreadBytes === 0) {
@@ -930,23 +848,23 @@ export class LedgerDevice extends EventEmitter {
      *        (to disable, must be running a DEBUG build)
      * @param data any data that must be included in the payload for the given command
      */
-    private async exchange (command: LedgerWalletTypes.CMD, confirm = true, data?: Buffer): Promise<Reader> {
+    private async exchange (command: LedgerTypes.Command, confirm = true, data?: Buffer): Promise<Reader> {
         const writer = new Writer();
 
-        writer.uint8_t(LedgerWalletTypes.APDU.INS);
+        writer.uint8_t(LedgerTypes.APDU.INS);
 
         writer.uint8_t(command);
 
         if (confirm) {
-            writer.uint8_t(LedgerWalletTypes.APDU.P1_CONFIRM);
+            writer.uint8_t(LedgerTypes.APDU.P1_CONFIRM);
         } else {
-            writer.uint8_t(LedgerWalletTypes.APDU.P1_NON_CONFIRM);
+            writer.uint8_t(LedgerTypes.APDU.P1_NON_CONFIRM);
         }
 
-        writer.uint8_t(LedgerWalletTypes.APDU.P2);
+        writer.uint8_t(LedgerTypes.APDU.P2);
 
         if (data) {
-            if (data.length > (512 - 6)) {
+            if (data.length > (config.maximumLedgerAPDUPayloadSize - 6)) {
                 throw new Error('Data payload exceeds maximum size');
             }
 
@@ -971,12 +889,12 @@ export class LedgerDevice extends EventEmitter {
 
         let errCode = reader.uint16_t(true).toJSNumber();
 
-        if (errCode !== LedgerWalletTypes.ErrorCode.OK) {
+        if (errCode !== LedgerTypes.ErrorCode.OK) {
             if (response.length >= 2) {
                 errCode = response.uint16_t(true).toJSNumber();
             }
 
-            throw new Error('Could not complete request: ' + errCode);
+            throw new LedgerTypes.LedgerError(errCode, 'Could not complete request');
         }
 
         return response;
