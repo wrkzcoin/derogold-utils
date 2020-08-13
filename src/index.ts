@@ -14,6 +14,7 @@ export { Crypto } from 'turtlecoin-crypto';
 export { CryptoNote } from './CryptoNote';
 export { Interfaces } from './Types/ITransaction';
 export { LedgerDevice } from './LedgerDevice';
+export { LedgerNote } from './LedgerNote';
 export { LevinPacket, LevinProtocol } from './LevinPacket';
 export { LevinPayloads } from './Types/LevinPayloads';
 export { Multisig } from './Multisig';
