@@ -36,6 +36,7 @@ export declare namespace LedgerTypes {
         RANDOM_KEY_PAIR = 25,
         ADDRESS = 48,
         GENERATE_KEY_IMAGE = 64,
+        GENERATE_KEY_IMAGE_PRIMITIVE = 65,
         GENERATE_RING_SIGNATURES = 80,
         COMPLETE_RING_SIGNATURE = 81,
         CHECK_RING_SIGNATURES = 82,

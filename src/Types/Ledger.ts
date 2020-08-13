@@ -42,6 +42,7 @@ export namespace LedgerTypes {
         RANDOM_KEY_PAIR = 0x19,
         ADDRESS = 0x30,
         GENERATE_KEY_IMAGE = 0x40,
+        GENERATE_KEY_IMAGE_PRIMITIVE = 0x41,
         GENERATE_RING_SIGNATURES = 0x50,
         COMPLETE_RING_SIGNATURE = 0x51,
         CHECK_RING_SIGNATURES = 0x52,

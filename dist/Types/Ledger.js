@@ -46,6 +46,7 @@ var LedgerTypes;
         Command[Command["RANDOM_KEY_PAIR"] = 25] = "RANDOM_KEY_PAIR";
         Command[Command["ADDRESS"] = 48] = "ADDRESS";
         Command[Command["GENERATE_KEY_IMAGE"] = 64] = "GENERATE_KEY_IMAGE";
+        Command[Command["GENERATE_KEY_IMAGE_PRIMITIVE"] = 65] = "GENERATE_KEY_IMAGE_PRIMITIVE";
         Command[Command["GENERATE_RING_SIGNATURES"] = 80] = "GENERATE_RING_SIGNATURES";
         Command[Command["COMPLETE_RING_SIGNATURE"] = 81] = "COMPLETE_RING_SIGNATURE";
         Command[Command["CHECK_RING_SIGNATURES"] = 82] = "CHECK_RING_SIGNATURES";

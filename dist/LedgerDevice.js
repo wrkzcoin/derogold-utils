@@ -209,6 +209,33 @@ class LedgerDevice extends events_1.EventEmitter {
         });
     }
     /**
+     * Generates a key image on the device using the supplied parameters
+     * @param derivation the output derivation
+     * @param output_index the index of the given output in the transaction
+     * @param output_key the key of the given output in the transaction
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
+     */
+    generateKeyImagePrimitive(derivation, output_index, output_key, confirm = true) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!isHex64(derivation)) {
+                throw new Error('Malformed derivation supplied');
+            }
+            if (output_index < 0) {
+                throw new Error('output_index must be >= 0');
+            }
+            if (!isHex64(output_key)) {
+                throw new Error('Malformed output_key supplied');
+            }
+            const writer = new bytestream_helper_1.Writer();
+            writer.hash(derivation);
+            writer.uint32_t(output_index, true);
+            writer.hash(output_key);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.GENERATE_KEY_IMAGE_PRIMITIVE, confirm, writer.buffer);
+            return result.hash();
+        });
+    }
+    /**
      * Completes the given ring signature for using the supplied parameters
      * @param tx_public_key the transaction public key of the input used
      * @param output_index the index of the given output in the transaction of the input used

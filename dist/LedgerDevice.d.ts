@@ -108,6 +108,15 @@ export declare class LedgerDevice extends EventEmitter {
      */
     generateKeyImage(tx_public_key: string, output_index: number, output_key: string, confirm?: boolean): Promise<string>;
     /**
+     * Generates a key image on the device using the supplied parameters
+     * @param derivation the output derivation
+     * @param output_index the index of the given output in the transaction
+     * @param output_key the key of the given output in the transaction
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
+     */
+    generateKeyImagePrimitive(derivation: string, output_index: number, output_key: string, confirm?: boolean): Promise<string>;
+    /**
      * Completes the given ring signature for using the supplied parameters
      * @param tx_public_key the transaction public key of the input used
      * @param output_index the index of the given output in the transaction of the input used
