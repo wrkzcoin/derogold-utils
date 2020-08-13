@@ -41,7 +41,7 @@ export namespace Interfaces {
 
         cn_fast_hash?: (input: string) => Promise<string>;
 
-        generateRingSignatures?: (transactionPrefixHash: Promise<boolean>,
+        generateRingSignatures?: (transactionPrefixHash: string,
                                   keyImage: string,
                                   inputKeys: string[],
                                   privateKey: string,
@@ -57,7 +57,7 @@ export namespace Interfaces {
 
         checkSignature?: (digestHash: string,
                           publicKey: string,
-                          signature: string) => boolean;
+                          signature: string) => Promise<boolean>;
 
         generateSignature?: (digestHash: string,
                              publicKey: string,
