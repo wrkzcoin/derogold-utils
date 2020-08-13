@@ -6,10 +6,17 @@ import { BigInteger, Interfaces } from './Types';
 import { AddressPrefix } from './AddressPrefix';
 import { Address } from './Address';
 import { Transaction } from './Transaction';
+/** @ignore */
 import ICryptoNote = CryptoNoteInterfaces.ICryptoNote;
+/** @ignore */
 import Config = ConfigInterface.Interfaces.Config;
 /** @ignore */
 declare const Config: any;
+/**
+ * Ledger CryptoNote helper class for constructing transactions and performing
+ * various other cryptographic items during the receipt or transfer of funds
+ * on the network using a Ledger based hardware device
+ */
 export declare class LedgerNote implements ICryptoNote {
     protected config: Config;
     private readonly m_ledger;

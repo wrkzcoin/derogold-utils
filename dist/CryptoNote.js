@@ -569,7 +569,7 @@ class CryptoNote {
                 const input = prepared.inputs[i];
                 const srcKeys = [];
                 input.outputs.forEach((out) => srcKeys.push(out.key));
-                promises.push(prepareRingSignatures(txPrefixHash, input.keyImage, srcKeys, input.realOutputIndex, input.input.transactionKeys.derivedKey, input.input.transactionKeys.outputIndex, i, randomKey));
+                promises.push(prepareRingSignatures(txPrefixHash, input.keyImage, srcKeys, input.realOutputIndex, input.input.transactionKeys.derivedKey, input.input.transactionKeys.outputIndex, i, input.input.transactionKeys.publicKey, randomKey));
             }
             const results = yield Promise.all(promises);
             results.sort((a, b) => (a.index > b.index) ? 1 : -1);
@@ -667,7 +667,7 @@ function generateRingSignatures(hash, keyImage, publicKeys, privateKey, realOutp
     });
 }
 /** @ignore */
-function prepareRingSignatures(hash, keyImage, publicKeys, realOutputIndex, derivation, outputIndex, index, randomKey) {
+function prepareRingSignatures(hash, keyImage, publicKeys, realOutputIndex, derivation, outputIndex, index, tx_public_key, randomKey) {
     return __awaiter(this, void 0, void 0, function* () {
         const prepped = yield Types_1.TurtleCoinCrypto.prepareRingSignatures(hash, keyImage, publicKeys, realOutputIndex, randomKey);
         return {
@@ -678,7 +678,8 @@ function prepareRingSignatures(hash, keyImage, publicKeys, realOutputIndex, deri
             inputKeys: publicKeys,
             input: {
                 derivation,
-                outputIndex
+                outputIndex,
+                tx_public_key
             }
         };
     });

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ExtraTagType | TurtleCoin-Utils</title>
+	<title>TransactionState | TurtleCoin-Utils</title>
 	<meta name="description" content="Documentation for TurtleCoin-Utils">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -52,13 +52,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/extratag.html">ExtraTag</a>
+					<a href="../modules/ledgertypes.html">LedgerTypes</a>
 				</li>
 				<li>
-					<a href="extratag.extratagtype.html">ExtraTagType</a>
+					<a href="ledgertypes.transactionstate.html">TransactionState</a>
 				</li>
 			</ul>
-			<h1>Enumeration ExtraTagType</h1>
+			<h1>Enumeration TransactionState</h1>
 		</div>
 	</div>
 </header>
@@ -68,7 +68,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Extra tag types</p>
+						<p>Represents the current state of transaction construction on the device</p>
 					</div>
 				</div>
 			</section>
@@ -79,14 +79,14 @@
 						<section class="tsd-index-section ">
 							<h3>Enumeration members</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="extratag.extratagtype.html#merged_mining" class="tsd-kind-icon">MERGED_<wbr>MINING</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="extratag.extratagtype.html#nonce" class="tsd-kind-icon">NONCE</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="extratag.extratagtype.html#padding" class="tsd-kind-icon">PADDING</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="extratag.extratagtype.html#pool_nonce" class="tsd-kind-icon">POOL_<wbr>NONCE</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="extratag.extratagtype.html#pubkey" class="tsd-kind-icon">PUBKEY</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="extratag.extratagtype.html#recipient_public_spend_key" class="tsd-kind-icon">RECIPIENT_<wbr>PUBLIC_<wbr>SPEND_<wbr>KEY</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="extratag.extratagtype.html#recipient_public_view_key" class="tsd-kind-icon">RECIPIENT_<wbr>PUBLIC_<wbr>VIEW_<wbr>KEY</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="extratag.extratagtype.html#transaction_private_key" class="tsd-kind-icon">TRANSACTION_<wbr>PRIVATE_<wbr>KEY</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="ledgertypes.transactionstate.html#complete" class="tsd-kind-icon">COMPLETE</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="ledgertypes.transactionstate.html#inactive" class="tsd-kind-icon">INACTIVE</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="ledgertypes.transactionstate.html#inputs_received" class="tsd-kind-icon">INPUTS_<wbr>RECEIVED</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="ledgertypes.transactionstate.html#outputs_received" class="tsd-kind-icon">OUTPUTS_<wbr>RECEIVED</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="ledgertypes.transactionstate.html#prefix_ready" class="tsd-kind-icon">PREFIX_<wbr>READY</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="ledgertypes.transactionstate.html#ready" class="tsd-kind-icon">READY</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="ledgertypes.transactionstate.html#receiving_inputs" class="tsd-kind-icon">RECEIVING_<wbr>INPUTS</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="ledgertypes.transactionstate.html#receiving_outputs" class="tsd-kind-icon">RECEIVING_<wbr>OUTPUTS</a></li>
 							</ul>
 						</section>
 					</div>
@@ -95,82 +95,82 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Enumeration members</h2>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="merged_mining" class="tsd-anchor"></a>
-					<h3>MERGED_<wbr>MINING</h3>
-					<div class="tsd-signature tsd-kind-icon">MERGED_<wbr>MINING<span class="tsd-signature-symbol">:</span></div>
+					<a name="complete" class="tsd-anchor"></a>
+					<h3>COMPLETE</h3>
+					<div class="tsd-signature tsd-kind-icon">COMPLETE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 7</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/IExtraTag.ts#L25">src/Types/IExtraTag.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/Ledger.ts#L25">src/Types/Ledger.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="nonce" class="tsd-anchor"></a>
-					<h3>NONCE</h3>
-					<div class="tsd-signature tsd-kind-icon">NONCE<span class="tsd-signature-symbol">:</span></div>
+					<a name="inactive" class="tsd-anchor"></a>
+					<h3>INACTIVE</h3>
+					<div class="tsd-signature tsd-kind-icon">INACTIVE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/IExtraTag.ts#L24">src/Types/IExtraTag.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/Ledger.ts#L18">src/Types/Ledger.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="padding" class="tsd-anchor"></a>
-					<h3>PADDING</h3>
-					<div class="tsd-signature tsd-kind-icon">PADDING<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 0</span></div>
+					<a name="inputs_received" class="tsd-anchor"></a>
+					<h3>INPUTS_<wbr>RECEIVED</h3>
+					<div class="tsd-signature tsd-kind-icon">INPUTS_<wbr>RECEIVED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 3</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/IExtraTag.ts#L22">src/Types/IExtraTag.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/Ledger.ts#L21">src/Types/Ledger.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="pool_nonce" class="tsd-anchor"></a>
-					<h3>POOL_<wbr>NONCE</h3>
-					<div class="tsd-signature tsd-kind-icon">POOL_<wbr>NONCE<span class="tsd-signature-symbol">:</span></div>
+					<a name="outputs_received" class="tsd-anchor"></a>
+					<h3>OUTPUTS_<wbr>RECEIVED</h3>
+					<div class="tsd-signature tsd-kind-icon">OUTPUTS_<wbr>RECEIVED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 5</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/IExtraTag.ts#L29">src/Types/IExtraTag.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/Ledger.ts#L23">src/Types/Ledger.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="pubkey" class="tsd-anchor"></a>
-					<h3>PUBKEY</h3>
-					<div class="tsd-signature tsd-kind-icon">PUBKEY<span class="tsd-signature-symbol">:</span></div>
+					<a name="prefix_ready" class="tsd-anchor"></a>
+					<h3>PREFIX_<wbr>READY</h3>
+					<div class="tsd-signature tsd-kind-icon">PREFIX_<wbr>READY<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 6</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/IExtraTag.ts#L23">src/Types/IExtraTag.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/Ledger.ts#L24">src/Types/Ledger.ts:24</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="recipient_public_spend_key" class="tsd-anchor"></a>
-					<h3>RECIPIENT_<wbr>PUBLIC_<wbr>SPEND_<wbr>KEY</h3>
-					<div class="tsd-signature tsd-kind-icon">RECIPIENT_<wbr>PUBLIC_<wbr>SPEND_<wbr>KEY<span class="tsd-signature-symbol">:</span></div>
+					<a name="ready" class="tsd-anchor"></a>
+					<h3>READY</h3>
+					<div class="tsd-signature tsd-kind-icon">READY<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 1</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/IExtraTag.ts#L27">src/Types/IExtraTag.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/Ledger.ts#L19">src/Types/Ledger.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="recipient_public_view_key" class="tsd-anchor"></a>
-					<h3>RECIPIENT_<wbr>PUBLIC_<wbr>VIEW_<wbr>KEY</h3>
-					<div class="tsd-signature tsd-kind-icon">RECIPIENT_<wbr>PUBLIC_<wbr>VIEW_<wbr>KEY<span class="tsd-signature-symbol">:</span></div>
+					<a name="receiving_inputs" class="tsd-anchor"></a>
+					<h3>RECEIVING_<wbr>INPUTS</h3>
+					<div class="tsd-signature tsd-kind-icon">RECEIVING_<wbr>INPUTS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 2</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/IExtraTag.ts#L26">src/Types/IExtraTag.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/Ledger.ts#L20">src/Types/Ledger.ts:20</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="transaction_private_key" class="tsd-anchor"></a>
-					<h3>TRANSACTION_<wbr>PRIVATE_<wbr>KEY</h3>
-					<div class="tsd-signature tsd-kind-icon">TRANSACTION_<wbr>PRIVATE_<wbr>KEY<span class="tsd-signature-symbol">:</span></div>
+					<a name="receiving_outputs" class="tsd-anchor"></a>
+					<h3>RECEIVING_<wbr>OUTPUTS</h3>
+					<div class="tsd-signature tsd-kind-icon">RECEIVING_<wbr>OUTPUTS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 4</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/IExtraTag.ts#L28">src/Types/IExtraTag.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/7598e67/src/Types/Ledger.ts#L22">src/Types/Ledger.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -191,13 +191,13 @@
 					<li class=" tsd-kind-namespace">
 						<a href="../modules/extranoncetag.html">Extra<wbr>Nonce<wbr>Tag</a>
 					</li>
-					<li class="current tsd-kind-namespace">
+					<li class=" tsd-kind-namespace">
 						<a href="../modules/extratag.html">Extra<wbr>Tag</a>
 					</li>
 					<li class=" tsd-kind-namespace">
 						<a href="../modules/interfaces.html">Interfaces</a>
 					</li>
-					<li class=" tsd-kind-namespace">
+					<li class="current tsd-kind-namespace">
 						<a href="../modules/ledgertypes.html">Ledger<wbr>Types</a>
 					</li>
 					<li class=" tsd-kind-namespace">
@@ -213,65 +213,47 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-enum tsd-parent-kind-namespace">
+						<a href="ledgertypes.command.html" class="tsd-kind-icon">Command</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-namespace">
+						<a href="ledgertypes.errorcode.html" class="tsd-kind-icon">Error<wbr>Code</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-enum tsd-parent-kind-namespace">
-						<a href="extratag.extratagtype.html" class="tsd-kind-icon">Extra<wbr>Tag<wbr>Type</a>
+						<a href="ledgertypes.transactionstate.html" class="tsd-kind-icon">Transaction<wbr>State</a>
 						<ul>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="extratag.extratagtype.html#merged_mining" class="tsd-kind-icon">MERGED_<wbr>MINING</a>
+								<a href="ledgertypes.transactionstate.html#complete" class="tsd-kind-icon">COMPLETE</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="extratag.extratagtype.html#nonce" class="tsd-kind-icon">NONCE</a>
+								<a href="ledgertypes.transactionstate.html#inactive" class="tsd-kind-icon">INACTIVE</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="extratag.extratagtype.html#padding" class="tsd-kind-icon">PADDING</a>
+								<a href="ledgertypes.transactionstate.html#inputs_received" class="tsd-kind-icon">INPUTS_<wbr>RECEIVED</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="extratag.extratagtype.html#pool_nonce" class="tsd-kind-icon">POOL_<wbr>NONCE</a>
+								<a href="ledgertypes.transactionstate.html#outputs_received" class="tsd-kind-icon">OUTPUTS_<wbr>RECEIVED</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="extratag.extratagtype.html#pubkey" class="tsd-kind-icon">PUBKEY</a>
+								<a href="ledgertypes.transactionstate.html#prefix_ready" class="tsd-kind-icon">PREFIX_<wbr>READY</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="extratag.extratagtype.html#recipient_public_spend_key" class="tsd-kind-icon">RECIPIENT_<wbr>PUBLIC_<wbr>SPEND_<wbr>KEY</a>
+								<a href="ledgertypes.transactionstate.html#ready" class="tsd-kind-icon">READY</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="extratag.extratagtype.html#recipient_public_view_key" class="tsd-kind-icon">RECIPIENT_<wbr>PUBLIC_<wbr>VIEW_<wbr>KEY</a>
+								<a href="ledgertypes.transactionstate.html#receiving_inputs" class="tsd-kind-icon">RECEIVING_<wbr>INPUTS</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="extratag.extratagtype.html#transaction_private_key" class="tsd-kind-icon">TRANSACTION_<wbr>PRIVATE_<wbr>KEY</a>
+								<a href="ledgertypes.transactionstate.html#receiving_outputs" class="tsd-kind-icon">RECEIVING_<wbr>OUTPUTS</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-class tsd-parent-kind-namespace">
-						<a href="../classes/extratag.extramergedmining.html" class="tsd-kind-icon">Extra<wbr>Merged<wbr>Mining</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-namespace">
-						<a href="../classes/extratag.extranonce.html" class="tsd-kind-icon">Extra<wbr>Nonce</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-namespace">
-						<a href="../classes/extratag.extrapadding.html" class="tsd-kind-icon">Extra<wbr>Padding</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-namespace">
-						<a href="../classes/extratag.extrapoolnonce.html" class="tsd-kind-icon">Extra<wbr>Pool<wbr>Nonce</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-namespace">
-						<a href="../classes/extratag.extrapublickey.html" class="tsd-kind-icon">Extra<wbr>Public<wbr>Key</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-namespace">
-						<a href="../classes/extratag.extrarecipientpublicspendkey.html" class="tsd-kind-icon">Extra<wbr>Recipient<wbr>Public<wbr>Spend<wbr>Key</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-namespace">
-						<a href="../classes/extratag.extrarecipientpublicviewkey.html" class="tsd-kind-icon">Extra<wbr>Recipient<wbr>Public<wbr>View<wbr>Key</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-namespace">
-						<a href="../classes/extratag.extratransactionprivatekey.html" class="tsd-kind-icon">Extra<wbr>Transaction<wbr>Private<wbr>Key</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-namespace">
-						<a href="../classes/extratag.iextratag.html" class="tsd-kind-icon">IExtra<wbr>Tag</a>
+						<a href="../classes/ledgertypes.ledgererror.html" class="tsd-kind-icon">Ledger<wbr>Error</a>
 					</li>
 				</ul>
 			</nav>

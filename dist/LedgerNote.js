@@ -19,7 +19,10 @@ const Common_1 = require("./Common");
 const AddressPrefix_1 = require("./AddressPrefix");
 const Address_1 = require("./Address");
 const Numeral = require("numeral");
+const Transaction_1 = require("./Transaction");
+/** @ignore */
 var TransactionState = Types_1.LedgerTypes.TransactionState;
+/** @ignore */
 var KeyPair = Types_1.ED25519.KeyPair;
 /** @ignore */
 const Config = require('../config.json');
@@ -27,6 +30,11 @@ const Config = require('../config.json');
 const NULL_KEY = ''.padEnd(64, '0');
 /** @ignore */
 const UINT64_MAX = Types_1.BigInteger(2).pow(64);
+/**
+ * Ledger CryptoNote helper class for constructing transactions and performing
+ * various other cryptographic items during the receipt or transfer of funds
+ * on the network using a Ledger based hardware device
+ */
 class LedgerNote {
     /**
      * Constructs a new instance of the Ledger-based CryptoNote tools
@@ -560,15 +568,122 @@ class LedgerNote {
      */
     createTransactionStructure(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData) {
         return __awaiter(this, void 0, void 0, function* () {
-            UNUSED(outputs);
-            UNUSED(inputs);
-            UNUSED(randomOutputs);
-            UNUSED(mixin);
-            UNUSED(feeAmount);
-            UNUSED(paymentId);
-            UNUSED(unlockTime);
-            UNUSED(extraData);
-            throw new Error('Not implemented');
+            if (typeof feeAmount === 'undefined') {
+                feeAmount = this.config.defaultNetworkFee || Config.defaultNetworkFee;
+            }
+            unlockTime = unlockTime || 0;
+            const feePerByte = this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
+            if (randomOutputs.length !== inputs.length && mixin !== 0) {
+                throw new Error('The sets of random outputs supplied does not match the number of inputs supplied');
+            }
+            for (const randomOutput of randomOutputs) {
+                if (randomOutput.length < mixin) {
+                    throw new Error('There are not enough random outputs to mix with');
+                }
+            }
+            let neededMoney = Types_1.BigInteger.zero;
+            let integratedPaymentId;
+            for (const output of outputs) {
+                if (output.amount <= 0) {
+                    throw new RangeError('Cannot create an output with an amount <= 0');
+                }
+                if (output.amount > (this.config.maximumOutputAmount || Config.maximumOutputAmount)) {
+                    throw new RangeError('Cannot create an output with an amount > ' +
+                        (this.config.maximumOutputAmount || Config.maximumOutputAmount));
+                }
+                neededMoney = neededMoney.add(output.amount);
+                if (neededMoney.greater(UINT64_MAX)) {
+                    throw new RangeError('Total output amount exceeds UINT64_MAX');
+                }
+                /* Check to see if our destination contains differeing payment IDs via integrated addresses */
+                if (output.destination.paymentId) {
+                    if (!integratedPaymentId) {
+                        integratedPaymentId = output.destination.paymentId;
+                    }
+                    else if (integratedPaymentId && integratedPaymentId !== output.destination.paymentId) {
+                        throw new Error('Cannot perform multiple transfers with differing integrated addresses');
+                    }
+                }
+            }
+            /* If we found an integrated payment ID in the destinations and we supplied a payment ID
+            in our call to this method and they do not match, this will result in a failure */
+            if (integratedPaymentId && paymentId && integratedPaymentId !== paymentId) {
+                throw new Error('Transfer destinations contains an integrated payment ID that does not match the payment' +
+                    'ID supplied to this method');
+            }
+            let foundMoney = Types_1.BigInteger.zero;
+            for (const input of inputs) {
+                if (input.amount <= 0) {
+                    throw new RangeError('Cannot spend outputs with an amount <= 0');
+                }
+                foundMoney = foundMoney.add(input.amount);
+                if (foundMoney.greater(UINT64_MAX)) {
+                    throw new RangeError('Total input amount exceeds UINT64_MAX');
+                }
+            }
+            if (neededMoney.greater(foundMoney)) {
+                throw new Error('We need more funds than was currently supplied for the transaction');
+            }
+            const change = foundMoney.subtract(neededMoney);
+            if (!feePerByte && feeAmount && change.lesser(feeAmount)) {
+                throw new Error('We have not spent all of what we sent in');
+            }
+            const transactionInputs = yield prepareTransactionInputs(inputs, randomOutputs, mixin);
+            // Use the ledger to get our random pair of keys for the one-time transaction keys
+            const tx_keys = yield this.m_ledger.getRandomKeyPair();
+            const transactionOutputs = yield prepareTransactionOutputs(tx_keys, outputs);
+            if (transactionOutputs.outputs.length >
+                (this.config.maximumOutputsPerTransaction || Config.maximumOutputsPerTransaction)) {
+                throw new RangeError('Tried to create a transaction with more outputs than permitted');
+            }
+            if (feeAmount === 0) {
+                if (transactionInputs.length < 12) {
+                    throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of [' +
+                        (this.config.fusionMinInputCount || Config.fusionMinInputCount) + '] inputs');
+                }
+                const ratio = this.config.fusionMinInOutCountRatio || Config.fusionMinInOutCountRatio;
+                if ((transactionInputs.length / transactionOutputs.outputs.length) < ratio) {
+                    throw new Error('Sending a [0] fee transaction (fusion) requires the ' +
+                        'correct input:output ratio be met');
+                }
+            }
+            const tx = new Transaction_1.Transaction();
+            tx.unlockTime = Types_1.BigInteger(unlockTime);
+            yield tx.addPublicKey(transactionOutputs.transactionKeys.publicKey);
+            tx.transactionKeys = transactionOutputs.transactionKeys;
+            if (integratedPaymentId) {
+                tx.addPaymentId(integratedPaymentId);
+            }
+            else if (paymentId) {
+                tx.addPaymentId(paymentId);
+            }
+            if (extraData) {
+                if (!(extraData instanceof Buffer)) {
+                    extraData = (typeof extraData === 'string')
+                        ? Buffer.from(extraData) : Buffer.from(JSON.stringify(extraData));
+                }
+                tx.addData(extraData);
+            }
+            transactionInputs.sort((a, b) => {
+                return (Types_1.BigInteger(a.keyImage, 16).compare(Types_1.BigInteger(b.keyImage, 16)) * -1);
+            });
+            for (const input of transactionInputs) {
+                let offsets = [];
+                input.outputs.forEach((output) => offsets.push(Types_1.BigInteger(output.index)));
+                offsets = Common_1.Common.absoluteToRelativeOffsets(offsets);
+                tx.inputs.push(new Types_1.TransactionInputs.KeyInput(input.amount, offsets, input.keyImage));
+            }
+            for (const output of transactionOutputs.outputs) {
+                tx.outputs.push(new Types_1.TransactionOutputs.KeyOutput(output.amount, output.key));
+            }
+            if (tx.extra.length > (this.config.maximumExtraSize || Config.maximumExtraSize)) {
+                throw new Error('Transaction extra exceeds the limit of [' +
+                    (this.config.maximumExtraSize || Config.maximumExtraSize) + '] bytes');
+            }
+            return {
+                transaction: tx,
+                inputs: transactionInputs
+            };
         });
     }
     /**
@@ -588,16 +703,59 @@ class LedgerNote {
      */
     prepareTransaction(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData, randomKey) {
         return __awaiter(this, void 0, void 0, function* () {
-            UNUSED(outputs);
-            UNUSED(inputs);
-            UNUSED(randomOutputs);
-            UNUSED(mixin);
-            UNUSED(feeAmount);
-            UNUSED(paymentId);
-            UNUSED(unlockTime);
-            UNUSED(extraData);
-            UNUSED(randomKey);
-            throw new Error('Not implemented');
+            const feePerByte = this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
+            const prepared = yield this.createTransactionStructure(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData);
+            const recipients = [];
+            for (const output of outputs) {
+                recipients.push({
+                    address: yield output.destination.address(),
+                    amount: output.amount
+                });
+            }
+            const txPrefixHash = yield prepared.transaction.prefixHash();
+            const promises = [];
+            for (let i = 0; i < prepared.inputs.length; i++) {
+                const input = prepared.inputs[i];
+                const srcKeys = [];
+                input.outputs.forEach((out) => srcKeys.push(out.key));
+                promises.push(prepareRingSignatures(txPrefixHash, input.keyImage, srcKeys, input.realOutputIndex, input.input.transactionKeys.derivedKey, input.input.transactionKeys.outputIndex, i, input.input.transactionKeys.publicKey, randomKey));
+            }
+            const results = yield Promise.all(promises);
+            results.sort((a, b) => (a.index > b.index) ? 1 : -1);
+            const signatures = [];
+            const signatureMeta = [];
+            for (const result of results) {
+                const sigSet = [];
+                if (!result.signatures) {
+                    throw new Error('Prepared signatures are incomplete');
+                }
+                result.signatures.forEach((sig) => sigSet.push(sig));
+                signatures.push(sigSet);
+                const meta = {
+                    index: result.index,
+                    realOutputIndex: result.realOutputIndex,
+                    key: result.key,
+                    inputKeys: result.inputKeys,
+                    input: {
+                        derivation: prepared.inputs[result.index].input.transactionKeys.derivedKey,
+                        outputIndex: prepared.inputs[result.index].input.transactionKeys.outputIndex,
+                        tx_public_key: prepared.inputs[result.index].input.transactionKeys.publicKey
+                    }
+                };
+                signatureMeta.push(meta);
+            }
+            prepared.transaction.signatures = signatures;
+            const minimumFee = this.calculateMinimumTransactionFee(prepared.transaction.size);
+            if (feeAmount && feeAmount !== 0 && feePerByte && feeAmount < minimumFee) {
+                throw new Error('Transaction fee [' + prepared.transaction.fee +
+                    '] is not enough for network transmission: ' + minimumFee);
+            }
+            return {
+                transaction: prepared.transaction,
+                transactionRecipients: recipients,
+                transactionPrivateKey: prepared.transaction.transactionKeys.privateKey,
+                signatureMeta: signatureMeta
+            };
         });
     }
     /**
@@ -610,9 +768,38 @@ class LedgerNote {
      */
     completeTransaction(preparedTransaction, privateSpendKey) {
         return __awaiter(this, void 0, void 0, function* () {
-            UNUSED(preparedTransaction);
             UNUSED(privateSpendKey);
-            throw new Error('Not implemented');
+            const promises = [];
+            const tx = preparedTransaction.transaction;
+            if (!preparedTransaction.signatureMeta) {
+                throw new Error('No transaction signature meta data supplied');
+            }
+            for (const meta of preparedTransaction.signatureMeta) {
+                if (!meta.input || !meta.input.derivation || !meta.input.outputIndex) {
+                    throw new Error('Meta data is missing critical information');
+                }
+                if (!meta.input.tx_public_key) {
+                    throw new Error('Transactions must be prepared by this class');
+                }
+                const public_ephemeral = yield Types_1.TurtleCoinCrypto.derivePublicKey(meta.input.derivation, meta.input.outputIndex, this.m_address.spend.publicKey);
+                promises.push(completeRingSignatures(this.m_ledger, meta.input.tx_public_key, meta.input.outputIndex, public_ephemeral, meta.key, tx.signatures[meta.index], meta.realOutputIndex, meta.index));
+            }
+            const results = yield Promise.all(promises);
+            for (const result of results) {
+                tx.signatures[result.index] = result.signatures;
+            }
+            const prefixHash = yield tx.prefixHash();
+            const checkPromises = [];
+            for (let i = 0; i < tx.inputs.length; i++) {
+                checkPromises.push(checkRingSignatures(prefixHash, tx.inputs[i].keyImage, getInputKeys(preparedTransaction.signatureMeta, i), tx.signatures[i]));
+            }
+            const validSigs = yield Promise.all(checkPromises);
+            for (const valid of validSigs) {
+                if (!valid) {
+                    throw new Error('Could not complete ring signatures');
+                }
+            }
+            return preparedTransaction.transaction;
         });
     }
 }
@@ -620,6 +807,17 @@ exports.LedgerNote = LedgerNote;
 /** @ignore */
 function UNUSED(val) {
     return val || NULL_KEY;
+}
+/** @ignore */
+function getInputKeys(preparedSignatures, index) {
+    for (const meta of preparedSignatures) {
+        if (meta.index === index) {
+            if (meta.inputKeys) {
+                return meta.inputKeys;
+            }
+        }
+    }
+    throw new Error('Could not locate input keys in the prepared signatures');
 }
 /** @ignore */
 function prepareTransactionInputs(inputs, randomOutputs, mixin) {
@@ -715,5 +913,36 @@ function prepareTransactionOutputs(transactionKeys, outputs) {
             transactionKeys,
             outputs: preparedOutputs
         };
+    });
+}
+/** @ignore */
+function prepareRingSignatures(hash, keyImage, publicKeys, realOutputIndex, derivation, outputIndex, index, tx_public_key, randomKey) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const prepped = yield Types_1.TurtleCoinCrypto.prepareRingSignatures(hash, keyImage, publicKeys, realOutputIndex, randomKey);
+        return {
+            index: index,
+            realOutputIndex: realOutputIndex,
+            key: prepped.key,
+            signatures: prepped.signatures,
+            inputKeys: publicKeys,
+            input: {
+                derivation,
+                outputIndex,
+                tx_public_key
+            }
+        };
+    });
+}
+/** @ignore */
+function checkRingSignatures(hash, keyImage, publicKeys, signatures) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return Types_1.TurtleCoinCrypto.checkRingSignatures(hash, keyImage, publicKeys, signatures);
+    });
+}
+/** @ignore */
+function completeRingSignatures(ledger, tx_public_key, outputIndex, tx_output_key, key, signatures, realOutputIndex, index) {
+    return __awaiter(this, void 0, void 0, function* () {
+        signatures[realOutputIndex] = yield ledger.completeRingSignature(tx_public_key, outputIndex, tx_output_key, key, signatures[realOutputIndex]);
+        return { signatures, index };
     });
 }

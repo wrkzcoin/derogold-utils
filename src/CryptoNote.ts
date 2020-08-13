@@ -759,6 +759,7 @@ export class CryptoNote implements ICryptoNote {
                     input.input.transactionKeys.derivedKey,
                     input.input.transactionKeys.outputIndex,
                     i,
+                    input.input.transactionKeys.publicKey,
                     randomKey));
         }
 
@@ -921,6 +922,7 @@ async function prepareRingSignatures (
     derivation: string,
     outputIndex: number,
     index: number,
+    tx_public_key: string,
     randomKey?: string
 ): Promise<Interfaces.PreparedRingSignature> {
     const prepped = await TurtleCoinCrypto.prepareRingSignatures(
@@ -934,7 +936,8 @@ async function prepareRingSignatures (
         inputKeys: publicKeys,
         input: {
             derivation,
-            outputIndex
+            outputIndex,
+            tx_public_key
         }
     };
 }

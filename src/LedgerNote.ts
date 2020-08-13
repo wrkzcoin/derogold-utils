@@ -6,15 +6,31 @@ import { CryptoNoteInterfaces } from './Types/ICryptoNote';
 import * as ConfigInterface from './Config';
 import Transport from '@ledgerhq/hw-transport';
 import { LedgerDevice } from './LedgerDevice';
-import { BigInteger, ED25519, Interfaces, LedgerTypes, TurtleCoinCrypto } from './Types';
+import {
+    BigInteger,
+    ED25519,
+    Interfaces,
+    LedgerTypes,
+    TransactionInputs,
+    TransactionOutputs,
+    TurtleCoinCrypto
+} from './Types';
 import { Common } from './Common';
 import { AddressPrefix } from './AddressPrefix';
 import { Address } from './Address';
 import * as Numeral from 'numeral';
 import { Transaction } from './Transaction';
+
+/** @ignore */
 import ICryptoNote = CryptoNoteInterfaces.ICryptoNote;
+
+/** @ignore */
 import Config = ConfigInterface.Interfaces.Config;
+
+/** @ignore */
 import TransactionState = LedgerTypes.TransactionState;
+
+/** @ignore */
 import KeyPair = ED25519.KeyPair;
 
 /** @ignore */
@@ -26,6 +42,11 @@ const NULL_KEY: string = ''.padEnd(64, '0');
 /** @ignore */
 const UINT64_MAX = BigInteger(2).pow(64);
 
+/**
+ * Ledger CryptoNote helper class for constructing transactions and performing
+ * various other cryptographic items during the receipt or transfer of funds
+ * on the network using a Ledger based hardware device
+ */
 export class LedgerNote implements ICryptoNote {
     protected config: Config = require('../config.json');
     private readonly m_ledger: LedgerDevice;
@@ -727,16 +748,149 @@ export class LedgerNote implements ICryptoNote {
         unlockTime?: number,
         extraData?: any
     ): Promise<Interfaces.IPreparedTransaction> {
-        UNUSED(outputs);
-        UNUSED(inputs);
-        UNUSED(randomOutputs);
-        UNUSED(mixin);
-        UNUSED(feeAmount);
-        UNUSED(paymentId);
-        UNUSED(unlockTime);
-        UNUSED(extraData);
+        if (typeof feeAmount === 'undefined') {
+            feeAmount = this.config.defaultNetworkFee || Config.defaultNetworkFee;
+        }
+        unlockTime = unlockTime || 0;
 
-        throw new Error('Not implemented');
+        const feePerByte =
+            this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
+
+        if (randomOutputs.length !== inputs.length && mixin !== 0) {
+            throw new Error('The sets of random outputs supplied does not match the number of inputs supplied');
+        }
+
+        for (const randomOutput of randomOutputs) {
+            if (randomOutput.length < mixin) {
+                throw new Error('There are not enough random outputs to mix with');
+            }
+        }
+
+        let neededMoney = BigInteger.zero;
+        let integratedPaymentId: string | undefined;
+
+        for (const output of outputs) {
+            if (output.amount <= 0) {
+                throw new RangeError('Cannot create an output with an amount <= 0');
+            }
+            if (output.amount > (this.config.maximumOutputAmount || Config.maximumOutputAmount)) {
+                throw new RangeError('Cannot create an output with an amount > ' +
+                    (this.config.maximumOutputAmount || Config.maximumOutputAmount));
+            }
+            neededMoney = neededMoney.add(output.amount);
+            if (neededMoney.greater(UINT64_MAX)) {
+                throw new RangeError('Total output amount exceeds UINT64_MAX');
+            }
+            /* Check to see if our destination contains differeing payment IDs via integrated addresses */
+            if (output.destination.paymentId) {
+                if (!integratedPaymentId) {
+                    integratedPaymentId = output.destination.paymentId;
+                } else if (integratedPaymentId && integratedPaymentId !== output.destination.paymentId) {
+                    throw new Error('Cannot perform multiple transfers with differing integrated addresses');
+                }
+            }
+        }
+
+        /* If we found an integrated payment ID in the destinations and we supplied a payment ID
+        in our call to this method and they do not match, this will result in a failure */
+        if (integratedPaymentId && paymentId && integratedPaymentId !== paymentId) {
+            throw new Error('Transfer destinations contains an integrated payment ID that does not match the payment' +
+                'ID supplied to this method');
+        }
+
+        let foundMoney = BigInteger.zero;
+
+        for (const input of inputs) {
+            if (input.amount <= 0) {
+                throw new RangeError('Cannot spend outputs with an amount <= 0');
+            }
+            foundMoney = foundMoney.add(input.amount);
+            if (foundMoney.greater(UINT64_MAX)) {
+                throw new RangeError('Total input amount exceeds UINT64_MAX');
+            }
+        }
+
+        if (neededMoney.greater(foundMoney)) {
+            throw new Error('We need more funds than was currently supplied for the transaction');
+        }
+
+        const change = foundMoney.subtract(neededMoney);
+
+        if (!feePerByte && feeAmount && change.lesser(feeAmount)) {
+            throw new Error('We have not spent all of what we sent in');
+        }
+
+        const transactionInputs = await prepareTransactionInputs(inputs, randomOutputs, mixin);
+
+        // Use the ledger to get our random pair of keys for the one-time transaction keys
+        const tx_keys = await this.m_ledger.getRandomKeyPair();
+
+        const transactionOutputs = await prepareTransactionOutputs(tx_keys, outputs);
+
+        if (transactionOutputs.outputs.length >
+            (this.config.maximumOutputsPerTransaction || Config.maximumOutputsPerTransaction)) {
+            throw new RangeError('Tried to create a transaction with more outputs than permitted');
+        }
+
+        if (feeAmount === 0) {
+            if (transactionInputs.length < 12) {
+                throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of [' +
+                    (this.config.fusionMinInputCount || Config.fusionMinInputCount) + '] inputs');
+            }
+            const ratio = this.config.fusionMinInOutCountRatio || Config.fusionMinInOutCountRatio;
+            if ((transactionInputs.length / transactionOutputs.outputs.length) < ratio) {
+                throw new Error('Sending a [0] fee transaction (fusion) requires the ' +
+                    'correct input:output ratio be met');
+            }
+        }
+
+        const tx = new Transaction();
+        tx.unlockTime = BigInteger(unlockTime);
+        await tx.addPublicKey(transactionOutputs.transactionKeys.publicKey);
+        tx.transactionKeys = transactionOutputs.transactionKeys;
+
+        if (integratedPaymentId) {
+            tx.addPaymentId(integratedPaymentId);
+        } else if (paymentId) {
+            tx.addPaymentId(paymentId);
+        }
+
+        if (extraData) {
+            if (!(extraData instanceof Buffer)) {
+                extraData = (typeof extraData === 'string')
+                    ? Buffer.from(extraData) : Buffer.from(JSON.stringify(extraData));
+            }
+
+            tx.addData(extraData);
+        }
+
+        transactionInputs.sort((a, b) => {
+            return (BigInteger(a.keyImage, 16).compare(BigInteger(b.keyImage, 16)) * -1);
+        });
+
+        for (const input of transactionInputs) {
+            let offsets: BigInteger.BigInteger[] = [];
+
+            input.outputs.forEach((output) => offsets.push(BigInteger(output.index)));
+
+            offsets = Common.absoluteToRelativeOffsets(offsets);
+
+            tx.inputs.push(new TransactionInputs.KeyInput(input.amount, offsets, input.keyImage));
+        }
+
+        for (const output of transactionOutputs.outputs) {
+            tx.outputs.push(new TransactionOutputs.KeyOutput(output.amount, output.key));
+        }
+
+        if (tx.extra.length > (this.config.maximumExtraSize || Config.maximumExtraSize)) {
+            throw new Error('Transaction extra exceeds the limit of [' +
+                (this.config.maximumExtraSize || Config.maximumExtraSize) + '] bytes');
+        }
+
+        return {
+            transaction: tx,
+            inputs: transactionInputs
+        };
     }
 
     /**
@@ -765,17 +919,92 @@ export class LedgerNote implements ICryptoNote {
         extraData?: any,
         randomKey?: string
     ): Promise<Interfaces.PreparedTransaction> {
-        UNUSED(outputs);
-        UNUSED(inputs);
-        UNUSED(randomOutputs);
-        UNUSED(mixin);
-        UNUSED(feeAmount);
-        UNUSED(paymentId);
-        UNUSED(unlockTime);
-        UNUSED(extraData);
-        UNUSED(randomKey);
+        const feePerByte =
+            this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
 
-        throw new Error('Not implemented');
+        const prepared = await this.createTransactionStructure(
+            outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData
+        );
+
+        const recipients: Interfaces.TransactionRecipient[] = [];
+
+        for (const output of outputs) {
+            recipients.push({
+                address: await output.destination.address(),
+                amount: output.amount
+            });
+        }
+
+        const txPrefixHash = await prepared.transaction.prefixHash();
+
+        const promises = [];
+
+        for (let i = 0; i < prepared.inputs.length; i++) {
+            const input = prepared.inputs[i];
+            const srcKeys: string[] = [];
+
+            input.outputs.forEach((out) => srcKeys.push(out.key));
+
+            promises.push(
+                prepareRingSignatures(
+                    txPrefixHash,
+                    input.keyImage,
+                    srcKeys,
+                    input.realOutputIndex,
+                    input.input.transactionKeys.derivedKey,
+                    input.input.transactionKeys.outputIndex,
+                    i,
+                    input.input.transactionKeys.publicKey,
+                    randomKey));
+        }
+
+        const results = await Promise.all(promises);
+
+        results.sort((a, b) => (a.index > b.index) ? 1 : -1);
+
+        const signatures: string[][] = [];
+
+        const signatureMeta: Interfaces.PreparedRingSignature[] = [];
+
+        for (const result of results) {
+            const sigSet: string[] = [];
+            if (!result.signatures) {
+                throw new Error('Prepared signatures are incomplete');
+            }
+
+            result.signatures.forEach((sig) => sigSet.push(sig));
+            signatures.push(sigSet);
+
+            const meta: Interfaces.PreparedRingSignature = {
+                index: result.index,
+                realOutputIndex: result.realOutputIndex,
+                key: result.key,
+                inputKeys: result.inputKeys,
+                input: {
+                    derivation: prepared.inputs[result.index].input.transactionKeys.derivedKey,
+                    outputIndex: prepared.inputs[result.index].input.transactionKeys.outputIndex,
+                    tx_public_key: prepared.inputs[result.index].input.transactionKeys.publicKey
+                }
+            };
+
+            signatureMeta.push(meta);
+        }
+
+        prepared.transaction.signatures = signatures;
+
+        const minimumFee = this.calculateMinimumTransactionFee(prepared.transaction.size);
+
+        if (feeAmount && feeAmount !== 0 && feePerByte && feeAmount < minimumFee) {
+            throw new Error('Transaction fee [' + prepared.transaction.fee +
+                '] is not enough for network transmission: ' + minimumFee);
+        }
+
+        return {
+            transaction: prepared.transaction,
+            transactionRecipients: recipients,
+            transactionPrivateKey: prepared.transaction.transactionKeys.privateKey,
+            signatureMeta: signatureMeta
+        };
     }
 
     /**
@@ -790,16 +1019,86 @@ export class LedgerNote implements ICryptoNote {
         preparedTransaction: Interfaces.PreparedTransaction,
         privateSpendKey: string | undefined
     ): Promise<Transaction> {
-        UNUSED(preparedTransaction);
         UNUSED(privateSpendKey);
 
-        throw new Error('Not implemented');
+        const promises = [];
+
+        const tx = preparedTransaction.transaction;
+
+        if (!preparedTransaction.signatureMeta) {
+            throw new Error('No transaction signature meta data supplied');
+        }
+
+        for (const meta of preparedTransaction.signatureMeta) {
+            if (!meta.input || !meta.input.derivation || !meta.input.outputIndex) {
+                throw new Error('Meta data is missing critical information');
+            }
+
+            if (!meta.input.tx_public_key) {
+                throw new Error('Transactions must be prepared by this class');
+            }
+
+            const public_ephemeral = await TurtleCoinCrypto.derivePublicKey(
+                meta.input.derivation, meta.input.outputIndex, this.m_address.spend.publicKey);
+
+            promises.push(completeRingSignatures(
+                this.m_ledger,
+                meta.input.tx_public_key,
+                meta.input.outputIndex,
+                public_ephemeral,
+                meta.key,
+                tx.signatures[meta.index],
+                meta.realOutputIndex,
+                meta.index));
+        }
+
+        const results = await Promise.all(promises);
+
+        for (const result of results) {
+            tx.signatures[result.index] = result.signatures;
+        }
+
+        const prefixHash = await tx.prefixHash();
+
+        const checkPromises = [];
+
+        for (let i = 0; i < tx.inputs.length; i++) {
+            checkPromises.push(checkRingSignatures(
+                prefixHash,
+                (tx.inputs[i] as TransactionInputs.KeyInput).keyImage,
+                getInputKeys(preparedTransaction.signatureMeta, i),
+                tx.signatures[i]
+            ));
+        }
+
+        const validSigs = await Promise.all(checkPromises);
+
+        for (const valid of validSigs) {
+            if (!valid) {
+                throw new Error('Could not complete ring signatures');
+            }
+        }
+
+        return preparedTransaction.transaction;
     }
 }
 
 /** @ignore */
 function UNUSED (val: any): any {
     return val || NULL_KEY;
+}
+
+/** @ignore */
+function getInputKeys (preparedSignatures: Interfaces.PreparedRingSignature[], index: number): string[] {
+    for (const meta of preparedSignatures) {
+        if (meta.index === index) {
+            if (meta.inputKeys) {
+                return meta.inputKeys;
+            }
+        }
+    }
+
+    throw new Error('Could not locate input keys in the prepared signatures');
 }
 
 /** @ignore */
@@ -934,4 +1233,60 @@ async function prepareTransactionOutputs (
         transactionKeys,
         outputs: preparedOutputs
     };
+}
+
+/** @ignore */
+async function prepareRingSignatures (
+    hash: string,
+    keyImage: string,
+    publicKeys: string[],
+    realOutputIndex: number,
+    derivation: string,
+    outputIndex: number,
+    index: number,
+    tx_public_key: string,
+    randomKey?: string
+): Promise<Interfaces.PreparedRingSignature> {
+    const prepped = await TurtleCoinCrypto.prepareRingSignatures(
+        hash, keyImage, publicKeys, realOutputIndex, randomKey);
+
+    return {
+        index: index,
+        realOutputIndex: realOutputIndex,
+        key: prepped.key,
+        signatures: prepped.signatures,
+        inputKeys: publicKeys,
+        input: {
+            derivation,
+            outputIndex,
+            tx_public_key
+        }
+    };
+}
+
+/** @ignore */
+async function checkRingSignatures (
+    hash: string,
+    keyImage: string,
+    publicKeys: string[],
+    signatures: string[]
+): Promise<boolean> {
+    return TurtleCoinCrypto.checkRingSignatures(hash, keyImage, publicKeys, signatures);
+}
+
+/** @ignore */
+async function completeRingSignatures (
+    ledger: LedgerDevice,
+    tx_public_key: string,
+    outputIndex: number,
+    tx_output_key: string,
+    key: string,
+    signatures: string[],
+    realOutputIndex: number,
+    index: number
+): Promise<Interfaces.GeneratedRingSignatures> {
+    signatures[realOutputIndex] = await ledger.completeRingSignature(tx_public_key,
+        outputIndex, tx_output_key, key, signatures[realOutputIndex]);
+
+    return { signatures, index };
 }

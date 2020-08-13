@@ -76,6 +76,7 @@ export declare namespace Interfaces {
          */
         input: {
             derivation: string;
+            tx_public_key?: string;
             outputIndex: number;
         };
     }
