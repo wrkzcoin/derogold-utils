@@ -33,7 +33,9 @@ import LedgerTransactionState = Types.LedgerTypes.TransactionState;
 /** @ignore */
 import LedgerErrorCode = Types.LedgerTypes.ErrorCode;
 /** @ignore */
-export { KeyInput, KeyOutput, KeyPair, Keys, TransactionInputs, TransactionOutputs, LedgerError, LedgerTransactionState, LedgerErrorCode };
+import ICryptoNote = Types.CryptoNoteInterfaces.ICryptoNote;
+/** @ignore */
+export { ICryptoNote, KeyInput, KeyOutput, KeyPair, Keys, TransactionInputs, TransactionOutputs, LedgerError, LedgerTransactionState, LedgerErrorCode };
 /**
  * Executes the callback method upon the given event
  * @param event

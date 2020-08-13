@@ -8,7 +8,8 @@ import { BigInteger } from './Types';
 /** @ignore */
 export class Common {
     public static absoluteToRelativeOffsets (
-        offsets: BigInteger.BigInteger[] | number[] | string []): BigInteger.BigInteger[] {
+        offsets: BigInteger.BigInteger[] | number[] | string []
+    ): BigInteger.BigInteger[] {
         const offsetsCopy: BigInteger.BigInteger[] = [];
 
         for (const offset of offsets) {
@@ -33,7 +34,8 @@ export class Common {
     }
 
     public static relativeToAbsoluteOffsets (
-        offsets: BigInteger.BigInteger[] | number[] | string[]): BigInteger.BigInteger[] {
+        offsets: BigInteger.BigInteger[] | number[] | string[]
+    ): BigInteger.BigInteger[] {
         const offsetsCopy: BigInteger.BigInteger[] = [];
 
         for (const offset of offsets) {

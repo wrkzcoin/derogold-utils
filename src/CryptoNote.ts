@@ -18,6 +18,7 @@ import {
 import { Transaction } from './Transaction';
 import * as Numeral from 'numeral';
 import Config = ConfigInterface.Interfaces.Config;
+import ICryptoNote = CryptoNoteInterfaces.ICryptoNote;
 
 /** @ignore */
 const Config = require('../config.json');
@@ -30,7 +31,7 @@ const UINT64_MAX = BigInteger(2).pow(64);
  * various other cryptographic items during the receipt or transfer
  * of funds on the network
  */
-export class CryptoNote {
+export class CryptoNote implements ICryptoNote {
     protected config: Config = require('../config.json');
 
     /**
@@ -90,6 +91,14 @@ export class CryptoNote {
     }
 
     /**
+     * Provides the public wallet address of this instance
+     * THIS IS NOT IMPLEMENTED IN THIS CLASS
+     */
+    public get address (): Address {
+        throw new Error('Not implemented on this object');
+    }
+
+    /**
      * Converts absolute global index offsets to relative ones
      * @param offsets the absolute offsets
      * @returns the relative offsets
@@ -134,7 +143,8 @@ export class CryptoNote {
         privateViewKey: string,
         publicSpendKey: string,
         privateSpendKey: string,
-        outputIndex: number): Promise<CryptoNoteInterfaces.IKeyImage> {
+        outputIndex: number
+    ): Promise<CryptoNoteInterfaces.IKeyImage> {
         const derivation = await TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, privateViewKey);
 
         return this.generateKeyImagePrimitive(publicSpendKey, privateSpendKey, outputIndex, derivation);
@@ -153,7 +163,8 @@ export class CryptoNote {
         publicSpendKey: string,
         privateSpendKey: string,
         outputIndex: number,
-        derivation: string): Promise<CryptoNoteInterfaces.IKeyImage> {
+        derivation: string
+    ): Promise<CryptoNoteInterfaces.IKeyImage> {
         const publicEphemeral = await TurtleCoinCrypto.derivePublicKey(derivation, outputIndex, publicSpendKey);
 
         const privateEphemeral = await TurtleCoinCrypto.deriveSecretKey(derivation, outputIndex, privateSpendKey);

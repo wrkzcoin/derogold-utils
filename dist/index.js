@@ -3,7 +3,7 @@
 //
 // Please see the included LICENSE file for more information.
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.on = exports.LedgerErrorCode = exports.LedgerTransactionState = exports.LedgerError = exports.TransactionOutputs = exports.TransactionInputs = exports.Keys = exports.KeyPair = exports.KeyOutput = exports.KeyInput = void 0;
+exports.on = exports.LedgerErrorCode = exports.LedgerTransactionState = exports.LedgerError = exports.TransactionOutputs = exports.TransactionInputs = exports.Keys = exports.KeyPair = exports.KeyOutput = exports.KeyInput = exports.ICryptoNote = void 0;
 const turtlecoin_crypto_1 = require("turtlecoin-crypto");
 /** @ignore */
 const Types = require("./Types");
@@ -61,6 +61,9 @@ exports.LedgerTransactionState = LedgerTransactionState;
 /** @ignore */
 var LedgerErrorCode = Types.LedgerTypes.ErrorCode;
 exports.LedgerErrorCode = LedgerErrorCode;
+/** @ignore */
+var ICryptoNote = Types.CryptoNoteInterfaces.ICryptoNote;
+exports.ICryptoNote = ICryptoNote;
 /**
  * Executes the callback method upon the given event
  * @param event

@@ -12,31 +12,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CryptoNote = void 0;
-const Address_1 = require("./Address");
-const AddressPrefix_1 = require("./AddressPrefix");
-const Common_1 = require("./Common");
+exports.LedgerNote = void 0;
+const LedgerDevice_1 = require("./LedgerDevice");
 const Types_1 = require("./Types");
-const Transaction_1 = require("./Transaction");
+const Common_1 = require("./Common");
+const AddressPrefix_1 = require("./AddressPrefix");
+const Address_1 = require("./Address");
 const Numeral = require("numeral");
+var TransactionState = Types_1.LedgerTypes.TransactionState;
+var KeyPair = Types_1.ED25519.KeyPair;
 /** @ignore */
 const Config = require('../config.json');
 /** @ignore */
+const NULL_KEY = ''.padEnd(64, '0');
+/** @ignore */
 const UINT64_MAX = Types_1.BigInteger(2).pow(64);
-/**
- * CryptoNote helper class for constructing transactions and performing
- * various other cryptographic items during the receipt or transfer
- * of funds on the network
- */
-class CryptoNote {
+class LedgerNote {
     /**
-     * Constructs a new instance of the object
-     * If a configuration is supplied, it is also passed to the underlying
-     * cryptographic library
-     * @param [config] the base configuration to apply to our helper
+     * Constructs a new instance of the Ledger-based CryptoNote tools
+     * @param transport the transport mechanism for talking to a Ledger device
+     * @param config [config] the base configuration to apply to our helper
      */
-    constructor(config) {
+    constructor(transport, config) {
         this.config = require('../config.json');
+        this.m_spend = new KeyPair();
+        this.m_view = new KeyPair();
+        this.m_address = new Address_1.Address();
+        this.m_fetched = false;
+        this.m_ledger = new LedgerDevice_1.LedgerDevice(transport);
         if (config) {
             Object.keys(config).forEach((key) => {
                 switch (key) {
@@ -85,11 +88,36 @@ class CryptoNote {
         }
     }
     /**
-     * Provides the public wallet address of this instance
-     * THIS IS NOT IMPLEMENTED IN THIS CLASS
+     * Provides the public wallet address of the ledger device
      */
     get address() {
-        throw new Error('Not implemented on this object');
+        if (!this.ready) {
+            throw new Error('Instance is not ready');
+        }
+        return this.m_address;
+    }
+    /**
+     * Fetches the public keys and private view key from the Ledger device
+     * and stores it locally for use later
+     */
+    fetchKeys() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const keys = yield this.m_ledger.getPublicKeys();
+            this.m_spend = keys.spend;
+            this.m_view = keys.view;
+            const view = yield this.m_ledger.getPrivateViewKey();
+            yield this.m_view.setPrivateKey(view.privateKey);
+            const prefix = new AddressPrefix_1.AddressPrefix(this.config.addressPrefix || Config.addressPrefix);
+            this.m_address = yield Address_1.Address.fromPublicKeys(keys.spend.publicKey, keys.view.publicKey, undefined, prefix);
+            this.m_fetched = true;
+        });
+    }
+    /**
+     * Indicates whether the keys have been fetched from the ledger device
+     * and this instance of the class is ready for further interaction
+     */
+    get ready() {
+        return this.m_fetched;
     }
     /**
      * Converts absolute global index offsets to relative ones
@@ -125,8 +153,14 @@ class CryptoNote {
      */
     generateKeyImage(transactionPublicKey, privateViewKey, publicSpendKey, privateSpendKey, outputIndex) {
         return __awaiter(this, void 0, void 0, function* () {
-            const derivation = yield Types_1.TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, privateViewKey);
-            return this.generateKeyImagePrimitive(publicSpendKey, privateSpendKey, outputIndex, derivation);
+            if (!this.ready) {
+                yield this.fetchKeys();
+            }
+            UNUSED(privateViewKey);
+            UNUSED(publicSpendKey);
+            UNUSED(privateSpendKey);
+            const derivation = yield Types_1.TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, this.m_view.privateKey);
+            return this.generateKeyImagePrimitive(undefined, undefined, outputIndex, derivation);
         });
     }
     /**
@@ -140,13 +174,16 @@ class CryptoNote {
      */
     generateKeyImagePrimitive(publicSpendKey, privateSpendKey, outputIndex, derivation) {
         return __awaiter(this, void 0, void 0, function* () {
-            const publicEphemeral = yield Types_1.TurtleCoinCrypto.derivePublicKey(derivation, outputIndex, publicSpendKey);
-            const privateEphemeral = yield Types_1.TurtleCoinCrypto.deriveSecretKey(derivation, outputIndex, privateSpendKey);
-            const keyImage = yield Types_1.TurtleCoinCrypto.generateKeyImage(publicEphemeral, privateEphemeral);
+            if (!this.ready) {
+                yield this.fetchKeys();
+            }
+            UNUSED(publicSpendKey);
+            UNUSED(privateSpendKey);
+            const publicEphemeral = yield Types_1.TurtleCoinCrypto.derivePublicKey(derivation, outputIndex, this.m_spend.publicKey);
+            const result = yield this.m_ledger.generateKeyImagePrimitive(derivation, outputIndex, publicEphemeral);
             return {
                 publicEphemeral: publicEphemeral,
-                privateEphemeral: privateEphemeral,
-                keyImage: keyImage
+                keyImage: result
             };
         });
     }
@@ -201,10 +238,19 @@ class CryptoNote {
      * @param [generatePartial] whether we should generate partial key images
      * @returns the output if it belongs to us
      */
-    isOurTransactionOutput(transactionPublicKey, output, privateViewKey, publicSpendKey, privateSpendKey, generatePartial) {
+    isOurTransactionOutput(transactionPublicKey, output, privateViewKey, publicSpendKey, privateSpendKey, generatePartial = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            const derivedKey = yield Types_1.TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, privateViewKey);
-            const publicEphemeral = yield Types_1.TurtleCoinCrypto.derivePublicKey(derivedKey, output.index, publicSpendKey);
+            if (!this.ready) {
+                yield this.fetchKeys();
+            }
+            if (generatePartial) {
+                throw new Error('Generating partial key images is not supported');
+            }
+            UNUSED(privateViewKey);
+            UNUSED(publicSpendKey);
+            UNUSED(privateSpendKey);
+            const derivedKey = yield Types_1.TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, this.m_view.privateKey);
+            const publicEphemeral = yield Types_1.TurtleCoinCrypto.derivePublicKey(derivedKey, output.index, this.m_spend.publicKey);
             if (publicEphemeral === output.key) {
                 output.input = {
                     publicEphemeral,
@@ -214,23 +260,10 @@ class CryptoNote {
                         outputIndex: output.index
                     }
                 };
-                if (privateSpendKey) {
-                    /*  If we are forcing the generation of a partial key image then we
-                        use the supplied private spend key in the key generation instead of
-                        the privateEphemeral that we don't have
-                     */
-                    const privateEphemeral = (generatePartial)
-                        ? privateSpendKey
-                        : yield Types_1.TurtleCoinCrypto.deriveSecretKey(derivedKey, output.index, privateSpendKey);
-                    const derivedPublicEphemeral = yield Types_1.TurtleCoinCrypto.secretKeyToPublicKey(privateEphemeral);
-                    if (derivedPublicEphemeral !== publicEphemeral && !generatePartial) {
-                        throw new Error('Incorrect private spend key supplied');
-                    }
-                    const keyImage = yield Types_1.TurtleCoinCrypto.generateKeyImage(publicEphemeral, privateEphemeral);
-                    output.input.privateEphemeral = privateEphemeral;
-                    output.keyImage = keyImage;
-                    output.isPartialKeyImage = (generatePartial) || false;
-                }
+                const result = yield this.generateKeyImage(transactionPublicKey, undefined, undefined, undefined, output.index);
+                // we don't store this as it is private
+                output.input.privateEphemeral = NULL_KEY;
+                output.keyImage = result.keyImage;
                 return output;
             }
             throw new Error('Not our output');
@@ -332,13 +365,13 @@ class CryptoNote {
      */
     signMessage(message, privateKey) {
         return __awaiter(this, void 0, void 0, function* () {
+            UNUSED(privateKey);
             if (typeof message !== 'string') {
                 message = JSON.stringify(message);
             }
-            const publicKey = yield Types_1.TurtleCoinCrypto.secretKeyToPublicKey(privateKey);
             const hex = Buffer.from(message);
             const hash = yield Types_1.TurtleCoinCrypto.cn_fast_hash(hex.toString('hex'));
-            return Types_1.TurtleCoinCrypto.generateSignature(hash, publicKey, privateKey);
+            return this.m_ledger.generateSignature(hash);
         });
     }
     /**
@@ -361,52 +394,6 @@ class CryptoNote {
     }
     /**
      * Constructs a new Transaction using the supplied values.
-     * The resulting transaction can be broadcasted to the TurtleCoin network
-     * @async
-     * @param outputs the new outputs for the transaction (TO)
-     * @param inputs outputs we will be spending (FROM)
-     * @param randomOutputs the random outputs to use for mixing
-     * @param mixin the number of mixins to use
-     * @param [feeAmount] the transaction fee amount to pay
-     * @param [paymentId] the payment ID to use in the transaction,
-     * @param [unlockTime] the unlock time or block height for the transaction
-     * @param [extraData] arbitrary extra data to include in the transaction extra field
-     * @returns the newly created transaction object
-     */
-    createTransaction(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const feePerByte = this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
-            const prepared = yield this.createTransactionStructure(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData);
-            const txPrefixHash = yield prepared.transaction.prefixHash();
-            const promises = [];
-            for (let i = 0; i < prepared.inputs.length; i++) {
-                const input = prepared.inputs[i];
-                const srcKeys = [];
-                if (!input.input.privateEphemeral) {
-                    throw new Error('private ephemeral missing from input');
-                }
-                input.outputs.forEach((out) => srcKeys.push(out.key));
-                promises.push(generateRingSignatures(txPrefixHash, input.keyImage, srcKeys, input.input.privateEphemeral, input.realOutputIndex, i));
-            }
-            const tmpSignatures = yield Promise.all(promises);
-            tmpSignatures.sort((a, b) => (a.index > b.index) ? 1 : -1);
-            const signatures = [];
-            tmpSignatures.forEach((sigs) => {
-                const sigSet = [];
-                sigs.signatures.forEach((sig) => sigSet.push(sig));
-                signatures.push(sigSet);
-            });
-            prepared.transaction.signatures = signatures;
-            const minimumFee = this.calculateMinimumTransactionFee(prepared.transaction.size);
-            if (feeAmount && feeAmount !== 0 && feePerByte && feeAmount < minimumFee) {
-                throw new Error('Transaction fee [' + prepared.transaction.fee +
-                    '] is not enough for network transmission: ' + minimumFee);
-            }
-            return prepared.transaction;
-        });
-    }
-    /**
-     * Constructs a new Transaction using the supplied values.
      * Note: Does not sign the transaction
      * @async
      * @param outputs the new outputs for the transaction (TO)
@@ -419,8 +406,11 @@ class CryptoNote {
      * @param [extraData] arbitrary extra data to include in the transaction extra field
      * @returns the newly created transaction object and it's input data
      */
-    createTransactionStructure(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData) {
+    createTransaction(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (extraData) {
+                throw new Error('Supplying extra transaction data is not supported');
+            }
             if (typeof feeAmount === 'undefined') {
                 feeAmount = this.config.defaultNetworkFee || Config.defaultNetworkFee;
             }
@@ -482,7 +472,9 @@ class CryptoNote {
                 throw new Error('We have not spent all of what we sent in');
             }
             const transactionInputs = yield prepareTransactionInputs(inputs, randomOutputs, mixin);
-            const transactionOutputs = yield prepareTransactionOutputs(outputs);
+            // Use the ledger to get our random pair of keys for the one-time transaction keys
+            const tx_keys = yield this.m_ledger.getRandomKeyPair();
+            const transactionOutputs = yield prepareTransactionOutputs(tx_keys, outputs);
             if (transactionOutputs.outputs.length >
                 (this.config.maximumOutputsPerTransaction || Config.maximumOutputsPerTransaction)) {
                 throw new RangeError('Tried to create a transaction with more outputs than permitted');
@@ -498,43 +490,85 @@ class CryptoNote {
                         'correct input:output ratio be met');
                 }
             }
-            const tx = new Transaction_1.Transaction();
-            tx.unlockTime = Types_1.BigInteger(unlockTime);
-            yield tx.addPublicKey(transactionOutputs.transactionKeys.publicKey);
-            tx.transactionKeys = transactionOutputs.transactionKeys;
-            if (integratedPaymentId) {
-                tx.addPaymentId(integratedPaymentId);
-            }
-            else if (paymentId) {
-                tx.addPaymentId(paymentId);
-            }
-            if (extraData) {
-                if (!(extraData instanceof Buffer)) {
-                    extraData = (typeof extraData === 'string')
-                        ? Buffer.from(extraData) : Buffer.from(JSON.stringify(extraData));
-                }
-                tx.addData(extraData);
-            }
             transactionInputs.sort((a, b) => {
                 return (Types_1.BigInteger(a.keyImage, 16).compare(Types_1.BigInteger(b.keyImage, 16)) * -1);
             });
-            for (const input of transactionInputs) {
-                let offsets = [];
-                input.outputs.forEach((output) => offsets.push(Types_1.BigInteger(output.index)));
-                offsets = Common_1.Common.absoluteToRelativeOffsets(offsets);
-                tx.inputs.push(new Types_1.TransactionInputs.KeyInput(input.amount, offsets, input.keyImage));
+            try {
+                yield this.m_ledger.startTransaction(unlockTime, transactionInputs.length, transactionOutputs.outputs.length, tx_keys.publicKey, paymentId || undefined);
+                if ((yield this.m_ledger.transactionState()) !== TransactionState.READY) {
+                    throw new Error('Ledger transaction construction not ready.');
+                }
+                yield this.m_ledger.startTransactionInputLoad();
+                if ((yield this.m_ledger.transactionState()) !== TransactionState.RECEIVING_INPUTS) {
+                    throw new Error('Ledger is not ready to receive inputs.');
+                }
+                for (const input of transactionInputs) {
+                    let offsets = input.outputs
+                        .map(output => Types_1.BigInteger(output.index));
+                    offsets = Common_1.Common.absoluteToRelativeOffsets(offsets)
+                        .map(offset => offset.toJSNumber());
+                    yield this.m_ledger.loadTransactionInput(input.input.transactionKeys.publicKey, input.input.transactionKeys.outputIndex, input.amount, input.outputs.map(elem => elem.key), offsets, input.realOutputIndex);
+                }
+                if ((yield this.m_ledger.transactionState()) !== TransactionState.INPUTS_RECEIVED) {
+                    throw new Error('Ledger did not receive all required inputs.');
+                }
+                yield this.m_ledger.startTransactionOutputLoad();
+                if ((yield this.m_ledger.transactionState()) !== TransactionState.RECEIVING_OUTPUTS) {
+                    throw new Error('Ledger is not ready to receive outputs.');
+                }
+                for (const output of transactionOutputs.outputs) {
+                    yield this.m_ledger.loadTransactionOutput(output.amount, output.key);
+                }
+                if ((yield this.m_ledger.transactionState()) !== TransactionState.OUTPUTS_RECEIVED) {
+                    throw new Error('Ledger did not receive all required outputs.');
+                }
+                yield this.m_ledger.finalizeTransactionPrefix();
+                if ((yield this.m_ledger.transactionState()) !== TransactionState.PREFIX_READY) {
+                    throw new Error('Ledger did not properly finalize the transaction prefix.');
+                }
+                const result = yield this.m_ledger.signTransaction();
+                if ((yield this.m_ledger.transactionState()) !== TransactionState.COMPLETE) {
+                    throw new Error('Ledger did not properly complete the transaction.');
+                }
+                const tx = yield this.m_ledger.retrieveTransaction();
+                if ((yield tx.hash()) !== result.hash) {
+                    throw new Error('Transaction hash mismatch');
+                }
+                if (tx.size !== result.size) {
+                    throw new Error('Transaction size mismatch');
+                }
+                return tx;
             }
-            for (const output of transactionOutputs.outputs) {
-                tx.outputs.push(new Types_1.TransactionOutputs.KeyOutput(output.amount, output.key));
+            finally {
+                yield this.m_ledger.resetTransaction();
             }
-            if (tx.extra.length > (this.config.maximumExtraSize || Config.maximumExtraSize)) {
-                throw new Error('Transaction extra exceeds the limit of [' +
-                    (this.config.maximumExtraSize || Config.maximumExtraSize) + '] bytes');
-            }
-            return {
-                transaction: tx,
-                inputs: transactionInputs
-            };
+        });
+    }
+    /**
+     * Constructs a new Transaction using the supplied values.
+     * Note: Does not sign the transaction
+     * @async
+     * @param outputs the new outputs for the transaction (TO)
+     * @param inputs outputs we will be spending (FROM)
+     * @param randomOutputs the random outputs to use for mixing
+     * @param mixin the number of mixins to use
+     * @param [feeAmount] the transaction fee amount to pay
+     * @param [paymentId] the payment ID to use in the transaction,
+     * @param [unlockTime] the unlock time or block height for the transaction
+     * @param [extraData] arbitrary extra data to include in the transaction extra field
+     * @returns the newly created transaction object and it's input data
+     */
+    createTransactionStructure(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            UNUSED(outputs);
+            UNUSED(inputs);
+            UNUSED(randomOutputs);
+            UNUSED(mixin);
+            UNUSED(feeAmount);
+            UNUSED(paymentId);
+            UNUSED(unlockTime);
+            UNUSED(extraData);
+            throw new Error('Not implemented');
         });
     }
     /**
@@ -554,58 +588,16 @@ class CryptoNote {
      */
     prepareTransaction(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData, randomKey) {
         return __awaiter(this, void 0, void 0, function* () {
-            const feePerByte = this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
-            const prepared = yield this.createTransactionStructure(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData);
-            const recipients = [];
-            for (const output of outputs) {
-                recipients.push({
-                    address: yield output.destination.address(),
-                    amount: output.amount
-                });
-            }
-            const txPrefixHash = yield prepared.transaction.prefixHash();
-            const promises = [];
-            for (let i = 0; i < prepared.inputs.length; i++) {
-                const input = prepared.inputs[i];
-                const srcKeys = [];
-                input.outputs.forEach((out) => srcKeys.push(out.key));
-                promises.push(prepareRingSignatures(txPrefixHash, input.keyImage, srcKeys, input.realOutputIndex, input.input.transactionKeys.derivedKey, input.input.transactionKeys.outputIndex, i, randomKey));
-            }
-            const results = yield Promise.all(promises);
-            results.sort((a, b) => (a.index > b.index) ? 1 : -1);
-            const signatures = [];
-            const signatureMeta = [];
-            for (const result of results) {
-                const sigSet = [];
-                if (!result.signatures) {
-                    throw new Error('Prepared signatures are incomplete');
-                }
-                result.signatures.forEach((sig) => sigSet.push(sig));
-                signatures.push(sigSet);
-                const meta = {
-                    index: result.index,
-                    realOutputIndex: result.realOutputIndex,
-                    key: result.key,
-                    inputKeys: result.inputKeys,
-                    input: {
-                        derivation: prepared.inputs[result.index].input.transactionKeys.derivedKey,
-                        outputIndex: prepared.inputs[result.index].input.transactionKeys.outputIndex
-                    }
-                };
-                signatureMeta.push(meta);
-            }
-            prepared.transaction.signatures = signatures;
-            const minimumFee = this.calculateMinimumTransactionFee(prepared.transaction.size);
-            if (feeAmount && feeAmount !== 0 && feePerByte && feeAmount < minimumFee) {
-                throw new Error('Transaction fee [' + prepared.transaction.fee +
-                    '] is not enough for network transmission: ' + minimumFee);
-            }
-            return {
-                transaction: prepared.transaction,
-                transactionRecipients: recipients,
-                transactionPrivateKey: prepared.transaction.transactionKeys.privateKey,
-                signatureMeta: signatureMeta
-            };
+            UNUSED(outputs);
+            UNUSED(inputs);
+            UNUSED(randomOutputs);
+            UNUSED(mixin);
+            UNUSED(feeAmount);
+            UNUSED(paymentId);
+            UNUSED(unlockTime);
+            UNUSED(extraData);
+            UNUSED(randomKey);
+            throw new Error('Not implemented');
         });
     }
     /**
@@ -618,78 +610,16 @@ class CryptoNote {
      */
     completeTransaction(preparedTransaction, privateSpendKey) {
         return __awaiter(this, void 0, void 0, function* () {
-            const promises = [];
-            const tx = preparedTransaction.transaction;
-            if (!preparedTransaction.signatureMeta) {
-                throw new Error('No transaction signature meta data supplied');
-            }
-            for (const meta of preparedTransaction.signatureMeta) {
-                if (!meta.input || !meta.input.derivation || !meta.input.outputIndex) {
-                    throw new Error('Meta data is missing critical information');
-                }
-                promises.push(completeRingSignatures(privateSpendKey, meta.input.derivation, meta.input.outputIndex, meta.realOutputIndex, meta.key, tx.signatures[meta.index], meta.index));
-            }
-            const results = yield Promise.all(promises);
-            for (const result of results) {
-                tx.signatures[result.index] = result.signatures;
-            }
-            const prefixHash = yield tx.prefixHash();
-            const checkPromises = [];
-            for (let i = 0; i < tx.inputs.length; i++) {
-                checkPromises.push(checkRingSignatures(prefixHash, tx.inputs[i].keyImage, getInputKeys(preparedTransaction.signatureMeta, i), tx.signatures[i]));
-            }
-            const validSigs = yield Promise.all(checkPromises);
-            for (const valid of validSigs) {
-                if (!valid) {
-                    throw new Error('Could not complete ring signatures');
-                }
-            }
-            return preparedTransaction.transaction;
+            UNUSED(preparedTransaction);
+            UNUSED(privateSpendKey);
+            throw new Error('Not implemented');
         });
     }
 }
-exports.CryptoNote = CryptoNote;
+exports.LedgerNote = LedgerNote;
 /** @ignore */
-function checkRingSignatures(hash, keyImage, publicKeys, signatures) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return Types_1.TurtleCoinCrypto.checkRingSignatures(hash, keyImage, publicKeys, signatures);
-    });
-}
-/** @ignore */
-function generateRingSignatures(hash, keyImage, publicKeys, privateKey, realOutputIndex, index) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const signatures = yield Types_1.TurtleCoinCrypto.generateRingSignatures(hash, keyImage, publicKeys, privateKey, realOutputIndex);
-        const valid = yield checkRingSignatures(hash, keyImage, publicKeys, signatures);
-        if (!valid) {
-            throw new Error('Could not generate ring signatures');
-        }
-        return { signatures, index };
-    });
-}
-/** @ignore */
-function prepareRingSignatures(hash, keyImage, publicKeys, realOutputIndex, derivation, outputIndex, index, randomKey) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const prepped = yield Types_1.TurtleCoinCrypto.prepareRingSignatures(hash, keyImage, publicKeys, realOutputIndex, randomKey);
-        return {
-            index: index,
-            realOutputIndex: realOutputIndex,
-            key: prepped.key,
-            signatures: prepped.signatures,
-            inputKeys: publicKeys,
-            input: {
-                derivation,
-                outputIndex
-            }
-        };
-    });
-}
-/** @ignore */
-function completeRingSignatures(privateSpendKey, derivation, outputIndex, realOutputIndex, key, sigs, index) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const privateEphemeral = yield Types_1.TurtleCoinCrypto.deriveSecretKey(derivation, outputIndex, privateSpendKey);
-        const signatures = yield Types_1.TurtleCoinCrypto.completeRingSignatures(privateEphemeral, realOutputIndex, key, sigs);
-        return { signatures, index };
-    });
+function UNUSED(val) {
+    return val || NULL_KEY;
 }
 /** @ignore */
 function prepareTransactionInputs(inputs, randomOutputs, mixin) {
@@ -759,7 +689,7 @@ function prepareTransactionInputs(inputs, randomOutputs, mixin) {
     return mixedInputs;
 }
 /** @ignore */
-function prepareTransactionOutputs(outputs) {
+function prepareTransactionOutputs(transactionKeys, outputs) {
     return __awaiter(this, void 0, void 0, function* () {
         function prepareOutput(destination, amount, index, privateKey) {
             return __awaiter(this, void 0, void 0, function* () {
@@ -771,8 +701,6 @@ function prepareTransactionOutputs(outputs) {
                 };
             });
         }
-        const keys = yield Types_1.TurtleCoinCrypto.generateKeys();
-        const transactionKeys = yield Types_1.ED25519.KeyPair.from(keys.publicKey, keys.privateKey);
         outputs.sort((a, b) => (a.amount > b.amount) ? 1 : ((b.amount > a.amount) ? -1 : 0));
         const promises = [];
         for (let i = 0; i < outputs.length; i++) {
@@ -788,15 +716,4 @@ function prepareTransactionOutputs(outputs) {
             outputs: preparedOutputs
         };
     });
-}
-/** @ignore */
-function getInputKeys(preparedSignatures, index) {
-    for (const meta of preparedSignatures) {
-        if (meta.index === index) {
-            if (meta.inputKeys) {
-                return meta.inputKeys;
-            }
-        }
-    }
-    throw new Error('Could not locate input keys in the prepared signatures');
 }

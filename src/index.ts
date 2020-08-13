@@ -39,9 +39,12 @@ import LedgerError = Types.LedgerTypes.LedgerError;
 import LedgerTransactionState = Types.LedgerTypes.TransactionState;
 /** @ignore */
 import LedgerErrorCode = Types.LedgerTypes.ErrorCode;
+/** @ignore */
+import ICryptoNote = Types.CryptoNoteInterfaces.ICryptoNote;
 
 /** @ignore */
 export {
+    ICryptoNote,
     KeyInput,
     KeyOutput,
     KeyPair,
