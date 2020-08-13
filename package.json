@@ -1,7 +1,7 @@
 {
   "name": "turtlecoin-utils",
   "version": "3.0.0",
-  "description": "A Node.js collection of utilities useful for TurtleCoin developers",
+  "description": "A Typescript/CommonJS collection of utilities useful for TurtleCoin developers",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
