@@ -4,6 +4,7 @@ import Transport from '@ledgerhq/hw-transport';
 import { EventEmitter } from 'events';
 import { Address, KeyPair, Keys, Transaction } from './';
 import { LedgerTypes } from './Types/Ledger';
+import { ICoinConfig } from './Config';
 /**
  * An easy to use interface that uses a Ledger HW transport to communicate with
  * the TurtleCoin application running on a ledger device.
@@ -11,12 +12,14 @@ import { LedgerTypes } from './Types/Ledger';
  */
 export declare class LedgerDevice extends EventEmitter {
     private readonly m_transport;
+    private readonly m_config;
     /**
      * Creates a new instance of the Ledger interface
      * The transport MUST be connected already before passing to this constructor
      * @param transport See https://github.com/LedgerHQ/ledgerjs for available transport providers
+     * @param config coin configuration
      */
-    constructor(transport: Transport);
+    constructor(transport: Transport, config?: ICoinConfig);
     /**
      * Returns the underlying transport
      */

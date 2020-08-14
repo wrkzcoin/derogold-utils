@@ -3,18 +3,14 @@
 // Please see the included LICENSE file for more information.
 
 import { Base58 } from 'turtlecoin-base58';
-import * as ConfigInterface from './Config';
+import { Config } from './Config';
 import { Reader, Writer } from 'bytestream-helper';
-import Config = ConfigInterface.Interfaces.Config;
 
 /** @ignore */
 export enum SIZES {
     KEY = 32,
     CHECKSUM = 4,
 }
-
-/** @ignore */
-const Config: Config = require('../config.json');
 
 /**
  * Represents a TurtleCoin address prefix

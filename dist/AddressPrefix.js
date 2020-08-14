@@ -5,6 +5,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AddressPrefix = exports.SIZES = void 0;
 const turtlecoin_base58_1 = require("turtlecoin-base58");
+const Config_1 = require("./Config");
 const bytestream_helper_1 = require("bytestream-helper");
 /** @ignore */
 var SIZES;
@@ -12,8 +13,6 @@ var SIZES;
     SIZES[SIZES["KEY"] = 32] = "KEY";
     SIZES[SIZES["CHECKSUM"] = 4] = "CHECKSUM";
 })(SIZES = exports.SIZES || (exports.SIZES = {}));
-/** @ignore */
-const Config = require('../config.json');
 /**
  * Represents a TurtleCoin address prefix
  */
@@ -24,7 +23,7 @@ class AddressPrefix {
      * @param [base58] the Base58 representation of the address prefix
      */
     constructor(decimal, base58) {
-        this.m_decimal = Config.addressPrefix || 3914525;
+        this.m_decimal = Config_1.Config.addressPrefix || 3914525;
         if (decimal) {
             this.m_decimal = decimal;
         }

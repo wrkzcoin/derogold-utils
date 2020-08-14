@@ -2,65 +2,64 @@
 //
 // Please see the included LICENSE file for more information.
 
-export namespace Interfaces {
-    export interface Config {
-        activateParentBlockVersion?: number;
-        coinUnitPlaces?: number;
-        addressPrefix?: number;
-        keccakIterations?: number;
-        defaultNetworkFee?: number;
-        fusionMinInputCount?: number;
-        fusionMinInOutCountRatio?: number;
-        mmMiningBlockVersion?: number;
-        maximumOutputAmount?: number;
-        maximumOutputsPerTransaction?: number;
-        maximumExtraSize?: number;
-        activateFeePerByteTransactions?: boolean;
-        feePerByte?: number;
-        feePerByteChunkSize?: number;
-
-        underivePublicKey?: (derivation: string,
-                             outputIndex: number,
-                             outputKey: string) => Promise<string>;
-
-        derivePublicKey?: (derivation: string,
-                           outputIndex: number,
-                           publicKey: string) => Promise<string>;
-
-        deriveSecretKey?: (derivation: string,
-                           outputIndex: number,
-                           privateKey: string) => Promise<string>;
-
-        generateKeyImage?: (transactionPublicKey: string,
-                            privateViewKey: string,
-                            publicSpendKey: string,
-                            privateSpendKey: string,
-                            outputIndex: number) => Promise<string>;
-
-        secretKeyToPublicKey?: (privateKey: string) => Promise<string>;
-
-        cn_fast_hash?: (input: string) => Promise<string>;
-
-        generateRingSignatures?: (transactionPrefixHash: string,
-                                  keyImage: string,
-                                  inputKeys: string[],
-                                  privateKey: string,
-                                  realIndex: number) => Promise<string[]>;
-
-        checkRingSignatures?: (transactionPrefixHash: string,
-                               keyImage: string,
-                               publicKeys: string[],
-                               signatures: string[]) => Promise<boolean>;
-
-        generateKeyDerivation?: (transactionPublicKey: string,
-                                 privateViewKey: string) => Promise<string>;
-
-        checkSignature?: (digestHash: string,
-                          publicKey: string,
-                          signature: string) => Promise<boolean>;
-
-        generateSignature?: (digestHash: string,
-                             publicKey: string,
-                             privateKey: string) => Promise<[boolean, string]>;
-    }
+/**
+ * Respresents the available coin configuration parameters
+ */
+export interface ICoinConfig {
+    activateParentBlockVersion?: number;
+    coinUnitPlaces?: number;
+    addressPrefix?: number;
+    keccakIterations?: number;
+    defaultNetworkFee?: number;
+    fusionMinInputCount?: number;
+    fusionMinInOutCountRatio?: number;
+    mmMiningBlockVersion?: number;
+    maximumOutputAmount?: number;
+    maximumOutputsPerTransaction?: number;
+    maximumExtraSize?: number;
+    activateFeePerByteTransactions?: boolean;
+    feePerByte?: number;
+    feePerByteChunkSize?: number;
+    maximumLedgerTransactionSize?: number;
+    maximumLedgerAPDUPayloadSize?: number;
 }
+
+/** @ignore */
+export interface ICoinRunningConfig extends ICoinConfig {
+    activateParentBlockVersion: number;
+    coinUnitPlaces: number;
+    addressPrefix: number;
+    keccakIterations: number;
+    defaultNetworkFee: number;
+    fusionMinInputCount: number;
+    fusionMinInOutCountRatio: number;
+    mmMiningBlockVersion: number;
+    maximumOutputAmount: number;
+    maximumOutputsPerTransaction: number;
+    maximumExtraSize: number;
+    activateFeePerByteTransactions: boolean;
+    feePerByte: number;
+    feePerByteChunkSize: number;
+    maximumLedgerTransactionSize: number;
+    maximumLedgerAPDUPayloadSize: number;
+}
+
+/** @ignore */
+export const Config: ICoinRunningConfig = {
+    activateParentBlockVersion: 2,
+    coinUnitPlaces: 2,
+    addressPrefix: 3914525,
+    keccakIterations: 1,
+    defaultNetworkFee: 10,
+    fusionMinInputCount: 12,
+    fusionMinInOutCountRatio: 4,
+    mmMiningBlockVersion: 2,
+    maximumOutputAmount: 100000000000,
+    maximumOutputsPerTransaction: 90,
+    maximumExtraSize: 1024,
+    activateFeePerByteTransactions: true,
+    feePerByte: 1.953125,
+    feePerByteChunkSize: 256,
+    maximumLedgerTransactionSize: 38400,
+    maximumLedgerAPDUPayloadSize: 480
+};

@@ -15,6 +15,7 @@ export { Multisig } from './Multisig';
 export { MultisigMessage } from './MultisigMessage';
 export { ParentBlock } from './ParentBlock';
 export { Transaction } from './Transaction';
+export { ICoinConfig } from './Config';
 /** @ignore */
 import TransactionOutputs = Types.TransactionOutputs;
 /** @ignore */

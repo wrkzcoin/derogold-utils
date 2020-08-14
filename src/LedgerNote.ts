@@ -3,7 +3,7 @@
 // Please see the included LICENSE file for more information.
 
 import { CryptoNoteInterfaces } from './Types/ICryptoNote';
-import * as ConfigInterface from './Config';
+import { Config, ICoinConfig, ICoinRunningConfig } from './Config';
 import Transport from '@ledgerhq/hw-transport';
 import { LedgerDevice } from './LedgerDevice';
 import {
@@ -25,16 +25,10 @@ import { Transaction } from './Transaction';
 import ICryptoNote = CryptoNoteInterfaces.ICryptoNote;
 
 /** @ignore */
-import Config = ConfigInterface.Interfaces.Config;
-
-/** @ignore */
 import TransactionState = LedgerTypes.TransactionState;
 
 /** @ignore */
 import KeyPair = ED25519.KeyPair;
-
-/** @ignore */
-const Config = require('../config.json');
 
 /** @ignore */
 const NULL_KEY: string = ''.padEnd(64, '0');
@@ -48,7 +42,7 @@ const UINT64_MAX = BigInteger(2).pow(64);
  * on the network using a Ledger based hardware device
  */
 export class LedgerNote implements ICryptoNote {
-    protected config: Config = require('../config.json');
+    protected config: ICoinRunningConfig = Config;
     private readonly m_ledger: LedgerDevice;
     private m_spend: KeyPair = new KeyPair();
     private m_view: KeyPair = new KeyPair();
@@ -60,55 +54,11 @@ export class LedgerNote implements ICryptoNote {
      * @param transport the transport mechanism for talking to a Ledger device
      * @param config [config] the base configuration to apply to our helper
      */
-    constructor (transport: Transport, config?: Config) {
+    constructor (transport: Transport, config?: ICoinConfig) {
         this.m_ledger = new LedgerDevice(transport);
 
         if (config) {
-            Object.keys(config).forEach((key) => {
-                switch (key) {
-                    case 'coinUnitPlaces':
-                        this.config.coinUnitPlaces = config[key];
-                        break;
-                    case 'addressPrefix':
-                        this.config.addressPrefix = config[key];
-                        break;
-                    case 'keccakIterations':
-                        this.config.keccakIterations = config[key];
-                        break;
-                    case 'defaultNetworkFee':
-                        this.config.defaultNetworkFee = config[key];
-                        break;
-                    case 'fusionMinInputCount':
-                        this.config.fusionMinInputCount = config[key];
-                        break;
-                    case 'fusionMinInOutCountRatio':
-                        this.config.fusionMinInOutCountRatio = config[key];
-                        break;
-                    case 'mmMiningBlockVersion':
-                        this.config.mmMiningBlockVersion = config[key];
-                        break;
-                    case 'maximumOutputAmount':
-                        this.config.maximumOutputAmount = config[key];
-                        break;
-                    case 'maximumOutputsPerTransaction':
-                        this.config.maximumOutputsPerTransaction = config[key];
-                        break;
-                    case 'maximumExtraSize':
-                        this.config.maximumExtraSize = config[key];
-                        break;
-                    case 'activateFeePerByteTransactions':
-                        this.config.activateFeePerByteTransactions = config[key];
-                        break;
-                    case 'feePerByte':
-                        this.config.feePerByte = config[key];
-                        break;
-                    case 'feePerByteChunkSize':
-                        this.config.feePerByteChunkSize = config[key];
-                        break;
-                }
-            });
-
-            TurtleCoinCrypto.userCryptoFunctions = config;
+            this.config = Common.mergeConfig(config);
         }
     }
 

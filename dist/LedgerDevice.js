@@ -17,8 +17,8 @@ const bytestream_helper_1 = require("bytestream-helper");
 const events_1 = require("events");
 const _1 = require("./");
 const Ledger_1 = require("./Types/Ledger");
-/** @ignore */
-const config = require('../config.json');
+const Config_1 = require("./Config");
+const Common_1 = require("./Common");
 /**
  * An easy to use interface that uses a Ledger HW transport to communicate with
  * the TurtleCoin application running on a ledger device.
@@ -29,9 +29,14 @@ class LedgerDevice extends events_1.EventEmitter {
      * Creates a new instance of the Ledger interface
      * The transport MUST be connected already before passing to this constructor
      * @param transport See https://github.com/LedgerHQ/ledgerjs for available transport providers
+     * @param config coin configuration
      */
-    constructor(transport) {
+    constructor(transport, config) {
         super();
+        this.m_config = Config_1.Config;
+        if (config) {
+            this.m_config = Common_1.Common.mergeConfig(config);
+        }
         this.m_transport = transport;
     }
     /**
@@ -579,7 +584,7 @@ class LedgerDevice extends events_1.EventEmitter {
             if (input_output_index > 255 || input_output_index < 0) {
                 throw new RangeError('input_output_index out of range');
             }
-            if (amount > config.maximumOutputAmount || amount < 0) {
+            if (amount > this.m_config.maximumOutputAmount || amount < 0) {
                 throw new RangeError('amount out of range');
             }
             if (public_keys.length !== 4) {
@@ -630,7 +635,7 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     loadTransactionOutput(amount, output_key) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (amount < 0 || amount > config.maximumOutputAmount) {
+            if (amount < 0 || amount > this.m_config.maximumOutputAmount) {
                 throw new Error('amount out of range');
             }
             if (!isHex64(output_key)) {
@@ -668,7 +673,7 @@ class LedgerDevice extends events_1.EventEmitter {
     retrieveTransaction() {
         return __awaiter(this, void 0, void 0, function* () {
             const response = new bytestream_helper_1.Writer();
-            while (response.length < config.maximumLedgerTransactionSize) {
+            while (response.length < this.m_config.maximumLedgerTransactionSize) {
                 const writer = new bytestream_helper_1.Writer();
                 writer.uint16_t(response.length, true);
                 const result = yield this.exchange(Ledger_1.LedgerTypes.Command.TX_DUMP, undefined, writer.buffer);
@@ -701,7 +706,7 @@ class LedgerDevice extends events_1.EventEmitter {
             }
             writer.uint8_t(Ledger_1.LedgerTypes.APDU.P2);
             if (data) {
-                if (data.length > (config.maximumLedgerAPDUPayloadSize - 6)) {
+                if (data.length > (this.m_config.maximumLedgerAPDUPayloadSize - 6)) {
                     throw new Error('Data payload exceeds maximum size');
                 }
                 writer.uint16_t(data.length, true);

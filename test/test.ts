@@ -19,7 +19,7 @@ import { describe, it } from 'mocha';
 import { BigInteger } from '../src/Types';
 
 const TurtleCoinCrypto = new Crypto();
-const cnUtil = new CryptoNote(require('../config.json'));
+const cnUtil = new CryptoNote();
 
 if (process.env.FORCE_JS) {
     if (TurtleCoinCrypto.forceJSCrypto()) {

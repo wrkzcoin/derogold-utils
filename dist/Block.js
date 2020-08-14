@@ -13,12 +13,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Block = void 0;
+const Config_1 = require("./Config");
 const Transaction_1 = require("./Transaction");
 const ParentBlock_1 = require("./ParentBlock");
 const Types_1 = require("./Types");
 const bytestream_helper_1 = require("bytestream-helper");
-/** @ignore */
-const Config = require('../config.json');
+const Common_1 = require("./Common");
 /**
  * Represents a TurtleCoin Block
  */
@@ -32,7 +32,7 @@ class Block {
         this.m_nonce = 0;
         this.m_minerTransaction = new Transaction_1.Transaction();
         this.m_transactions = [];
-        this.m_activateParentBlockVersion = Config.activateParentBlockVersion || 2;
+        this.m_config = Config_1.Config;
         this.m_cache = {
             blob: '',
             hash: '',
@@ -108,11 +108,11 @@ class Block {
             const writer = new bytestream_helper_1.Writer();
             writer.varint(this.m_majorVersion);
             writer.varint(this.m_minorVersion);
-            if (this.m_majorVersion < this.m_activateParentBlockVersion) {
+            if (this.m_majorVersion < this.m_config.activateParentBlockVersion) {
                 writer.varint(this.m_timestamp.getTime() / 1000);
             }
             writer.hash(this.m_previousBlockHash);
-            if (this.m_majorVersion < this.m_activateParentBlockVersion) {
+            if (this.m_majorVersion < this.m_config.activateParentBlockVersion) {
                 writer.uint32_t(this.m_nonce, true);
             }
             const transactionTreeHash = yield this.transactionTreeHash();
@@ -207,10 +207,10 @@ class Block {
      * Defines what major block version activates the use of parent blocks
      */
     get activateParentBlockVersion() {
-        return this.m_activateParentBlockVersion;
+        return this.m_config.activateParentBlockVersion;
     }
     set activateParentBlockVersion(activateParentBlockVersion) {
-        this.m_activateParentBlockVersion = activateParentBlockVersion;
+        this.m_config.activateParentBlockVersion = activateParentBlockVersion;
     }
     /**
      * Creates a new instance of a block from the data supplied
@@ -220,27 +220,27 @@ class Block {
      */
     static from(data, config) {
         return __awaiter(this, void 0, void 0, function* () {
-            const activateParentBlockVersion = (config && config.activateParentBlockVersion &&
-                typeof config.activateParentBlockVersion !== 'undefined')
-                ? config.activateParentBlockVersion : 2;
             const block = new Block();
+            if (config) {
+                block.m_config = Common_1.Common.mergeConfig(config);
+            }
             const reader = new bytestream_helper_1.Reader(data);
             block.m_majorVersion = reader.varint().toJSNumber();
             block.m_minorVersion = reader.varint().toJSNumber();
-            if (block.m_majorVersion >= activateParentBlockVersion) {
+            if (block.m_majorVersion >= block.m_config.activateParentBlockVersion) {
                 block.m_previousBlockHash = reader.hash();
                 block.m_parentBlock.majorVersion = reader.varint().toJSNumber();
                 block.m_parentBlock.minorVersion = reader.varint().toJSNumber();
             }
             block.m_timestamp = new Date(reader.varint().toJSNumber() * 1000);
-            if (block.m_majorVersion >= activateParentBlockVersion) {
+            if (block.m_majorVersion >= block.m_config.activateParentBlockVersion) {
                 block.m_parentBlock.previousBlockHash = reader.hash();
             }
             else {
                 block.m_previousBlockHash = reader.hash();
             }
             block.m_nonce = reader.uint32_t(true).toJSNumber();
-            if (block.m_majorVersion >= activateParentBlockVersion) {
+            if (block.m_majorVersion >= block.m_config.activateParentBlockVersion) {
                 block.m_parentBlock.transactionCount = reader.varint().toJSNumber();
                 const baseTransactionBranchDepth = yield Types_1.TurtleCoinCrypto.tree_depth(block.m_parentBlock.transactionCount);
                 for (let i = 0; i < baseTransactionBranchDepth; i++) {
@@ -323,20 +323,20 @@ class Block {
         const writer = new bytestream_helper_1.Writer();
         writer.varint(this.m_majorVersion);
         writer.varint(this.m_minorVersion);
-        if (this.m_majorVersion >= this.m_activateParentBlockVersion) {
+        if (this.m_majorVersion >= this.m_config.activateParentBlockVersion) {
             writer.hash(this.m_previousBlockHash);
             writer.varint(this.m_parentBlock.majorVersion);
             writer.varint(this.m_parentBlock.minorVersion);
         }
         writer.varint(this.m_timestamp.getTime() / 1000);
-        if (this.m_majorVersion >= this.m_activateParentBlockVersion) {
+        if (this.m_majorVersion >= this.m_config.activateParentBlockVersion) {
             writer.hash(this.m_parentBlock.previousBlockHash);
         }
         else {
             writer.hash(this.m_previousBlockHash);
         }
         writer.uint32_t(this.m_nonce, true);
-        if (this.m_majorVersion >= this.m_activateParentBlockVersion) {
+        if (this.m_majorVersion >= this.m_config.activateParentBlockVersion) {
             writer.varint(this.m_parentBlock.transactionCount);
             if (Array.isArray(this.m_parentBlock.baseTransactionBranch)) {
                 this.m_parentBlock.baseTransactionBranch.forEach((branch) => {
@@ -378,7 +378,7 @@ class Block {
             const writer = new bytestream_helper_1.Writer();
             writer.varint(this.m_majorVersion);
             writer.varint(this.m_minorVersion);
-            if (this.m_majorVersion >= this.m_activateParentBlockVersion) {
+            if (this.m_majorVersion >= this.m_config.activateParentBlockVersion) {
                 writer.hash(this.m_previousBlockHash);
             }
             else {
@@ -389,7 +389,7 @@ class Block {
             const transactionTreeHash = yield this.transactionTreeHash();
             writer.hash(transactionTreeHash.hash);
             writer.varint(transactionTreeHash.count);
-            if (this.m_majorVersion >= this.m_activateParentBlockVersion) {
+            if (this.m_majorVersion >= this.m_config.activateParentBlockVersion) {
                 if (headerOnly) {
                     writer.clear();
                 }

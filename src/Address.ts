@@ -5,14 +5,10 @@
 import { AddressPrefix } from './AddressPrefix';
 import { Base58 } from 'turtlecoin-base58';
 import { Common } from './Common';
-import * as ConfigInterface from './Config';
+import { Config } from './Config';
 import { ED25519, TurtleCoinCrypto } from './Types';
 import { Mnemonics } from 'turtlecoin-mnemonics';
 import { Reader, Writer } from 'bytestream-helper';
-import Config = ConfigInterface.Interfaces.Config;
-
-/** @ignore */
-const Config: Config = require('../config.json');
 
 /** @ignore */
 interface Cache {

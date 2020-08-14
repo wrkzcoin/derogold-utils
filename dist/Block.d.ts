@@ -1,10 +1,7 @@
 /// <reference types="node" />
-import * as ConfigInterface from './Config';
+import { ICoinConfig, ICoinRunningConfig } from './Config';
 import { Transaction } from './Transaction';
 import { ParentBlock } from './ParentBlock';
-import Config = ConfigInterface.Interfaces.Config;
-/** @ignore */
-declare const Config: any;
 /** @ignore */
 interface Cache {
     blob: string;
@@ -97,7 +94,7 @@ export declare class Block {
      * @param [config] the configuration that may define the major block version to activate parent block usage
      * @returns the new block object
      */
-    static from(data: Buffer | string, config?: Config): Promise<Block>;
+    static from(data: Buffer | string, config?: ICoinConfig): Promise<Block>;
     protected m_majorVersion: number;
     protected m_minorVersion: number;
     protected m_timestamp: Date;
@@ -106,7 +103,7 @@ export declare class Block {
     protected m_nonce: number;
     protected m_minerTransaction: Transaction;
     protected m_transactions: string[];
-    protected m_activateParentBlockVersion: number;
+    protected m_config: ICoinRunningConfig;
     protected m_cache: Cache;
     /**
      * Returns a Buffer representation of the block

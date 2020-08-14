@@ -4,9 +4,21 @@
 
 import { Writer } from 'bytestream-helper';
 import { BigInteger } from './Types';
+import { Config, ICoinConfig, ICoinRunningConfig } from './Config';
 
 /** @ignore */
 export class Common {
+    public static mergeConfig (config: ICoinConfig): ICoinRunningConfig {
+        const merged = Config;
+
+        Object.keys((config as any))
+            .forEach(key => {
+                (merged as any)[key] = (config as any)[key];
+            });
+
+        return merged;
+    }
+
     public static absoluteToRelativeOffsets (
         offsets: BigInteger.BigInteger[] | number[] | string []
     ): BigInteger.BigInteger[] {

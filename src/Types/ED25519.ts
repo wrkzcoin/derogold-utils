@@ -3,11 +3,9 @@
 // Please see the included LICENSE file for more information.
 
 import { Common } from '../Common';
+import { Config } from '../Config';
 import { TurtleCoinCrypto } from '../Types';
 import { randomBytes } from 'crypto';
-
-/** @ignore */
-const Config = require('../../config.json');
 
 export namespace ED25519 {
     /**

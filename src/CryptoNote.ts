@@ -4,7 +4,7 @@
 
 import { Address } from './Address';
 import { AddressPrefix } from './AddressPrefix';
-import * as ConfigInterface from './Config';
+import { Config, ICoinConfig, ICoinRunningConfig } from './Config';
 import { Common } from './Common';
 import {
     BigInteger,
@@ -17,11 +17,7 @@ import {
 } from './Types';
 import { Transaction } from './Transaction';
 import * as Numeral from 'numeral';
-import Config = ConfigInterface.Interfaces.Config;
 import ICryptoNote = CryptoNoteInterfaces.ICryptoNote;
-
-/** @ignore */
-const Config = require('../config.json');
 
 /** @ignore */
 const UINT64_MAX = BigInteger(2).pow(64);
@@ -32,7 +28,7 @@ const UINT64_MAX = BigInteger(2).pow(64);
  * of funds on the network
  */
 export class CryptoNote implements ICryptoNote {
-    protected config: Config = require('../config.json');
+    protected config: ICoinRunningConfig = Config;
 
     /**
      * Constructs a new instance of the object
@@ -40,53 +36,9 @@ export class CryptoNote implements ICryptoNote {
      * cryptographic library
      * @param [config] the base configuration to apply to our helper
      */
-    constructor (config?: Config) {
+    constructor (config?: ICoinConfig) {
         if (config) {
-            Object.keys(config).forEach((key) => {
-                switch (key) {
-                    case 'coinUnitPlaces':
-                        this.config.coinUnitPlaces = config[key];
-                        break;
-                    case 'addressPrefix':
-                        this.config.addressPrefix = config[key];
-                        break;
-                    case 'keccakIterations':
-                        this.config.keccakIterations = config[key];
-                        break;
-                    case 'defaultNetworkFee':
-                        this.config.defaultNetworkFee = config[key];
-                        break;
-                    case 'fusionMinInputCount':
-                        this.config.fusionMinInputCount = config[key];
-                        break;
-                    case 'fusionMinInOutCountRatio':
-                        this.config.fusionMinInOutCountRatio = config[key];
-                        break;
-                    case 'mmMiningBlockVersion':
-                        this.config.mmMiningBlockVersion = config[key];
-                        break;
-                    case 'maximumOutputAmount':
-                        this.config.maximumOutputAmount = config[key];
-                        break;
-                    case 'maximumOutputsPerTransaction':
-                        this.config.maximumOutputsPerTransaction = config[key];
-                        break;
-                    case 'maximumExtraSize':
-                        this.config.maximumExtraSize = config[key];
-                        break;
-                    case 'activateFeePerByteTransactions':
-                        this.config.activateFeePerByteTransactions = config[key];
-                        break;
-                    case 'feePerByte':
-                        this.config.feePerByte = config[key];
-                        break;
-                    case 'feePerByteChunkSize':
-                        this.config.feePerByteChunkSize = config[key];
-                        break;
-                }
-            });
-
-            TurtleCoinCrypto.userCryptoFunctions = config;
+            this.config = Common.mergeConfig(config);
         }
     }
 

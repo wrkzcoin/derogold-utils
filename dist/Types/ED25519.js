@@ -14,10 +14,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ED25519 = void 0;
 const Common_1 = require("../Common");
+const Config_1 = require("../Config");
 const Types_1 = require("../Types");
 const crypto_1 = require("crypto");
-/** @ignore */
-const Config = require('../../config.json');
 var ED25519;
 (function (ED25519) {
     /**
@@ -48,7 +47,7 @@ var ED25519;
                     pair.m_privateKey = privateKey;
                 }
                 if (!publicKey && !privateKey) {
-                    const temp = yield simpleKdf(entropy + rand(32), iterations || Config.keccakIterations);
+                    const temp = yield simpleKdf(entropy + rand(32), iterations || Config_1.Config.keccakIterations);
                     yield pair.setPrivateKey(temp);
                 }
                 if (pair.m_privateKey && !pair.m_publicKey) {

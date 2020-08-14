@@ -7,9 +7,8 @@ import { Reader, Writer } from 'bytestream-helper';
 import { EventEmitter } from 'events';
 import { Address, KeyPair, Keys, Transaction } from './';
 import { LedgerTypes } from './Types/Ledger';
-
-/** @ignore */
-const config = require('../config.json');
+import { Config, ICoinRunningConfig, ICoinConfig } from './Config';
+import { Common } from './Common';
 
 /**
  * An easy to use interface that uses a Ledger HW transport to communicate with
@@ -18,14 +17,20 @@ const config = require('../config.json');
  */
 export class LedgerDevice extends EventEmitter {
     private readonly m_transport: Transport;
+    private readonly m_config: ICoinRunningConfig = Config;
 
     /**
      * Creates a new instance of the Ledger interface
      * The transport MUST be connected already before passing to this constructor
      * @param transport See https://github.com/LedgerHQ/ledgerjs for available transport providers
+     * @param config coin configuration
      */
-    constructor (transport: Transport) {
+    constructor (transport: Transport, config?: ICoinConfig) {
         super();
+
+        if (config) {
+            this.m_config = Common.mergeConfig(config);
+        }
 
         this.m_transport = transport;
     }
@@ -753,7 +758,7 @@ export class LedgerDevice extends EventEmitter {
             throw new RangeError('input_output_index out of range');
         }
 
-        if (amount > config.maximumOutputAmount || amount < 0) {
+        if (amount > this.m_config.maximumOutputAmount || amount < 0) {
             throw new RangeError('amount out of range');
         }
 
@@ -818,7 +823,7 @@ export class LedgerDevice extends EventEmitter {
         amount: number,
         output_key: string
     ): Promise<void> {
-        if (amount < 0 || amount > config.maximumOutputAmount) {
+        if (amount < 0 || amount > this.m_config.maximumOutputAmount) {
             throw new Error('amount out of range');
         }
 
@@ -862,7 +867,7 @@ export class LedgerDevice extends EventEmitter {
     public async retrieveTransaction (): Promise<Transaction> {
         const response = new Writer();
 
-        while (response.length < config.maximumLedgerTransactionSize) {
+        while (response.length < this.m_config.maximumLedgerTransactionSize) {
             const writer = new Writer();
 
             writer.uint16_t(response.length, true);
@@ -903,7 +908,7 @@ export class LedgerDevice extends EventEmitter {
         writer.uint8_t(LedgerTypes.APDU.P2);
 
         if (data) {
-            if (data.length > (config.maximumLedgerAPDUPayloadSize - 6)) {
+            if (data.length > (this.m_config.maximumLedgerAPDUPayloadSize - 6)) {
                 throw new Error('Data payload exceeds maximum size');
             }
 

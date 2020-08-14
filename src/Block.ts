@@ -2,15 +2,12 @@
 //
 // Please see the included LICENSE file for more information.
 
-import * as ConfigInterface from './Config';
+import { Config, ICoinConfig, ICoinRunningConfig } from './Config';
 import { Transaction } from './Transaction';
 import { ParentBlock } from './ParentBlock';
 import { TransactionInputs, TransactionOutputs, TurtleCoinCrypto } from './Types';
 import { Reader, Writer } from 'bytestream-helper';
-import Config = ConfigInterface.Interfaces.Config;
-
-/** @ignore */
-const Config = require('../config.json');
+import { Common } from './Common';
 
 /** @ignore */
 interface Cache {
@@ -99,13 +96,13 @@ export class Block {
         writer.varint(this.m_majorVersion);
         writer.varint(this.m_minorVersion);
 
-        if (this.m_majorVersion < this.m_activateParentBlockVersion) {
+        if (this.m_majorVersion < this.m_config.activateParentBlockVersion) {
             writer.varint(this.m_timestamp.getTime() / 1000);
         }
 
         writer.hash(this.m_previousBlockHash);
 
-        if (this.m_majorVersion < this.m_activateParentBlockVersion) {
+        if (this.m_majorVersion < this.m_config.activateParentBlockVersion) {
             writer.uint32_t(this.m_nonce, true);
         }
 
@@ -221,11 +218,11 @@ export class Block {
      * Defines what major block version activates the use of parent blocks
      */
     public get activateParentBlockVersion (): number {
-        return this.m_activateParentBlockVersion;
+        return this.m_config.activateParentBlockVersion;
     }
 
     public set activateParentBlockVersion (activateParentBlockVersion: number) {
-        this.m_activateParentBlockVersion = activateParentBlockVersion;
+        this.m_config.activateParentBlockVersion = activateParentBlockVersion;
     }
 
     /**
@@ -234,20 +231,19 @@ export class Block {
      * @param [config] the configuration that may define the major block version to activate parent block usage
      * @returns the new block object
      */
-    public static async from (data: Buffer | string, config?: Config): Promise<Block> {
-        const activateParentBlockVersion =
-            (config && config.activateParentBlockVersion &&
-                typeof config.activateParentBlockVersion !== 'undefined')
-                ? config.activateParentBlockVersion : 2;
-
+    public static async from (data: Buffer | string, config?: ICoinConfig): Promise<Block> {
         const block = new Block();
+
+        if (config) {
+            block.m_config = Common.mergeConfig(config);
+        }
 
         const reader = new Reader(data);
 
         block.m_majorVersion = reader.varint().toJSNumber();
         block.m_minorVersion = reader.varint().toJSNumber();
 
-        if (block.m_majorVersion >= activateParentBlockVersion) {
+        if (block.m_majorVersion >= block.m_config.activateParentBlockVersion) {
             block.m_previousBlockHash = reader.hash();
             block.m_parentBlock.majorVersion = reader.varint().toJSNumber();
             block.m_parentBlock.minorVersion = reader.varint().toJSNumber();
@@ -255,7 +251,7 @@ export class Block {
 
         block.m_timestamp = new Date(reader.varint().toJSNumber() * 1000);
 
-        if (block.m_majorVersion >= activateParentBlockVersion) {
+        if (block.m_majorVersion >= block.m_config.activateParentBlockVersion) {
             block.m_parentBlock.previousBlockHash = reader.hash();
         } else {
             block.m_previousBlockHash = reader.hash();
@@ -263,7 +259,7 @@ export class Block {
 
         block.m_nonce = reader.uint32_t(true).toJSNumber();
 
-        if (block.m_majorVersion >= activateParentBlockVersion) {
+        if (block.m_majorVersion >= block.m_config.activateParentBlockVersion) {
             block.m_parentBlock.transactionCount = reader.varint().toJSNumber();
 
             const baseTransactionBranchDepth = await TurtleCoinCrypto.tree_depth(block.m_parentBlock.transactionCount);
@@ -375,7 +371,7 @@ export class Block {
     protected m_nonce = 0;
     protected m_minerTransaction: Transaction = new Transaction();
     protected m_transactions: string[] = [];
-    protected m_activateParentBlockVersion: number = Config.activateParentBlockVersion || 2;
+    protected m_config: ICoinRunningConfig = Config;
     protected m_cache: Cache = {
         blob: '',
         hash: '',
@@ -393,7 +389,7 @@ export class Block {
         writer.varint(this.m_majorVersion);
         writer.varint(this.m_minorVersion);
 
-        if (this.m_majorVersion >= this.m_activateParentBlockVersion) {
+        if (this.m_majorVersion >= this.m_config.activateParentBlockVersion) {
             writer.hash(this.m_previousBlockHash);
             writer.varint(this.m_parentBlock.majorVersion);
             writer.varint(this.m_parentBlock.minorVersion);
@@ -401,7 +397,7 @@ export class Block {
 
         writer.varint(this.m_timestamp.getTime() / 1000);
 
-        if (this.m_majorVersion >= this.m_activateParentBlockVersion) {
+        if (this.m_majorVersion >= this.m_config.activateParentBlockVersion) {
             writer.hash(this.m_parentBlock.previousBlockHash);
         } else {
             writer.hash(this.m_previousBlockHash);
@@ -409,7 +405,7 @@ export class Block {
 
         writer.uint32_t(this.m_nonce, true);
 
-        if (this.m_majorVersion >= this.m_activateParentBlockVersion) {
+        if (this.m_majorVersion >= this.m_config.activateParentBlockVersion) {
             writer.varint(this.m_parentBlock.transactionCount);
 
             if (Array.isArray(this.m_parentBlock.baseTransactionBranch)) {
@@ -461,7 +457,7 @@ export class Block {
         writer.varint(this.m_majorVersion);
         writer.varint(this.m_minorVersion);
 
-        if (this.m_majorVersion >= this.m_activateParentBlockVersion) {
+        if (this.m_majorVersion >= this.m_config.activateParentBlockVersion) {
             writer.hash(this.m_previousBlockHash);
         } else {
             writer.varint(this.m_timestamp.getTime() / 1000);
@@ -475,7 +471,7 @@ export class Block {
 
         writer.varint(transactionTreeHash.count);
 
-        if (this.m_majorVersion >= this.m_activateParentBlockVersion) {
+        if (this.m_majorVersion >= this.m_config.activateParentBlockVersion) {
             if (headerOnly) {
                 writer.clear();
             }

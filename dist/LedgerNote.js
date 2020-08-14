@@ -13,6 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LedgerNote = void 0;
+const Config_1 = require("./Config");
 const LedgerDevice_1 = require("./LedgerDevice");
 const Types_1 = require("./Types");
 const Common_1 = require("./Common");
@@ -24,8 +25,6 @@ const Transaction_1 = require("./Transaction");
 var TransactionState = Types_1.LedgerTypes.TransactionState;
 /** @ignore */
 var KeyPair = Types_1.ED25519.KeyPair;
-/** @ignore */
-const Config = require('../config.json');
 /** @ignore */
 const NULL_KEY = ''.padEnd(64, '0');
 /** @ignore */
@@ -42,57 +41,14 @@ class LedgerNote {
      * @param config [config] the base configuration to apply to our helper
      */
     constructor(transport, config) {
-        this.config = require('../config.json');
+        this.config = Config_1.Config;
         this.m_spend = new KeyPair();
         this.m_view = new KeyPair();
         this.m_address = new Address_1.Address();
         this.m_fetched = false;
         this.m_ledger = new LedgerDevice_1.LedgerDevice(transport);
         if (config) {
-            Object.keys(config).forEach((key) => {
-                switch (key) {
-                    case 'coinUnitPlaces':
-                        this.config.coinUnitPlaces = config[key];
-                        break;
-                    case 'addressPrefix':
-                        this.config.addressPrefix = config[key];
-                        break;
-                    case 'keccakIterations':
-                        this.config.keccakIterations = config[key];
-                        break;
-                    case 'defaultNetworkFee':
-                        this.config.defaultNetworkFee = config[key];
-                        break;
-                    case 'fusionMinInputCount':
-                        this.config.fusionMinInputCount = config[key];
-                        break;
-                    case 'fusionMinInOutCountRatio':
-                        this.config.fusionMinInOutCountRatio = config[key];
-                        break;
-                    case 'mmMiningBlockVersion':
-                        this.config.mmMiningBlockVersion = config[key];
-                        break;
-                    case 'maximumOutputAmount':
-                        this.config.maximumOutputAmount = config[key];
-                        break;
-                    case 'maximumOutputsPerTransaction':
-                        this.config.maximumOutputsPerTransaction = config[key];
-                        break;
-                    case 'maximumExtraSize':
-                        this.config.maximumExtraSize = config[key];
-                        break;
-                    case 'activateFeePerByteTransactions':
-                        this.config.activateFeePerByteTransactions = config[key];
-                        break;
-                    case 'feePerByte':
-                        this.config.feePerByte = config[key];
-                        break;
-                    case 'feePerByteChunkSize':
-                        this.config.feePerByteChunkSize = config[key];
-                        break;
-                }
-            });
-            Types_1.TurtleCoinCrypto.userCryptoFunctions = config;
+            this.config = Common_1.Common.mergeConfig(config);
         }
     }
     /**
@@ -115,7 +71,7 @@ class LedgerNote {
             this.m_view = keys.view;
             const view = yield this.m_ledger.getPrivateViewKey();
             yield this.m_view.setPrivateKey(view.privateKey);
-            const prefix = new AddressPrefix_1.AddressPrefix(this.config.addressPrefix || Config.addressPrefix);
+            const prefix = new AddressPrefix_1.AddressPrefix(this.config.addressPrefix || Config_1.Config.addressPrefix);
             this.m_address = yield Address_1.Address.fromPublicKeys(keys.spend.publicKey, keys.view.publicKey, undefined, prefix);
             this.m_fetched = true;
         });
@@ -284,10 +240,10 @@ class LedgerNote {
      */
     calculateMinimumTransactionFee(txSize) {
         const chunks = Math.ceil(txSize /
-            (this.config.feePerByteChunkSize || Config.feePerByteChunkSize));
+            (this.config.feePerByteChunkSize || Config_1.Config.feePerByteChunkSize));
         return chunks *
-            (this.config.feePerByteChunkSize || Config.feePerByteChunkSize) *
-            (this.config.feePerByte || Config.feePerByte);
+            (this.config.feePerByteChunkSize || Config_1.Config.feePerByteChunkSize) *
+            (this.config.feePerByte || Config_1.Config.feePerByte);
     }
     /**
      * Creates an integrated address using the supplied values
@@ -302,7 +258,7 @@ class LedgerNote {
                 prefix = new AddressPrefix_1.AddressPrefix(prefix);
             }
             if (!prefix) {
-                prefix = new AddressPrefix_1.AddressPrefix(this.config.addressPrefix || Config.addressPrefix);
+                prefix = new AddressPrefix_1.AddressPrefix(this.config.addressPrefix || Config_1.Config.addressPrefix);
             }
             const addr = yield Address_1.Address.fromAddress(address);
             addr.paymentId = paymentId;
@@ -319,13 +275,13 @@ class LedgerNote {
      */
     formatMoney(amount) {
         let places = '';
-        for (let i = 0; i < (this.config.coinUnitPlaces || Config.coinUnitPlaces); i++) {
+        for (let i = 0; i < (this.config.coinUnitPlaces || Config_1.Config.coinUnitPlaces); i++) {
             places += '0';
         }
         if (typeof amount !== 'number') {
             amount = amount.toJSNumber();
         }
-        return Numeral(amount / Math.pow(10, this.config.coinUnitPlaces || Config.coinUnitPlaces)).format('0,0.' + places);
+        return Numeral(amount / Math.pow(10, this.config.coinUnitPlaces || Config_1.Config.coinUnitPlaces)).format('0,0.' + places);
     }
     /**
      * Generates an array of transaction outputs (new destinations) for the given address
@@ -344,14 +300,14 @@ class LedgerNote {
             const amountChars = amount.toString().split('').reverse();
             for (let i = 0; i < amountChars.length; i++) {
                 const amt = parseInt(amountChars[i], 10) * Math.pow(10, i);
-                if (amt > (this.config.maximumOutputAmount || Config.maximumOutputAmount)) {
+                if (amt > (this.config.maximumOutputAmount || Config_1.Config.maximumOutputAmount)) {
                     let splitAmt = amt;
-                    while (splitAmt >= (this.config.maximumOutputAmount || Config.maximumOutputAmount)) {
+                    while (splitAmt >= (this.config.maximumOutputAmount || Config_1.Config.maximumOutputAmount)) {
                         result.push({
-                            amount: this.config.maximumOutputAmount || Config.maximumOutputAmount,
+                            amount: this.config.maximumOutputAmount || Config_1.Config.maximumOutputAmount,
                             destination: destination
                         });
-                        splitAmt -= this.config.maximumOutputAmount || Config.maximumOutputAmount;
+                        splitAmt -= this.config.maximumOutputAmount || Config_1.Config.maximumOutputAmount;
                     }
                 }
                 else if (amt !== 0) {
@@ -420,10 +376,10 @@ class LedgerNote {
                 throw new Error('Supplying extra transaction data is not supported');
             }
             if (typeof feeAmount === 'undefined') {
-                feeAmount = this.config.defaultNetworkFee || Config.defaultNetworkFee;
+                feeAmount = this.config.defaultNetworkFee || Config_1.Config.defaultNetworkFee;
             }
             unlockTime = unlockTime || 0;
-            const feePerByte = this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
+            const feePerByte = this.config.activateFeePerByteTransactions || Config_1.Config.activateFeePerByteTransactions || false;
             if (randomOutputs.length !== inputs.length && mixin !== 0) {
                 throw new Error('The sets of random outputs supplied does not match the number of inputs supplied');
             }
@@ -438,9 +394,9 @@ class LedgerNote {
                 if (output.amount <= 0) {
                     throw new RangeError('Cannot create an output with an amount <= 0');
                 }
-                if (output.amount > (this.config.maximumOutputAmount || Config.maximumOutputAmount)) {
+                if (output.amount > (this.config.maximumOutputAmount || Config_1.Config.maximumOutputAmount)) {
                     throw new RangeError('Cannot create an output with an amount > ' +
-                        (this.config.maximumOutputAmount || Config.maximumOutputAmount));
+                        (this.config.maximumOutputAmount || Config_1.Config.maximumOutputAmount));
                 }
                 neededMoney = neededMoney.add(output.amount);
                 if (neededMoney.greater(UINT64_MAX)) {
@@ -484,15 +440,15 @@ class LedgerNote {
             const tx_keys = yield this.m_ledger.getRandomKeyPair();
             const transactionOutputs = yield prepareTransactionOutputs(tx_keys, outputs);
             if (transactionOutputs.outputs.length >
-                (this.config.maximumOutputsPerTransaction || Config.maximumOutputsPerTransaction)) {
+                (this.config.maximumOutputsPerTransaction || Config_1.Config.maximumOutputsPerTransaction)) {
                 throw new RangeError('Tried to create a transaction with more outputs than permitted');
             }
             if (feeAmount === 0) {
                 if (transactionInputs.length < 12) {
                     throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of [' +
-                        (this.config.fusionMinInputCount || Config.fusionMinInputCount) + '] inputs');
+                        (this.config.fusionMinInputCount || Config_1.Config.fusionMinInputCount) + '] inputs');
                 }
-                const ratio = this.config.fusionMinInOutCountRatio || Config.fusionMinInOutCountRatio;
+                const ratio = this.config.fusionMinInOutCountRatio || Config_1.Config.fusionMinInOutCountRatio;
                 if ((transactionInputs.length / transactionOutputs.outputs.length) < ratio) {
                     throw new Error('Sending a [0] fee transaction (fusion) requires the ' +
                         'correct input:output ratio be met');
@@ -569,10 +525,10 @@ class LedgerNote {
     createTransactionStructure(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData) {
         return __awaiter(this, void 0, void 0, function* () {
             if (typeof feeAmount === 'undefined') {
-                feeAmount = this.config.defaultNetworkFee || Config.defaultNetworkFee;
+                feeAmount = this.config.defaultNetworkFee || Config_1.Config.defaultNetworkFee;
             }
             unlockTime = unlockTime || 0;
-            const feePerByte = this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
+            const feePerByte = this.config.activateFeePerByteTransactions || Config_1.Config.activateFeePerByteTransactions || false;
             if (randomOutputs.length !== inputs.length && mixin !== 0) {
                 throw new Error('The sets of random outputs supplied does not match the number of inputs supplied');
             }
@@ -587,9 +543,9 @@ class LedgerNote {
                 if (output.amount <= 0) {
                     throw new RangeError('Cannot create an output with an amount <= 0');
                 }
-                if (output.amount > (this.config.maximumOutputAmount || Config.maximumOutputAmount)) {
+                if (output.amount > (this.config.maximumOutputAmount || Config_1.Config.maximumOutputAmount)) {
                     throw new RangeError('Cannot create an output with an amount > ' +
-                        (this.config.maximumOutputAmount || Config.maximumOutputAmount));
+                        (this.config.maximumOutputAmount || Config_1.Config.maximumOutputAmount));
                 }
                 neededMoney = neededMoney.add(output.amount);
                 if (neededMoney.greater(UINT64_MAX)) {
@@ -633,15 +589,15 @@ class LedgerNote {
             const tx_keys = yield this.m_ledger.getRandomKeyPair();
             const transactionOutputs = yield prepareTransactionOutputs(tx_keys, outputs);
             if (transactionOutputs.outputs.length >
-                (this.config.maximumOutputsPerTransaction || Config.maximumOutputsPerTransaction)) {
+                (this.config.maximumOutputsPerTransaction || Config_1.Config.maximumOutputsPerTransaction)) {
                 throw new RangeError('Tried to create a transaction with more outputs than permitted');
             }
             if (feeAmount === 0) {
                 if (transactionInputs.length < 12) {
                     throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of [' +
-                        (this.config.fusionMinInputCount || Config.fusionMinInputCount) + '] inputs');
+                        (this.config.fusionMinInputCount || Config_1.Config.fusionMinInputCount) + '] inputs');
                 }
-                const ratio = this.config.fusionMinInOutCountRatio || Config.fusionMinInOutCountRatio;
+                const ratio = this.config.fusionMinInOutCountRatio || Config_1.Config.fusionMinInOutCountRatio;
                 if ((transactionInputs.length / transactionOutputs.outputs.length) < ratio) {
                     throw new Error('Sending a [0] fee transaction (fusion) requires the ' +
                         'correct input:output ratio be met');
@@ -676,9 +632,9 @@ class LedgerNote {
             for (const output of transactionOutputs.outputs) {
                 tx.outputs.push(new Types_1.TransactionOutputs.KeyOutput(output.amount, output.key));
             }
-            if (tx.extra.length > (this.config.maximumExtraSize || Config.maximumExtraSize)) {
+            if (tx.extra.length > (this.config.maximumExtraSize || Config_1.Config.maximumExtraSize)) {
                 throw new Error('Transaction extra exceeds the limit of [' +
-                    (this.config.maximumExtraSize || Config.maximumExtraSize) + '] bytes');
+                    (this.config.maximumExtraSize || Config_1.Config.maximumExtraSize) + '] bytes');
             }
             return {
                 transaction: tx,
@@ -703,7 +659,7 @@ class LedgerNote {
      */
     prepareTransaction(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData, randomKey) {
         return __awaiter(this, void 0, void 0, function* () {
-            const feePerByte = this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
+            const feePerByte = this.config.activateFeePerByteTransactions || Config_1.Config.activateFeePerByteTransactions || false;
             const prepared = yield this.createTransactionStructure(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData);
             const recipients = [];
             for (const output of outputs) {

@@ -1,7 +1,9 @@
 /// <reference types="node" />
 import { BigInteger } from './Types';
+import { ICoinConfig, ICoinRunningConfig } from './Config';
 /** @ignore */
 export declare class Common {
+    static mergeConfig(config: ICoinConfig): ICoinRunningConfig;
     static absoluteToRelativeOffsets(offsets: BigInteger.BigInteger[] | number[] | string[]): BigInteger.BigInteger[];
     static relativeToAbsoluteOffsets(offsets: BigInteger.BigInteger[] | number[] | string[]): BigInteger.BigInteger[];
     static bin2hex(bin: Uint8Array): string;

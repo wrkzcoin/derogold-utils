@@ -1,6 +1,6 @@
 /// <reference types="ledgerhq__hw-transport" />
 import { CryptoNoteInterfaces } from './Types/ICryptoNote';
-import * as ConfigInterface from './Config';
+import { ICoinConfig, ICoinRunningConfig } from './Config';
 import Transport from '@ledgerhq/hw-transport';
 import { BigInteger, Interfaces } from './Types';
 import { AddressPrefix } from './AddressPrefix';
@@ -8,17 +8,13 @@ import { Address } from './Address';
 import { Transaction } from './Transaction';
 /** @ignore */
 import ICryptoNote = CryptoNoteInterfaces.ICryptoNote;
-/** @ignore */
-import Config = ConfigInterface.Interfaces.Config;
-/** @ignore */
-declare const Config: any;
 /**
  * Ledger CryptoNote helper class for constructing transactions and performing
  * various other cryptographic items during the receipt or transfer of funds
  * on the network using a Ledger based hardware device
  */
 export declare class LedgerNote implements ICryptoNote {
-    protected config: Config;
+    protected config: ICoinRunningConfig;
     private readonly m_ledger;
     private m_spend;
     private m_view;
@@ -29,7 +25,7 @@ export declare class LedgerNote implements ICryptoNote {
      * @param transport the transport mechanism for talking to a Ledger device
      * @param config [config] the base configuration to apply to our helper
      */
-    constructor(transport: Transport, config?: Config);
+    constructor(transport: Transport, config?: ICoinConfig);
     /**
      * Provides the public wallet address of the ledger device
      */
@@ -211,4 +207,3 @@ export declare class LedgerNote implements ICryptoNote {
      */
     completeTransaction(preparedTransaction: Interfaces.PreparedTransaction, privateSpendKey: string | undefined): Promise<Transaction>;
 }
-export {};

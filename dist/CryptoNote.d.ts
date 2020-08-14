@@ -1,26 +1,23 @@
 import { Address } from './Address';
 import { AddressPrefix } from './AddressPrefix';
-import * as ConfigInterface from './Config';
+import { ICoinConfig, ICoinRunningConfig } from './Config';
 import { BigInteger, Interfaces, CryptoNoteInterfaces } from './Types';
 import { Transaction } from './Transaction';
-import Config = ConfigInterface.Interfaces.Config;
 import ICryptoNote = CryptoNoteInterfaces.ICryptoNote;
-/** @ignore */
-declare const Config: any;
 /**
  * CryptoNote helper class for constructing transactions and performing
  * various other cryptographic items during the receipt or transfer
  * of funds on the network
  */
 export declare class CryptoNote implements ICryptoNote {
-    protected config: Config;
+    protected config: ICoinRunningConfig;
     /**
      * Constructs a new instance of the object
      * If a configuration is supplied, it is also passed to the underlying
      * cryptographic library
      * @param [config] the base configuration to apply to our helper
      */
-    constructor(config?: Config);
+    constructor(config?: ICoinConfig);
     /**
      * Provides the public wallet address of this instance
      * THIS IS NOT IMPLEMENTED IN THIS CLASS
@@ -193,4 +190,3 @@ export declare class CryptoNote implements ICryptoNote {
      */
     completeTransaction(preparedTransaction: Interfaces.PreparedTransaction, privateSpendKey: string): Promise<Transaction>;
 }
-export {};

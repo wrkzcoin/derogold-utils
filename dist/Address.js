@@ -16,11 +16,10 @@ exports.Address = exports.SIZES = void 0;
 const AddressPrefix_1 = require("./AddressPrefix");
 const turtlecoin_base58_1 = require("turtlecoin-base58");
 const Common_1 = require("./Common");
+const Config_1 = require("./Config");
 const Types_1 = require("./Types");
 const turtlecoin_mnemonics_1 = require("turtlecoin-mnemonics");
 const bytestream_helper_1 = require("bytestream-helper");
-/** @ignore */
-const Config = require('../config.json');
 /** @ignore */
 var SIZES;
 (function (SIZES) {
@@ -35,7 +34,7 @@ class Address {
         this.m_keys = new Types_1.ED25519.Keys();
         this.m_language = 'english';
         this.m_subwalletIndex = 0;
-        this.m_prefix = new AddressPrefix_1.AddressPrefix(Config.addressPrefix);
+        this.m_prefix = new AddressPrefix_1.AddressPrefix(Config_1.Config.addressPrefix);
         this.m_cached = { addressPrefix: '', address: '' };
     }
     /**

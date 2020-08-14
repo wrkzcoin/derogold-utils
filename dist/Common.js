@@ -6,8 +6,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Common = void 0;
 const bytestream_helper_1 = require("bytestream-helper");
 const Types_1 = require("./Types");
+const Config_1 = require("./Config");
 /** @ignore */
 class Common {
+    static mergeConfig(config) {
+        const merged = Config_1.Config;
+        Object.keys(config)
+            .forEach(key => {
+            merged[key] = config[key];
+        });
+        return merged;
+    }
     static absoluteToRelativeOffsets(offsets) {
         const offsetsCopy = [];
         for (const offset of offsets) {
