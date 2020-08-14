@@ -1,7 +1,7 @@
 import { Address } from './Address';
 import { AddressPrefix } from './AddressPrefix';
 import { ICoinConfig, ICoinRunningConfig } from './Config';
-import { BigInteger, Interfaces, CryptoNoteInterfaces } from './Types';
+import { BigInteger, Interfaces, CryptoNoteInterfaces, ICryptoConfig } from './Types';
 import { Transaction } from './Transaction';
 import ICryptoNote = CryptoNoteInterfaces.ICryptoNote;
 /**
@@ -15,9 +15,10 @@ export declare class CryptoNote implements ICryptoNote {
      * Constructs a new instance of the object
      * If a configuration is supplied, it is also passed to the underlying
      * cryptographic library
-     * @param [config] the base configuration to apply to our helper
+     * @param config the base configuration to apply to our helper
+     * @param cryptoConfig configuration to allow for overriding the provided cryptographic primitives
      */
-    constructor(config?: ICoinConfig);
+    constructor(config?: ICoinConfig, cryptoConfig?: ICryptoConfig);
     /**
      * Provides the public wallet address of this instance
      * THIS IS NOT IMPLEMENTED IN THIS CLASS

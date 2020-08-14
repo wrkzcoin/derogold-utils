@@ -32,12 +32,16 @@ class CryptoNote {
      * Constructs a new instance of the object
      * If a configuration is supplied, it is also passed to the underlying
      * cryptographic library
-     * @param [config] the base configuration to apply to our helper
+     * @param config the base configuration to apply to our helper
+     * @param cryptoConfig configuration to allow for overriding the provided cryptographic primitives
      */
-    constructor(config) {
+    constructor(config, cryptoConfig) {
         this.config = Config_1.Config;
         if (config) {
             this.config = Common_1.Common.mergeConfig(config);
+        }
+        if (cryptoConfig) {
+            Types_1.TurtleCoinCrypto.userCryptoFunctions = cryptoConfig;
         }
     }
     /**
@@ -629,7 +633,7 @@ function prepareRingSignatures(hash, keyImage, publicKeys, realOutputIndex, deri
         return {
             index: index,
             realOutputIndex: realOutputIndex,
-            key: prepped.key,
+            key: prepped.k,
             signatures: prepped.signatures,
             inputKeys: publicKeys,
             input: {
@@ -729,7 +733,7 @@ function prepareTransactionOutputs(outputs) {
             });
         }
         const keys = yield Types_1.TurtleCoinCrypto.generateKeys();
-        const transactionKeys = yield Types_1.ED25519.KeyPair.from(keys.publicKey, keys.privateKey);
+        const transactionKeys = yield Types_1.ED25519.KeyPair.from(keys.public_key, keys.private_key);
         outputs.sort((a, b) => (a.amount > b.amount) ? 1 : ((b.amount > a.amount) ? -1 : 0));
         const promises = [];
         for (let i = 0; i < outputs.length; i++) {

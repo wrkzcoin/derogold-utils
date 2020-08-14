@@ -1373,9 +1373,17 @@ describe('Transactions', async function () {
             ]];
 
             const prep = await cnUtil.prepareTransaction(
-                madeOutputs, [madeInput], randomOutputs, 3, 1000, undefined, 0, undefined, keys.privateKey);
+                madeOutputs,
+                [madeInput],
+                randomOutputs,
+                3,
+                1000,
+                undefined,
+                0,
+                undefined,
+                keys.private_key);
 
-            assert(prep && prep.signatureMeta[0].key === keys.privateKey);
+            assert(prep && prep.signatureMeta[0].key === keys.private_key);
         });
 
         it('complete a transaction', async function () {
@@ -1454,7 +1462,7 @@ describe('Transactions', async function () {
             ]];
 
             const prep = await cnUtil.prepareTransaction(
-                madeOutputs, [madeInput], randomOutputs, 3, 1000, undefined, 0, undefined, keys.privateKey);
+                madeOutputs, [madeInput], randomOutputs, 3, 1000, undefined, 0, undefined, keys.private_key);
 
             await cnUtil.completeTransaction(prep, walletPrivateSpendKey);
         });

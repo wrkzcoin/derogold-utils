@@ -383,7 +383,7 @@ export class Address {
         const spend = await TurtleCoinCrypto.generateDeterministicSubwalletKeys(privateSpendKey, subwalletIndex);
 
         address.m_keys = await ED25519.Keys.from(
-            await ED25519.KeyPair.from(spend.publicKey, spend.privateKey), view);
+            await ED25519.KeyPair.from(spend.public_key, spend.private_key), view);
 
         return address;
     }

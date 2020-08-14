@@ -8,7 +8,7 @@ import Transport from '@ledgerhq/hw-transport';
 import { LedgerDevice } from './LedgerDevice';
 import {
     BigInteger,
-    ED25519,
+    ED25519, ICryptoConfig,
     Interfaces,
     LedgerTypes,
     TransactionInputs,
@@ -52,13 +52,18 @@ export class LedgerNote implements ICryptoNote {
     /**
      * Constructs a new instance of the Ledger-based CryptoNote tools
      * @param transport the transport mechanism for talking to a Ledger device
-     * @param config [config] the base configuration to apply to our helper
+     * @param config  the base configuration to apply to our helper
+     * @param cryptoConfig configuration to allow for overriding the provided cryptographic primitives
      */
-    constructor (transport: Transport, config?: ICoinConfig) {
+    constructor (transport: Transport, config?: ICoinConfig, cryptoConfig?: ICryptoConfig) {
         this.m_ledger = new LedgerDevice(transport);
 
         if (config) {
             this.config = Common.mergeConfig(config);
+        }
+
+        if (cryptoConfig) {
+            TurtleCoinCrypto.userCryptoFunctions = cryptoConfig;
         }
     }
 
@@ -1203,7 +1208,7 @@ async function prepareRingSignatures (
     return {
         index: index,
         realOutputIndex: realOutputIndex,
-        key: prepped.key,
+        key: prepped.k,
         signatures: prepped.signatures,
         inputKeys: publicKeys,
         input: {

@@ -2,7 +2,7 @@
 import { CryptoNoteInterfaces } from './Types/ICryptoNote';
 import { ICoinConfig, ICoinRunningConfig } from './Config';
 import Transport from '@ledgerhq/hw-transport';
-import { BigInteger, Interfaces } from './Types';
+import { BigInteger, ICryptoConfig, Interfaces } from './Types';
 import { AddressPrefix } from './AddressPrefix';
 import { Address } from './Address';
 import { Transaction } from './Transaction';
@@ -23,9 +23,10 @@ export declare class LedgerNote implements ICryptoNote {
     /**
      * Constructs a new instance of the Ledger-based CryptoNote tools
      * @param transport the transport mechanism for talking to a Ledger device
-     * @param config [config] the base configuration to apply to our helper
+     * @param config  the base configuration to apply to our helper
+     * @param cryptoConfig configuration to allow for overriding the provided cryptographic primitives
      */
-    constructor(transport: Transport, config?: ICoinConfig);
+    constructor(transport: Transport, config?: ICoinConfig, cryptoConfig?: ICryptoConfig);
     /**
      * Provides the public wallet address of the ledger device
      */

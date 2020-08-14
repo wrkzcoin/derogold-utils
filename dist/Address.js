@@ -301,7 +301,7 @@ class Address {
             }
             const view = yield Types_1.ED25519.KeyPair.from(undefined, privateSpendKey, undefined, 1);
             const spend = yield Types_1.TurtleCoinCrypto.generateDeterministicSubwalletKeys(privateSpendKey, subwalletIndex);
-            address.m_keys = yield Types_1.ED25519.Keys.from(yield Types_1.ED25519.KeyPair.from(spend.publicKey, spend.privateKey), view);
+            address.m_keys = yield Types_1.ED25519.Keys.from(yield Types_1.ED25519.KeyPair.from(spend.public_key, spend.private_key), view);
             return address;
         });
     }

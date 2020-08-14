@@ -13,7 +13,8 @@ import {
     TransactionOutputs,
     TurtleCoinCrypto,
     Interfaces,
-    CryptoNoteInterfaces
+    CryptoNoteInterfaces,
+    ICryptoConfig
 } from './Types';
 import { Transaction } from './Transaction';
 import * as Numeral from 'numeral';
@@ -34,11 +35,16 @@ export class CryptoNote implements ICryptoNote {
      * Constructs a new instance of the object
      * If a configuration is supplied, it is also passed to the underlying
      * cryptographic library
-     * @param [config] the base configuration to apply to our helper
+     * @param config the base configuration to apply to our helper
+     * @param cryptoConfig configuration to allow for overriding the provided cryptographic primitives
      */
-    constructor (config?: ICoinConfig) {
+    constructor (config?: ICoinConfig, cryptoConfig?: ICryptoConfig) {
         if (config) {
             this.config = Common.mergeConfig(config);
+        }
+
+        if (cryptoConfig) {
+            TurtleCoinCrypto.userCryptoFunctions = cryptoConfig;
         }
     }
 
@@ -883,7 +889,7 @@ async function prepareRingSignatures (
     return {
         index: index,
         realOutputIndex: realOutputIndex,
-        key: prepped.key,
+        key: prepped.k,
         signatures: prepped.signatures,
         inputKeys: publicKeys,
         input: {
@@ -1022,7 +1028,7 @@ async function prepareTransactionOutputs (outputs: Interfaces.GeneratedOutput[])
 
     const keys = await TurtleCoinCrypto.generateKeys();
 
-    const transactionKeys: ED25519.KeyPair = await ED25519.KeyPair.from(keys.publicKey, keys.privateKey);
+    const transactionKeys: ED25519.KeyPair = await ED25519.KeyPair.from(keys.public_key, keys.private_key);
 
     outputs.sort((a, b) => (a.amount > b.amount) ? 1 : ((b.amount > a.amount) ? -1 : 0));
 

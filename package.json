@@ -48,7 +48,7 @@
     "get-random-values": "^1.2.0",
     "numeral": "^2.0.6",
     "turtlecoin-base58": "^0.0.6",
-    "turtlecoin-crypto": "^5.0.0",
+    "turtlecoin-crypto": "^6.0.0",
     "turtlecoin-mnemonics": "^0.0.6"
   },
   "devDependencies": {

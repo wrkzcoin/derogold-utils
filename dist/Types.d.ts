@@ -9,6 +9,7 @@ export declare enum PortableStorageConstants {
     SIGNATURE_B = 16908545,
     VERSION = 1
 }
+export { ICryptoConfig } from 'turtlecoin-crypto';
 export * from './Types/IExtraNonce';
 export * from './Types/IExtraTag';
 export * from './Types/ITransactionInput';

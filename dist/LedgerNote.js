@@ -38,9 +38,10 @@ class LedgerNote {
     /**
      * Constructs a new instance of the Ledger-based CryptoNote tools
      * @param transport the transport mechanism for talking to a Ledger device
-     * @param config [config] the base configuration to apply to our helper
+     * @param config  the base configuration to apply to our helper
+     * @param cryptoConfig configuration to allow for overriding the provided cryptographic primitives
      */
-    constructor(transport, config) {
+    constructor(transport, config, cryptoConfig) {
         this.config = Config_1.Config;
         this.m_spend = new KeyPair();
         this.m_view = new KeyPair();
@@ -49,6 +50,9 @@ class LedgerNote {
         this.m_ledger = new LedgerDevice_1.LedgerDevice(transport);
         if (config) {
             this.config = Common_1.Common.mergeConfig(config);
+        }
+        if (cryptoConfig) {
+            Types_1.TurtleCoinCrypto.userCryptoFunctions = cryptoConfig;
         }
     }
     /**
@@ -878,7 +882,7 @@ function prepareRingSignatures(hash, keyImage, publicKeys, realOutputIndex, deri
         return {
             index: index,
             realOutputIndex: realOutputIndex,
-            key: prepped.key,
+            key: prepped.k,
             signatures: prepped.signatures,
             inputKeys: publicKeys,
             input: {
