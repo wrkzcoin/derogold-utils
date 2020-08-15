@@ -1823,11 +1823,15 @@ describe('Test Ledger Integration', async function () {
 
     before(async () => {
         if (!skipLedgerTests) {
-            TransportNodeHID = (await import('@ledgerhq/hw-transport-node-hid')).default;
+            try {
+                TransportNodeHID = (await import('@ledgerhq/hw-transport-node-hid')).default;
 
-            const devices = await TransportNodeHID.list();
+                const devices = await TransportNodeHID.list();
 
-            if (devices.length === 0) {
+                if (devices.length === 0) {
+                    skipLedgerTests = true;
+                }
+            } catch (e) {
                 skipLedgerTests = true;
             }
         }
