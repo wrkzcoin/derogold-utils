@@ -17,7 +17,7 @@ export interface ICoinConfig {
     maximumLedgerTransactionSize?: number;
     maximumLedgerAPDUPayloadSize?: number;
     minimumLedgerVersion?: string;
-    ledgerDebug: boolean;
+    ledgerDebug?: boolean;
     [key: string]: any;
 }
 /** @ignore */
