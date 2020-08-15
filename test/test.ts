@@ -15,7 +15,7 @@ import {
     CryptoNote
 } from '../src';
 import * as assert from 'assert';
-import { describe, it } from 'mocha';
+import { before, describe, it } from 'mocha';
 import { BigInteger } from '../src/Types';
 
 const TurtleCoinCrypto = new Crypto();
