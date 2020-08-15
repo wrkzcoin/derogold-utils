@@ -98,6 +98,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="ledgerdevice.html#defaultmaxlisteners" class="tsd-kind-icon">default<wbr>Max<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="ledgerdevice.html#errormonitor" class="tsd-kind-icon">error<wbr>Monitor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -110,10 +111,12 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="ledgerdevice.html#addlistener" class="tsd-kind-icon">add<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgerdevice.html#checkident" class="tsd-kind-icon">check<wbr>Ident</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgerdevice.html#checkkey" class="tsd-kind-icon">check<wbr>Key</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgerdevice.html#checkringsignatures" class="tsd-kind-icon">check<wbr>Ring<wbr>Signatures</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgerdevice.html#checkscalar" class="tsd-kind-icon">check<wbr>Scalar</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgerdevice.html#checksignature" class="tsd-kind-icon">check<wbr>Signature</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgerdevice.html#checkversion" class="tsd-kind-icon">check<wbr>Version</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgerdevice.html#completeringsignature" class="tsd-kind-icon">complete<wbr>Ring<wbr>Signature</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgerdevice.html#derivepublickey" class="tsd-kind-icon">derive<wbr>Public<wbr>Key</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgerdevice.html#derivesecretkey" class="tsd-kind-icon">derive<wbr>Secret<wbr>Key</a></li>
@@ -133,6 +136,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgerdevice.html#getpublickeys" class="tsd-kind-icon">get<wbr>Public<wbr>Keys</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgerdevice.html#getrandomkeypair" class="tsd-kind-icon">get<wbr>Random<wbr>Key<wbr>Pair</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgerdevice.html#getversion" class="tsd-kind-icon">get<wbr>Version</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgerdevice.html#getviewwallet" class="tsd-kind-icon">get<wbr>View<wbr>Wallet</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgerdevice.html#isdebug" class="tsd-kind-icon">is<wbr>Debug</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="ledgerdevice.html#listenercount" class="tsd-kind-icon">listener<wbr>Count</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="ledgerdevice.html#listeners" class="tsd-kind-icon">listeners</a></li>
@@ -167,14 +171,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Ledger<wbr>Device<span class="tsd-signature-symbol">(</span>transport<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Transport</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ledgerdevice.html" class="tsd-signature-type">LedgerDevice</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Ledger<wbr>Device<span class="tsd-signature-symbol">(</span>transport<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Transport</span>, config<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ICoinConfig</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ledgerdevice.html" class="tsd-signature-type">LedgerDevice</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides EventEmitter.__constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L20">src/LedgerDevice.ts:20</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L27">src/LedgerDevice.ts:27</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -190,6 +194,14 @@
 									<div class="tsd-comment tsd-typography">
 										<div class="lead">
 											<p>See <a href="https://github.com/LedgerHQ/ledgerjs">https://github.com/LedgerHQ/ledgerjs</a> for available transport providers</p>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <span class="tsd-signature-type">ICoinConfig</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>coin configuration</p>
 										</div>
 									</div>
 								</li>
@@ -212,6 +224,27 @@
 						</ul>
 					</aside>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="errormonitor" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> error<wbr>Monitor</h3>
+					<div class="tsd-signature tsd-kind-icon">error<wbr>Monitor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">symbol</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#errormonitor">errorMonitor</a></p>
+						<ul>
+							<li>Defined in node_modules/@types/node/events.d.ts:55</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>This symbol shall be used to install a listener for only monitoring <code>&#39;error&#39;</code>
+								events. Listeners installed using this symbol are called before the regular
+							<code>&#39;error&#39;</code> listeners are called.</p>
+						</div>
+						<p>Installing a listener using this symbol does not change the behavior once an
+							<code>&#39;error&#39;</code> event is emitted, therefore the process will still crash if no
+						regular <code>&#39;error&#39;</code> listener is installed.</p>
+					</div>
+				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
@@ -225,7 +258,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L36">src/LedgerDevice.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L48">src/LedgerDevice.ts:48</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -251,7 +284,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#addlistener">addListener</a></p>
 								<ul>
-									<li>Defined in node_modules/@types/node/globals.d.ts:553</li>
+									<li>Defined in node_modules/@types/node/events.d.ts:62</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -286,6 +319,29 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="checkident" class="tsd-anchor"></a>
+					<h3>check<wbr>Ident</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">check<wbr>Ident<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L108">src/LedgerDevice.ts:108</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Checks to make sure that the application running on the ledger
+									at least claims to be the TurtleCoin ledger application</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="checkkey" class="tsd-anchor"></a>
 					<h3>check<wbr>Key</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -295,7 +351,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L96">src/LedgerDevice.ts:96</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L137">src/LedgerDevice.ts:137</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -326,7 +382,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L584">src/LedgerDevice.ts:584</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L637">src/LedgerDevice.ts:637</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -376,7 +432,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L114">src/LedgerDevice.ts:114</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L155">src/LedgerDevice.ts:155</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -407,7 +463,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L546">src/LedgerDevice.ts:546</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L599">src/LedgerDevice.ts:599</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -441,6 +497,34 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="checkversion" class="tsd-anchor"></a>
+					<h3>check<wbr>Version</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">check<wbr>Version<span class="tsd-signature-symbol">(</span>requiredVersion<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L117">src/LedgerDevice.ts:117</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Checks to</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>requiredVersion: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="completeringsignature" class="tsd-anchor"></a>
 					<h3>complete<wbr>Ring<wbr>Signature</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -450,7 +534,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L295">src/LedgerDevice.ts:295</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L348">src/LedgerDevice.ts:348</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -512,7 +596,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L485">src/LedgerDevice.ts:485</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L538">src/LedgerDevice.ts:538</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -556,7 +640,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L516">src/LedgerDevice.ts:516</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L569">src/LedgerDevice.ts:569</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -601,7 +685,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#emit">emit</a></p>
 								<ul>
-									<li>Defined in node_modules/@types/node/globals.d.ts:563</li>
+									<li>Defined in node_modules/@types/node/events.d.ts:72</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -628,7 +712,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#eventnames">eventNames</a></p>
 								<ul>
-									<li>Defined in node_modules/@types/node/globals.d.ts:568</li>
+									<li>Defined in node_modules/@types/node/events.d.ts:77</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">symbol</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -645,7 +729,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L841">src/LedgerDevice.ts:841</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L894">src/LedgerDevice.ts:894</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -667,7 +751,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L461">src/LedgerDevice.ts:461</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L514">src/LedgerDevice.ts:514</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -706,7 +790,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L215">src/LedgerDevice.ts:215</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L268">src/LedgerDevice.ts:268</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -756,7 +840,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L254">src/LedgerDevice.ts:254</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L307">src/LedgerDevice.ts:307</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -806,7 +890,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L352">src/LedgerDevice.ts:352</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L405">src/LedgerDevice.ts:405</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -875,7 +959,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L433">src/LedgerDevice.ts:433</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L486">src/LedgerDevice.ts:486</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -914,7 +998,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L201">src/LedgerDevice.ts:201</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L254">src/LedgerDevice.ts:254</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -946,7 +1030,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L86">src/LedgerDevice.ts:86</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L98">src/LedgerDevice.ts:98</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -970,7 +1054,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#getmaxlisteners">getMaxListeners</a></p>
 								<ul>
-									<li>Defined in node_modules/@types/node/globals.d.ts:560</li>
+									<li>Defined in node_modules/@types/node/events.d.ts:69</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -987,7 +1071,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L163">src/LedgerDevice.ts:163</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L204">src/LedgerDevice.ts:204</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1022,7 +1106,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L148">src/LedgerDevice.ts:148</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L189">src/LedgerDevice.ts:189</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1054,7 +1138,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L133">src/LedgerDevice.ts:133</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L174">src/LedgerDevice.ts:174</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1086,7 +1170,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L190">src/LedgerDevice.ts:190</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L243">src/LedgerDevice.ts:243</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1108,7 +1192,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L63">src/LedgerDevice.ts:63</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L75">src/LedgerDevice.ts:75</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1122,6 +1206,39 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getviewwallet" class="tsd-anchor"></a>
+					<h3>get<wbr>View<wbr>Wallet</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>View<wbr>Wallet<span class="tsd-signature-symbol">(</span>confirm<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="address.html" class="tsd-signature-type">Address</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L216">src/LedgerDevice.ts:216</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Retrieves the the public spend key and private view key from the
+									ledger device which is essentially a view only wallet</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> confirm: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = true</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>whether the device will prompt the user to confirm their actions
+										(to disable, must be running a DEBUG build)</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="address.html" class="tsd-signature-type">Address</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="isdebug" class="tsd-anchor"></a>
 					<h3>is<wbr>Debug</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -1131,7 +1248,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L76">src/LedgerDevice.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L88">src/LedgerDevice.ts:88</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1154,7 +1271,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#listenercount">listenerCount</a></p>
 								<ul>
-									<li>Defined in node_modules/@types/node/globals.d.ts:564</li>
+									<li>Defined in node_modules/@types/node/events.d.ts:73</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1178,7 +1295,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#listeners">listeners</a></p>
 								<ul>
-									<li>Defined in node_modules/@types/node/globals.d.ts:561</li>
+									<li>Defined in node_modules/@types/node/events.d.ts:70</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1201,7 +1318,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L740">src/LedgerDevice.ts:740</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L793">src/LedgerDevice.ts:793</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1262,7 +1379,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L817">src/LedgerDevice.ts:817</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L870">src/LedgerDevice.ts:870</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1300,7 +1417,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#off">off</a></p>
 								<ul>
-									<li>Defined in node_modules/@types/node/globals.d.ts:557</li>
+									<li>Defined in node_modules/@types/node/events.d.ts:66</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1345,7 +1462,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#once">once</a></p>
 								<ul>
-									<li>Defined in node_modules/@types/node/globals.d.ts:555</li>
+									<li>Defined in node_modules/@types/node/events.d.ts:64</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1390,7 +1507,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#prependlistener">prependListener</a></p>
 								<ul>
-									<li>Defined in node_modules/@types/node/globals.d.ts:566</li>
+									<li>Defined in node_modules/@types/node/events.d.ts:75</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1435,7 +1552,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#prependoncelistener">prependOnceListener</a></p>
 								<ul>
-									<li>Defined in node_modules/@types/node/globals.d.ts:567</li>
+									<li>Defined in node_modules/@types/node/events.d.ts:76</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1479,7 +1596,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L173">src/LedgerDevice.ts:173</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L226">src/LedgerDevice.ts:226</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1511,7 +1628,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#rawlisteners">rawListeners</a></p>
 								<ul>
-									<li>Defined in node_modules/@types/node/globals.d.ts:562</li>
+									<li>Defined in node_modules/@types/node/events.d.ts:71</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1535,7 +1652,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#removealllisteners">removeAllListeners</a></p>
 								<ul>
-									<li>Defined in node_modules/@types/node/globals.d.ts:558</li>
+									<li>Defined in node_modules/@types/node/events.d.ts:67</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1559,7 +1676,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#removelistener">removeListener</a></p>
 								<ul>
-									<li>Defined in node_modules/@types/node/globals.d.ts:556</li>
+									<li>Defined in node_modules/@types/node/events.d.ts:65</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1603,7 +1720,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L646">src/LedgerDevice.ts:646</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L699">src/LedgerDevice.ts:699</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1634,7 +1751,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L664">src/LedgerDevice.ts:664</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L717">src/LedgerDevice.ts:717</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1662,7 +1779,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L862">src/LedgerDevice.ts:862</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L915">src/LedgerDevice.ts:915</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1685,7 +1802,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ledgerdevice.html">LedgerDevice</a>.<a href="ledgerdevice.html#setmaxlisteners">setMaxListeners</a></p>
 								<ul>
-									<li>Defined in node_modules/@types/node/globals.d.ts:559</li>
+									<li>Defined in node_modules/@types/node/events.d.ts:68</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1708,7 +1825,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L848">src/LedgerDevice.ts:848</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L901">src/LedgerDevice.ts:901</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1736,7 +1853,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L678">src/LedgerDevice.ts:678</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L731">src/LedgerDevice.ts:731</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1791,7 +1908,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L727">src/LedgerDevice.ts:727</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L780">src/LedgerDevice.ts:780</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1813,7 +1930,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L808">src/LedgerDevice.ts:808</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L861">src/LedgerDevice.ts:861</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1835,7 +1952,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerDevice.ts#L655">src/LedgerDevice.ts:655</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerDevice.ts#L708">src/LedgerDevice.ts:708</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1919,11 +2036,17 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="ledgerdevice.html#defaultmaxlisteners" class="tsd-kind-icon">default<wbr>Max<wbr>Listeners</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="ledgerdevice.html#errormonitor" class="tsd-kind-icon">error<wbr>Monitor</a>
+							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="ledgerdevice.html#transport" class="tsd-kind-icon">transport</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="ledgerdevice.html#addlistener" class="tsd-kind-icon">add<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="ledgerdevice.html#checkident" class="tsd-kind-icon">check<wbr>Ident</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ledgerdevice.html#checkkey" class="tsd-kind-icon">check<wbr>Key</a>
@@ -1936,6 +2059,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ledgerdevice.html#checksignature" class="tsd-kind-icon">check<wbr>Signature</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="ledgerdevice.html#checkversion" class="tsd-kind-icon">check<wbr>Version</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ledgerdevice.html#completeringsignature" class="tsd-kind-icon">complete<wbr>Ring<wbr>Signature</a>
@@ -1993,6 +2119,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ledgerdevice.html#getversion" class="tsd-kind-icon">get<wbr>Version</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="ledgerdevice.html#getviewwallet" class="tsd-kind-icon">get<wbr>View<wbr>Wallet</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ledgerdevice.html#isdebug" class="tsd-kind-icon">is<wbr>Debug</a>

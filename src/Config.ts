@@ -2,9 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 
-/**
- * Respresents the available coin configuration parameters
- */
+/** @ignore */
 export interface ICoinConfig {
     activateParentBlockVersion?: number;
     coinUnitPlaces?: number;

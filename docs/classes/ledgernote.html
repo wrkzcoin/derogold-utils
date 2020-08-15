@@ -99,6 +99,8 @@
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="ledgernote.html#address" class="tsd-kind-icon">address</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="ledgernote.html#config" class="tsd-kind-icon">config</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="ledgernote.html#cryptoconfig" class="tsd-kind-icon">crypto<wbr>Config</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="ledgernote.html#ready" class="tsd-kind-icon">ready</a></li>
 							</ul>
 						</section>
@@ -111,10 +113,13 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgernote.html#createintegratedaddress" class="tsd-kind-icon">create<wbr>Integrated<wbr>Address</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgernote.html#createtransaction" class="tsd-kind-icon">create<wbr>Transaction</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgernote.html#createtransactionstructure" class="tsd-kind-icon">create<wbr>Transaction<wbr>Structure</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgernote.html#fetchkeys" class="tsd-kind-icon">fetch<wbr>Keys</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgernote.html#formatmoney" class="tsd-kind-icon">format<wbr>Money</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgernote.html#generatekeyderivation" class="tsd-kind-icon">generate<wbr>Key<wbr>Derivation</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgernote.html#generatekeyimage" class="tsd-kind-icon">generate<wbr>Key<wbr>Image</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgernote.html#generatekeyimageprimitive" class="tsd-kind-icon">generate<wbr>Key<wbr>Image<wbr>Primitive</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgernote.html#generatetransactionoutputs" class="tsd-kind-icon">generate<wbr>Transaction<wbr>Outputs</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgernote.html#init" class="tsd-kind-icon">init</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgernote.html#isourtransactionoutput" class="tsd-kind-icon">is<wbr>Our<wbr>Transaction<wbr>Output</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgernote.html#preparetransaction" class="tsd-kind-icon">prepare<wbr>Transaction</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ledgernote.html#privatekeytopublickey" class="tsd-kind-icon">private<wbr>Key<wbr>ToPublic<wbr>Key</a></li>
@@ -133,13 +138,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Ledger<wbr>Note<span class="tsd-signature-symbol">(</span>transport<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Transport</span>, config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/interfaces.config.html" class="tsd-signature-type">Config</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ledgernote.html" class="tsd-signature-type">LedgerNote</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Ledger<wbr>Note<span class="tsd-signature-symbol">(</span>transport<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Transport</span>, config<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ICoinConfig</span>, cryptoConfig<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ICryptoConfig</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ledgernote.html" class="tsd-signature-type">LedgerNote</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L56">src/LedgerNote.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L47">src/LedgerNote.ts:47</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -158,10 +163,18 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <a href="../interfaces/interfaces.config.html" class="tsd-signature-type">Config</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <span class="tsd-signature-type">ICoinConfig</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<div class="lead">
 											<p>the base configuration to apply to our helper</p>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> cryptoConfig: <span class="tsd-signature-type">ICryptoConfig</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>configuration to allow for overriding the provided cryptographic primitives</p>
 										</div>
 									</div>
 								</li>
@@ -183,7 +196,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L118">src/LedgerNote.ts:118</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L92">src/LedgerNote.ts:92</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -192,6 +205,90 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <a href="address.html" class="tsd-signature-type">Address</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="config" class="tsd-anchor"></a>
+					<h3>config</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> config<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ICoinConfig</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> config<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ICoinConfig</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L70">src/LedgerNote.ts:70</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The current coin configuration</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ICoinConfig</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L74">src/LedgerNote.ts:74</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The current coin configuration</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>config: <span class="tsd-signature-type">ICoinConfig</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="cryptoconfig" class="tsd-anchor"></a>
+					<h3>crypto<wbr>Config</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> cryptoConfig<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ICryptoConfig</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> cryptoConfig<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ICryptoConfig</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L81">src/LedgerNote.ts:81</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The current cryptographic primitives configuration</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ICryptoConfig</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L85">src/LedgerNote.ts:85</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The current cryptographic primitives configuration</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>config: <span class="tsd-signature-type">ICryptoConfig</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -205,7 +302,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L152">src/LedgerNote.ts:152</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L127">src/LedgerNote.ts:127</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -231,7 +328,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L161">src/LedgerNote.ts:161</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L136">src/LedgerNote.ts:136</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -263,7 +360,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L371">src/LedgerNote.ts:371</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L369">src/LedgerNote.ts:369</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -295,7 +392,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L1018">src/LedgerNote.ts:1018</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L1016">src/LedgerNote.ts:1016</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -335,7 +432,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L388">src/LedgerNote.ts:388</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L386">src/LedgerNote.ts:386</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -376,7 +473,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L533">src/LedgerNote.ts:533</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L531">src/LedgerNote.ts:531</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -443,7 +540,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L741">src/LedgerNote.ts:741</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L739">src/LedgerNote.ts:739</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -501,6 +598,29 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="fetchkeys" class="tsd-anchor"></a>
+					<h3>fetch<wbr>Keys</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">fetch<wbr>Keys<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L117">src/LedgerNote.ts:117</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Fetches the public keys and private view key from the Ledger device
+									and stores it locally for use later</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="formatmoney" class="tsd-anchor"></a>
 					<h3>format<wbr>Money</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -510,7 +630,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L417">src/LedgerNote.ts:417</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L415">src/LedgerNote.ts:415</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -533,6 +653,43 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="generatekeyderivation" class="tsd-anchor"></a>
+					<h3>generate<wbr>Key<wbr>Derivation</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Key<wbr>Derivation<span class="tsd-signature-symbol">(</span>transactionPublicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, privateViewKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L166">src/LedgerNote.ts:166</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Generates a key derivation</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>transactionPublicKey: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the transaction public key</p>
+									</div>
+								</li>
+								<li>
+									<h5>privateViewKey: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the private view key (ignored)</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="generatekeyimage" class="tsd-anchor"></a>
 					<h3>generate<wbr>Key<wbr>Image</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -542,7 +699,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L196">src/LedgerNote.ts:196</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L190">src/LedgerNote.ts:190</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -602,7 +759,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L225">src/LedgerNote.ts:225</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L220">src/LedgerNote.ts:220</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -656,7 +813,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L440">src/LedgerNote.ts:440</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L438">src/LedgerNote.ts:438</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -686,6 +843,28 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="init" class="tsd-anchor"></a>
+					<h3>init</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">init<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L103">src/LedgerNote.ts:103</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Manually initializes the class if necessary</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="isourtransactionoutput" class="tsd-anchor"></a>
 					<h3>is<wbr>Our<wbr>Transaction<wbr>Output</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -695,7 +874,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L317">src/LedgerNote.ts:317</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L314">src/LedgerNote.ts:314</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -756,7 +935,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L911">src/LedgerNote.ts:911</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L909">src/LedgerNote.ts:909</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -826,7 +1005,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L254">src/LedgerNote.ts:254</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L251">src/LedgerNote.ts:251</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -862,7 +1041,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L176">src/LedgerNote.ts:176</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L151">src/LedgerNote.ts:151</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -894,7 +1073,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L270">src/LedgerNote.ts:270</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L267">src/LedgerNote.ts:267</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -955,7 +1134,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L485">src/LedgerNote.ts:485</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L483">src/LedgerNote.ts:483</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -997,7 +1176,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/LedgerNote.ts#L507">src/LedgerNote.ts:507</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/LedgerNote.ts#L505">src/LedgerNote.ts:505</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1076,6 +1255,12 @@
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="ledgernote.html#address" class="tsd-kind-icon">address</a>
 							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="ledgernote.html#config" class="tsd-kind-icon">config</a>
+							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="ledgernote.html#cryptoconfig" class="tsd-kind-icon">crypto<wbr>Config</a>
+							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="ledgernote.html#ready" class="tsd-kind-icon">ready</a>
 							</li>
@@ -1098,7 +1283,13 @@
 								<a href="ledgernote.html#createtransactionstructure" class="tsd-kind-icon">create<wbr>Transaction<wbr>Structure</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="ledgernote.html#fetchkeys" class="tsd-kind-icon">fetch<wbr>Keys</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ledgernote.html#formatmoney" class="tsd-kind-icon">format<wbr>Money</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="ledgernote.html#generatekeyderivation" class="tsd-kind-icon">generate<wbr>Key<wbr>Derivation</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ledgernote.html#generatekeyimage" class="tsd-kind-icon">generate<wbr>Key<wbr>Image</a>
@@ -1108,6 +1299,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ledgernote.html#generatetransactionoutputs" class="tsd-kind-icon">generate<wbr>Transaction<wbr>Outputs</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="ledgernote.html#init" class="tsd-kind-icon">init</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ledgernote.html#isourtransactionoutput" class="tsd-kind-icon">is<wbr>Our<wbr>Transaction<wbr>Output</a>

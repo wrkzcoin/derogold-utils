@@ -99,6 +99,8 @@
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="cryptonote.html#address" class="tsd-kind-icon">address</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="cryptonote.html#config" class="tsd-kind-icon">config</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="cryptonote.html#cryptoconfig" class="tsd-kind-icon">crypto<wbr>Config</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -110,10 +112,13 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="cryptonote.html#createintegratedaddress" class="tsd-kind-icon">create<wbr>Integrated<wbr>Address</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="cryptonote.html#createtransaction" class="tsd-kind-icon">create<wbr>Transaction</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="cryptonote.html#createtransactionstructure" class="tsd-kind-icon">create<wbr>Transaction<wbr>Structure</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="cryptonote.html#fetchkeys" class="tsd-kind-icon">fetch<wbr>Keys</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="cryptonote.html#formatmoney" class="tsd-kind-icon">format<wbr>Money</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="cryptonote.html#generatekeyderivation" class="tsd-kind-icon">generate<wbr>Key<wbr>Derivation</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="cryptonote.html#generatekeyimage" class="tsd-kind-icon">generate<wbr>Key<wbr>Image</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="cryptonote.html#generatekeyimageprimitive" class="tsd-kind-icon">generate<wbr>Key<wbr>Image<wbr>Primitive</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="cryptonote.html#generatetransactionoutputs" class="tsd-kind-icon">generate<wbr>Transaction<wbr>Outputs</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="cryptonote.html#init" class="tsd-kind-icon">init</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="cryptonote.html#isourtransactionoutput" class="tsd-kind-icon">is<wbr>Our<wbr>Transaction<wbr>Output</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="cryptonote.html#preparetransaction" class="tsd-kind-icon">prepare<wbr>Transaction</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="cryptonote.html#privatekeytopublickey" class="tsd-kind-icon">private<wbr>Key<wbr>ToPublic<wbr>Key</a></li>
@@ -132,13 +137,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Crypto<wbr>Note<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/interfaces.config.html" class="tsd-signature-type">Config</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="cryptonote.html" class="tsd-signature-type">CryptoNote</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Crypto<wbr>Note<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ICoinConfig</span>, cryptoConfig<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ICryptoConfig</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="cryptonote.html" class="tsd-signature-type">CryptoNote</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L35">src/CryptoNote.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L32">src/CryptoNote.ts:32</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -151,7 +156,20 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <a href="../interfaces/interfaces.config.html" class="tsd-signature-type">Config</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <span class="tsd-signature-type">ICoinConfig</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>the base configuration to apply to our helper</p>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> cryptoConfig: <span class="tsd-signature-type">ICryptoConfig</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>configuration to allow for overriding the provided cryptographic primitives</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="cryptonote.html" class="tsd-signature-type">CryptoNote</a></h4>
@@ -165,22 +183,105 @@
 					<a name="address" class="tsd-anchor"></a>
 					<h3>address</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> address<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="address.html" class="tsd-signature-type">Address</a></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> address<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L97">src/CryptoNote.ts:97</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L68">src/CryptoNote.ts:68</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Provides the public wallet address of this instance
-									THIS IS NOT IMPLEMENTED IN THIS CLASS</p>
+									<p>This does nothing in this class</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <a href="address.html" class="tsd-signature-type">Address</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="config" class="tsd-anchor"></a>
+					<h3>config</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> config<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ICoinConfig</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> config<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ICoinConfig</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L75">src/CryptoNote.ts:75</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The current coin configuration</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ICoinConfig</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L79">src/CryptoNote.ts:79</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The current coin configuration</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>config: <span class="tsd-signature-type">ICoinConfig</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="cryptoconfig" class="tsd-anchor"></a>
+					<h3>crypto<wbr>Config</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> cryptoConfig<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ICryptoConfig</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> cryptoConfig<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ICryptoConfig</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L86">src/CryptoNote.ts:86</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The current cryptographic primitives configuration</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ICryptoConfig</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L90">src/CryptoNote.ts:90</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The current cryptographic primitives configuration</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>config: <span class="tsd-signature-type">ICryptoConfig</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -197,7 +298,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L106">src/CryptoNote.ts:106</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L99">src/CryptoNote.ts:99</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -229,7 +330,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L308">src/CryptoNote.ts:308</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L314">src/CryptoNote.ts:314</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -261,7 +362,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L822">src/CryptoNote.ts:822</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L828">src/CryptoNote.ts:828</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -301,7 +402,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L325">src/CryptoNote.ts:325</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L331">src/CryptoNote.ts:331</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -342,7 +443,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L470">src/CryptoNote.ts:470</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L476">src/CryptoNote.ts:476</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -409,7 +510,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L549">src/CryptoNote.ts:549</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L555">src/CryptoNote.ts:555</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -467,6 +568,28 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="fetchkeys" class="tsd-anchor"></a>
+					<h3>fetch<wbr>Keys</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">fetch<wbr>Keys<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L61">src/CryptoNote.ts:61</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This does nothing in this class</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="formatmoney" class="tsd-anchor"></a>
 					<h3>format<wbr>Money</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -476,7 +599,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L354">src/CryptoNote.ts:354</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L360">src/CryptoNote.ts:360</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -499,6 +622,43 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="generatekeyderivation" class="tsd-anchor"></a>
+					<h3>generate<wbr>Key<wbr>Derivation</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Key<wbr>Derivation<span class="tsd-signature-symbol">(</span>transactionPublicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, privateViewKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L129">src/CryptoNote.ts:129</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Generates a key derivation</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>transactionPublicKey: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the transaction public key</p>
+									</div>
+								</li>
+								<li>
+									<h5>privateViewKey: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the private view key (ignored)</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="generatekeyimage" class="tsd-anchor"></a>
 					<h3>generate<wbr>Key<wbr>Image</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -508,7 +668,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L141">src/CryptoNote.ts:141</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L147">src/CryptoNote.ts:147</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -568,7 +728,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L162">src/CryptoNote.ts:162</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L168">src/CryptoNote.ts:168</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -622,7 +782,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L377">src/CryptoNote.ts:377</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L383">src/CryptoNote.ts:383</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -652,6 +812,28 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="init" class="tsd-anchor"></a>
+					<h3>init</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">init<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L54">src/CryptoNote.ts:54</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This does nothing in this class</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="isourtransactionoutput" class="tsd-anchor"></a>
 					<h3>is<wbr>Our<wbr>Transaction<wbr>Output</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -661,7 +843,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L250">src/CryptoNote.ts:250</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L256">src/CryptoNote.ts:256</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -722,7 +904,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L716">src/CryptoNote.ts:716</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L722">src/CryptoNote.ts:722</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -792,7 +974,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L187">src/CryptoNote.ts:187</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L193">src/CryptoNote.ts:193</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -828,7 +1010,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L121">src/CryptoNote.ts:121</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L114">src/CryptoNote.ts:114</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -860,7 +1042,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L203">src/CryptoNote.ts:203</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L209">src/CryptoNote.ts:209</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -921,7 +1103,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L422">src/CryptoNote.ts:422</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L428">src/CryptoNote.ts:428</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -963,7 +1145,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/1bc8b54/src/CryptoNote.ts#L444">src/CryptoNote.ts:444</a></li>
+									<li>Defined in <a href="https://github.com/turtlecoin/turtlecoin-utils/blob/b86c7e4/src/CryptoNote.ts#L450">src/CryptoNote.ts:450</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1036,6 +1218,12 @@
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="cryptonote.html#address" class="tsd-kind-icon">address</a>
 							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="cryptonote.html#config" class="tsd-kind-icon">config</a>
+							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="cryptonote.html#cryptoconfig" class="tsd-kind-icon">crypto<wbr>Config</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="cryptonote.html#absolutetorelativeoffsets" class="tsd-kind-icon">absolute<wbr>ToRelative<wbr>Offsets</a>
 							</li>
@@ -1055,7 +1243,13 @@
 								<a href="cryptonote.html#createtransactionstructure" class="tsd-kind-icon">create<wbr>Transaction<wbr>Structure</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="cryptonote.html#fetchkeys" class="tsd-kind-icon">fetch<wbr>Keys</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="cryptonote.html#formatmoney" class="tsd-kind-icon">format<wbr>Money</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="cryptonote.html#generatekeyderivation" class="tsd-kind-icon">generate<wbr>Key<wbr>Derivation</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="cryptonote.html#generatekeyimage" class="tsd-kind-icon">generate<wbr>Key<wbr>Image</a>
@@ -1065,6 +1259,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="cryptonote.html#generatetransactionoutputs" class="tsd-kind-icon">generate<wbr>Transaction<wbr>Outputs</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="cryptonote.html#init" class="tsd-kind-icon">init</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="cryptonote.html#isourtransactionoutput" class="tsd-kind-icon">is<wbr>Our<wbr>Transaction<wbr>Output</a>

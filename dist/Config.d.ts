@@ -1,6 +1,4 @@
-/**
- * Respresents the available coin configuration parameters
- */
+/** @ignore */
 export interface ICoinConfig {
     activateParentBlockVersion?: number;
     coinUnitPlaces?: number;
