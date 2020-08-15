@@ -43,7 +43,7 @@ class LedgerNote {
         this.m_config = Config_1.Config;
         this.m_address = new Address_1.Address();
         this.m_fetched = false;
-        this.m_ledger = new LedgerDevice_1.LedgerDevice(transport);
+        this.m_ledger = new LedgerDevice_1.LedgerDevice(transport, config);
         if (config) {
             this.m_config = Common_1.Common.mergeConfig(config);
         }
@@ -97,10 +97,7 @@ class LedgerNote {
      */
     fetchKeys() {
         return __awaiter(this, void 0, void 0, function* () {
-            const keys = yield this.m_ledger.getPublicKeys(!this.m_config.ledgerDebug);
-            const view = yield this.m_ledger.getPrivateViewKey(!this.m_config.ledgerDebug);
-            const prefix = new AddressPrefix_1.AddressPrefix(this.m_config.addressPrefix || Config_1.Config.addressPrefix);
-            this.m_address = yield Address_1.Address.fromViewOnlyKeys(keys.spend.publicKey, view.privateKey, undefined, prefix);
+            this.m_address = yield this.m_ledger.getViewWallet(!this.m_config.ledgerDebug);
             this.m_fetched = true;
         });
     }

@@ -53,7 +53,7 @@ export class LedgerNote implements ICryptoNote {
      * @param cryptoConfig configuration to allow for overriding the provided cryptographic primitives
      */
     constructor (transport: Transport, config?: ICoinConfig, cryptoConfig?: ICryptoConfig) {
-        this.m_ledger = new LedgerDevice(transport);
+        this.m_ledger = new LedgerDevice(transport, config);
 
         if (config) {
             this.m_config = Common.mergeConfig(config);
@@ -115,13 +115,7 @@ export class LedgerNote implements ICryptoNote {
      * and stores it locally for use later
      */
     public async fetchKeys (): Promise<void> {
-        const keys = await this.m_ledger.getPublicKeys(!this.m_config.ledgerDebug);
-
-        const view = await this.m_ledger.getPrivateViewKey(!this.m_config.ledgerDebug);
-
-        const prefix = new AddressPrefix(this.m_config.addressPrefix || Config.addressPrefix);
-
-        this.m_address = await Address.fromViewOnlyKeys(keys.spend.publicKey, view.privateKey, undefined, prefix);
+        this.m_address = await this.m_ledger.getViewWallet(!this.m_config.ledgerDebug);
 
         this.m_fetched = true;
     }
