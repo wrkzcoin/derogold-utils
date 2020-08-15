@@ -9,9 +9,13 @@ import { Address, KeyPair, Keys, Transaction } from './';
 import { LedgerTypes } from './Types/Ledger';
 import { Config, ICoinRunningConfig, ICoinConfig } from './Config';
 import { Common } from './Common';
+import * as semver from 'semver';
 
 /** @ignore */
 export { Transport as LedgerTransport };
+
+/** @ignore */
+const IDENT = '547572746c65436f696e206973206e6f742061204d6f6e65726f20666f726b21';
 
 /**
  * An easy to use interface that uses a Ledger HW transport to communicate with
@@ -95,6 +99,35 @@ export class LedgerDevice extends EventEmitter {
         const result = await this.exchange(LedgerTypes.Command.IDENT);
 
         return result.unreadBuffer.toString('hex');
+    }
+
+    /**
+     * Checks to make sure that the application running on the ledger
+     * at least claims to be the TurtleCoin ledger application
+     */
+    public async checkIdent (): Promise<boolean> {
+        const ident = await this.getIdent();
+
+        return ident === IDENT;
+    }
+
+    /**
+     * Checks to
+     */
+    public async checkVersion (requiredVersion: string): Promise<boolean> {
+        if (!semver.valid(requiredVersion)) {
+            throw new Error('Invalid required version supplied');
+        }
+
+        const l_version = await this.getVersion();
+
+        const version = [l_version.major, l_version.minor, l_version.patch].join('.');
+
+        if (!semver.valid(version)) {
+            return false;
+        }
+
+        return semver.gte(version, requiredVersion);
     }
 
     /**
