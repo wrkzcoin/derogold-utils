@@ -94,6 +94,19 @@ export class CryptoNote implements ICryptoNote {
     }
 
     /**
+     * Generates a key derivation
+     * @param transactionPublicKey the transaction public key
+     * @param privateViewKey the private view key (ignored)
+     */
+    public async generateKeyDerivation (
+        transactionPublicKey: string,
+        privateViewKey: string
+    ): Promise<string> {
+        return TurtleCoinCrypto.generateKeyDerivation(
+            transactionPublicKey, privateViewKey);
+    }
+
+    /**
      * Generates a key image from the supplied values
      * @async
      * @param transactionPublicKey the transaction public key

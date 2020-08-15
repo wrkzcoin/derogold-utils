@@ -8,7 +8,8 @@ import Transport from '@ledgerhq/hw-transport';
 import { LedgerDevice } from './LedgerDevice';
 import {
     BigInteger,
-    ED25519, ICryptoConfig,
+    ED25519,
+    ICryptoConfig,
     Interfaces,
     LedgerTypes,
     TransactionInputs,
@@ -23,10 +24,8 @@ import { Transaction } from './Transaction';
 
 /** @ignore */
 import ICryptoNote = CryptoNoteInterfaces.ICryptoNote;
-
 /** @ignore */
 import TransactionState = LedgerTypes.TransactionState;
-
 /** @ignore */
 import KeyPair = ED25519.KeyPair;
 
@@ -88,6 +87,14 @@ export class LedgerNote implements ICryptoNote {
      * and stores it locally for use later
      */
     private async fetchKeys (): Promise<void> {
+        if (!await this.m_ledger.checkVersion(this.config.minimumLedgerVersion)) {
+            throw new Error('Ledger application does not meet minimum version');
+        }
+
+        if (!await this.m_ledger.checkIdent()) {
+            throw new Error('Application running on the Ledger has the wrong identity');
+        }
+
         const keys = await this.m_ledger.getPublicKeys();
 
         const view = await this.m_ledger.getPrivateViewKey();
@@ -135,6 +142,25 @@ export class LedgerNote implements ICryptoNote {
         tmpOffsets.forEach((offset) => result.push(offset.toJSNumber()));
 
         return result;
+    }
+
+    /**
+     * Generates a key derivation
+     * @param transactionPublicKey the transaction public key
+     * @param privateViewKey the private view key (ignored)
+     */
+    public async generateKeyDerivation (
+        transactionPublicKey: string,
+        privateViewKey: string | undefined
+    ): Promise<string> {
+        if (!this.ready) {
+            await this.fetchKeys();
+        }
+
+        UNUSED(privateViewKey);
+
+        return TurtleCoinCrypto.generateKeyDerivation(
+            transactionPublicKey, this.address.view.privateKey);
     }
 
     /**

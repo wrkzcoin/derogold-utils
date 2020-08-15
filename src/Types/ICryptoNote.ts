@@ -23,6 +23,10 @@ export namespace CryptoNoteInterfaces {
 
         public abstract relativeToAbsoluteOffsets(offsets: BigInteger.BigInteger[] | string[] | number[]): number[];
 
+        public abstract async generateKeyDerivation(
+            transactionPublicKey: string,
+            privateViewKey: string): Promise<string>;
+
         public abstract async generateKeyImage(
             transactionPublicKey: string,
             privateViewKey: string,
