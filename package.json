@@ -49,11 +49,13 @@
     "numeral": "^2.0.6",
     "semver": "^7.3.2",
     "turtlecoin-base58": "0.0.7",
-    "turtlecoin-crypto": "^6.0.1",
+    "turtlecoin-crypto": "^6.0.2",
     "turtlecoin-mnemonics": "0.0.8"
   },
   "devDependencies": {
+    "@ledgerhq/hw-transport-node-hid": "^5.22.0",
     "@types/aes-js": "^3.1.1",
+    "@types/ledgerhq__hw-transport-node-hid": "^4.22.1",
     "@types/mocha": "^8.0.2",
     "@types/node": "^14.0.27",
     "@types/numeral": "0.0.28",
