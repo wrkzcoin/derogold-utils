@@ -13,7 +13,7 @@
   },
   "scripts": {
     "build": "./node_modules/.bin/tsc",
-    "docs": "./node_modules/.bin/typedoc && touch docs/.nojekyll",
+    "docs": "./node_modules/.bin/typedoc && touch docs/.nojekyll && git restore docs/CNAME",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run docs",
     "style": "./node_modules/.bin/eslint src/**/*.ts src/*.ts test/*.ts",
@@ -48,7 +48,7 @@
     "get-random-values": "^1.2.0",
     "numeral": "^2.0.6",
     "turtlecoin-base58": "0.0.7",
-    "turtlecoin-crypto": "^6.0.0",
+    "turtlecoin-crypto": "^6.0.1",
     "turtlecoin-mnemonics": "0.0.8"
   },
   "devDependencies": {
