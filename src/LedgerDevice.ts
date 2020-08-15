@@ -7,7 +7,7 @@ import { Reader, Writer } from 'bytestream-helper';
 import { EventEmitter } from 'events';
 import { Address, KeyPair, Keys, Transaction } from './';
 import { LedgerTypes } from './Types/Ledger';
-import { Config, ICoinRunningConfig, ICoinConfig } from './Config';
+import { Config, ICoinConfig, ICoinRunningConfig } from './Config';
 import { Common } from './Common';
 import * as semver from 'semver';
 
@@ -888,7 +888,7 @@ export class LedgerDevice extends EventEmitter {
      */
     public async signTransaction (
         confirm = true
-    ): Promise<{hash: string, size: number}> {
+    ): Promise<{ hash: string, size: number }> {
         const result = await this.exchange(LedgerTypes.Command.TX_SIGN, confirm);
 
         return {
