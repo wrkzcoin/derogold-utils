@@ -12,7 +12,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LedgerDevice = void 0;
+exports.LedgerDevice = exports.LedgerTransport = void 0;
+const hw_transport_1 = require("@ledgerhq/hw-transport");
+exports.LedgerTransport = hw_transport_1.default;
 const bytestream_helper_1 = require("bytestream-helper");
 const events_1 = require("events");
 const _1 = require("./");

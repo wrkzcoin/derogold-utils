@@ -21,6 +21,7 @@ var CryptoNote_1 = require("./CryptoNote");
 Object.defineProperty(exports, "CryptoNote", { enumerable: true, get: function () { return CryptoNote_1.CryptoNote; } });
 var LedgerDevice_1 = require("./LedgerDevice");
 Object.defineProperty(exports, "LedgerDevice", { enumerable: true, get: function () { return LedgerDevice_1.LedgerDevice; } });
+Object.defineProperty(exports, "LedgerTransport", { enumerable: true, get: function () { return LedgerDevice_1.LedgerTransport; } });
 var LedgerNote_1 = require("./LedgerNote");
 Object.defineProperty(exports, "LedgerNote", { enumerable: true, get: function () { return LedgerNote_1.LedgerNote; } });
 var LevinPacket_1 = require("./LevinPacket");

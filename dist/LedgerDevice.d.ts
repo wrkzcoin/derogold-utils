@@ -5,6 +5,8 @@ import { EventEmitter } from 'events';
 import { Address, KeyPair, Keys, Transaction } from './';
 import { LedgerTypes } from './Types/Ledger';
 import { ICoinConfig } from './Config';
+/** @ignore */
+export { Transport as LedgerTransport };
 /**
  * An easy to use interface that uses a Ledger HW transport to communicate with
  * the TurtleCoin application running on a ledger device.

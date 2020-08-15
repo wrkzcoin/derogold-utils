@@ -10,6 +10,9 @@ import { LedgerTypes } from './Types/Ledger';
 import { Config, ICoinRunningConfig, ICoinConfig } from './Config';
 import { Common } from './Common';
 
+/** @ignore */
+export { Transport as LedgerTransport };
+
 /**
  * An easy to use interface that uses a Ledger HW transport to communicate with
  * the TurtleCoin application running on a ledger device.
