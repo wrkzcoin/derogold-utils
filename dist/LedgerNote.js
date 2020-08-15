@@ -65,6 +65,14 @@ class LedgerNote {
         return this.m_address;
     }
     /**
+     * Manually initializes the class if necessary
+     */
+    init() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.fetchKeys();
+        });
+    }
+    /**
      * Fetches the public keys and private view key from the Ledger device
      * and stores it locally for use later
      */

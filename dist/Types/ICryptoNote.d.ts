@@ -10,6 +10,7 @@ export declare namespace CryptoNoteInterfaces {
     }
     abstract class ICryptoNote {
         abstract get address(): Address;
+        abstract init(): Promise<void>;
         abstract absoluteToRelativeOffsets(offsets: BigInteger.BigInteger[] | string[] | number[]): number[];
         abstract relativeToAbsoluteOffsets(offsets: BigInteger.BigInteger[] | string[] | number[]): number[];
         abstract generateKeyImage(transactionPublicKey: string, privateViewKey: string, publicSpendKey: string, privateSpendKey: string, outputIndex: number): Promise<IKeyImage>;

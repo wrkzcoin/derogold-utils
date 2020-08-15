@@ -17,6 +17,8 @@ export namespace CryptoNoteInterfaces {
     export abstract class ICryptoNote {
         public abstract get address(): Address;
 
+        public abstract async init(): Promise<void>;
+
         public abstract absoluteToRelativeOffsets(offsets: BigInteger.BigInteger[] | string[] | number[]): number[];
 
         public abstract relativeToAbsoluteOffsets(offsets: BigInteger.BigInteger[] | string[] | number[]): number[];

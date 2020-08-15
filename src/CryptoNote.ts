@@ -49,6 +49,13 @@ export class CryptoNote implements ICryptoNote {
     }
 
     /**
+     * Manually initializes the class if necessary
+     */
+    public async init (): Promise<void> {
+        // do nothing
+    }
+
+    /**
      * Provides the public wallet address of this instance
      * THIS IS NOT IMPLEMENTED IN THIS CLASS
      */

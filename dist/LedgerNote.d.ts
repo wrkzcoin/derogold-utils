@@ -32,6 +32,10 @@ export declare class LedgerNote implements ICryptoNote {
      */
     get address(): Address;
     /**
+     * Manually initializes the class if necessary
+     */
+    init(): Promise<void>;
+    /**
      * Fetches the public keys and private view key from the Ledger device
      * and stores it locally for use later
      */

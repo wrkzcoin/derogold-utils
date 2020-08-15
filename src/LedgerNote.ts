@@ -79,6 +79,13 @@ export class LedgerNote implements ICryptoNote {
     }
 
     /**
+     * Manually initializes the class if necessary
+     */
+    public async init (): Promise<void> {
+        await this.fetchKeys();
+    }
+
+    /**
      * Fetches the public keys and private view key from the Ledger device
      * and stores it locally for use later
      */

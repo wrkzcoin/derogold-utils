@@ -45,6 +45,14 @@ class CryptoNote {
         }
     }
     /**
+     * Manually initializes the class if necessary
+     */
+    init() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // do nothing
+        });
+    }
+    /**
      * Provides the public wallet address of this instance
      * THIS IS NOT IMPLEMENTED IN THIS CLASS
      */

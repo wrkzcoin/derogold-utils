@@ -20,6 +20,10 @@ export declare class CryptoNote implements ICryptoNote {
      */
     constructor(config?: ICoinConfig, cryptoConfig?: ICryptoConfig);
     /**
+     * Manually initializes the class if necessary
+     */
+    init(): Promise<void>;
+    /**
      * Provides the public wallet address of this instance
      * THIS IS NOT IMPLEMENTED IN THIS CLASS
      */
