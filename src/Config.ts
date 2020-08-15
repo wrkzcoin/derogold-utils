@@ -22,6 +22,7 @@ export interface ICoinConfig {
     feePerByteChunkSize?: number;
     maximumLedgerTransactionSize?: number;
     maximumLedgerAPDUPayloadSize?: number;
+    [key: string]: any;
 }
 
 /** @ignore */

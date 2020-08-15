@@ -11,9 +11,9 @@ export class Common {
     public static mergeConfig (config: ICoinConfig): ICoinRunningConfig {
         const merged = Config;
 
-        Object.keys((config as any))
+        Object.keys(config)
             .forEach(key => {
-                (merged as any)[key] = (config as any)[key];
+                merged[key] = config[key];
             });
 
         return merged;
