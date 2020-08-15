@@ -21,5 +21,7 @@ exports.Config = {
     feePerByte: 1.953125,
     feePerByteChunkSize: 256,
     maximumLedgerTransactionSize: 38400,
-    maximumLedgerAPDUPayloadSize: 480
+    maximumLedgerAPDUPayloadSize: 480,
+    minimumLedgerVersion: '1.2.0',
+    ledgerDebug: false
 };

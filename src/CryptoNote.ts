@@ -29,7 +29,7 @@ const UINT64_MAX = BigInteger(2).pow(64);
  * of funds on the network
  */
 export class CryptoNote implements ICryptoNote {
-    protected config: ICoinRunningConfig = Config;
+    protected m_config: ICoinRunningConfig = Config;
 
     /**
      * Constructs a new instance of the object
@@ -40,7 +40,7 @@ export class CryptoNote implements ICryptoNote {
      */
     constructor (config?: ICoinConfig, cryptoConfig?: ICryptoConfig) {
         if (config) {
-            this.config = Common.mergeConfig(config);
+            this.m_config = Common.mergeConfig(config);
         }
 
         if (cryptoConfig) {
@@ -49,18 +49,46 @@ export class CryptoNote implements ICryptoNote {
     }
 
     /**
-     * Manually initializes the class if necessary
+     * This does nothing in this class
      */
     public async init (): Promise<void> {
-        // do nothing
+        return undefined;
     }
 
     /**
-     * Provides the public wallet address of this instance
-     * THIS IS NOT IMPLEMENTED IN THIS CLASS
+     * This does nothing in this class
      */
-    public get address (): Address {
-        throw new Error('Not implemented on this object');
+    public async fetchKeys (): Promise<void> {
+        return undefined;
+    }
+
+    /**
+     * This does nothing in this class
+     */
+    public get address (): undefined {
+        return undefined;
+    }
+
+    /**
+     * The current coin configuration
+     */
+    public get config (): ICoinConfig {
+        return this.m_config;
+    }
+
+    public set config (config: ICoinConfig) {
+        this.m_config = Common.mergeConfig(config);
+    }
+
+    /**
+     * The current cryptographic primitives configuration
+     */
+    public get cryptoConfig (): ICryptoConfig {
+        return TurtleCoinCrypto.userCryptoFunctions;
+    }
+
+    public set cryptoConfig (config: ICryptoConfig) {
+        TurtleCoinCrypto.userCryptoFunctions = config;
     }
 
     /**
@@ -286,11 +314,11 @@ export class CryptoNote implements ICryptoNote {
     public calculateMinimumTransactionFee (txSize: number): number {
         const chunks = Math.ceil(
             txSize /
-            (this.config.feePerByteChunkSize || Config.feePerByteChunkSize));
+            (this.m_config.feePerByteChunkSize || Config.feePerByteChunkSize));
 
         return chunks *
-            (this.config.feePerByteChunkSize || Config.feePerByteChunkSize) *
-            (this.config.feePerByte || Config.feePerByte);
+            (this.m_config.feePerByteChunkSize || Config.feePerByteChunkSize) *
+            (this.m_config.feePerByte || Config.feePerByte);
     }
 
     /**
@@ -310,7 +338,7 @@ export class CryptoNote implements ICryptoNote {
         }
 
         if (!prefix) {
-            prefix = new AddressPrefix(this.config.addressPrefix || Config.addressPrefix);
+            prefix = new AddressPrefix(this.m_config.addressPrefix || Config.addressPrefix);
         }
 
         const addr = await Address.fromAddress(address);
@@ -332,7 +360,7 @@ export class CryptoNote implements ICryptoNote {
     public formatMoney (amount: BigInteger.BigInteger | number): string {
         let places = '';
 
-        for (let i = 0; i < (this.config.coinUnitPlaces || Config.coinUnitPlaces); i++) {
+        for (let i = 0; i < (this.m_config.coinUnitPlaces || Config.coinUnitPlaces); i++) {
             places += '0';
         }
 
@@ -341,7 +369,7 @@ export class CryptoNote implements ICryptoNote {
         }
 
         return Numeral(
-            amount / Math.pow(10, this.config.coinUnitPlaces || Config.coinUnitPlaces)
+            amount / Math.pow(10, this.m_config.coinUnitPlaces || Config.coinUnitPlaces)
         ).format('0,0.' + places);
     }
 
@@ -369,15 +397,15 @@ export class CryptoNote implements ICryptoNote {
         for (let i = 0; i < amountChars.length; i++) {
             const amt = parseInt(amountChars[i], 10) * Math.pow(10, i);
 
-            if (amt > (this.config.maximumOutputAmount || Config.maximumOutputAmount)) {
+            if (amt > (this.m_config.maximumOutputAmount || Config.maximumOutputAmount)) {
                 let splitAmt = amt;
 
-                while (splitAmt >= (this.config.maximumOutputAmount || Config.maximumOutputAmount)) {
+                while (splitAmt >= (this.m_config.maximumOutputAmount || Config.maximumOutputAmount)) {
                     result.push({
-                        amount: this.config.maximumOutputAmount || Config.maximumOutputAmount,
+                        amount: this.m_config.maximumOutputAmount || Config.maximumOutputAmount,
                         destination: destination
                     });
-                    splitAmt -= this.config.maximumOutputAmount || Config.maximumOutputAmount;
+                    splitAmt -= this.m_config.maximumOutputAmount || Config.maximumOutputAmount;
                 }
             } else if (amt !== 0) {
                 result.push({
@@ -456,7 +484,7 @@ export class CryptoNote implements ICryptoNote {
         extraData?: any
     ): Promise<Transaction> {
         const feePerByte =
-            this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
+            this.m_config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
 
         const prepared = await this.createTransactionStructure(
             outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData
@@ -535,12 +563,12 @@ export class CryptoNote implements ICryptoNote {
         extraData?: any
     ): Promise<Interfaces.IPreparedTransaction> {
         if (typeof feeAmount === 'undefined') {
-            feeAmount = this.config.defaultNetworkFee || Config.defaultNetworkFee;
+            feeAmount = this.m_config.defaultNetworkFee || Config.defaultNetworkFee;
         }
         unlockTime = unlockTime || 0;
 
         const feePerByte =
-            this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
+            this.m_config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
 
         if (randomOutputs.length !== inputs.length && mixin !== 0) {
             throw new Error('The sets of random outputs supplied does not match the number of inputs supplied');
@@ -559,9 +587,9 @@ export class CryptoNote implements ICryptoNote {
             if (output.amount <= 0) {
                 throw new RangeError('Cannot create an output with an amount <= 0');
             }
-            if (output.amount > (this.config.maximumOutputAmount || Config.maximumOutputAmount)) {
+            if (output.amount > (this.m_config.maximumOutputAmount || Config.maximumOutputAmount)) {
                 throw new RangeError('Cannot create an output with an amount > ' +
-                    (this.config.maximumOutputAmount || Config.maximumOutputAmount));
+                    (this.m_config.maximumOutputAmount || Config.maximumOutputAmount));
             }
             neededMoney = neededMoney.add(output.amount);
             if (neededMoney.greater(UINT64_MAX)) {
@@ -611,16 +639,16 @@ export class CryptoNote implements ICryptoNote {
         const transactionOutputs = await prepareTransactionOutputs(outputs);
 
         if (transactionOutputs.outputs.length >
-            (this.config.maximumOutputsPerTransaction || Config.maximumOutputsPerTransaction)) {
+            (this.m_config.maximumOutputsPerTransaction || Config.maximumOutputsPerTransaction)) {
             throw new RangeError('Tried to create a transaction with more outputs than permitted');
         }
 
         if (feeAmount === 0) {
             if (transactionInputs.length < 12) {
                 throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of [' +
-                    (this.config.fusionMinInputCount || Config.fusionMinInputCount) + '] inputs');
+                    (this.m_config.fusionMinInputCount || Config.fusionMinInputCount) + '] inputs');
             }
-            const ratio = this.config.fusionMinInOutCountRatio || Config.fusionMinInOutCountRatio;
+            const ratio = this.m_config.fusionMinInOutCountRatio || Config.fusionMinInOutCountRatio;
             if ((transactionInputs.length / transactionOutputs.outputs.length) < ratio) {
                 throw new Error('Sending a [0] fee transaction (fusion) requires the ' +
                     'correct input:output ratio be met');
@@ -665,9 +693,9 @@ export class CryptoNote implements ICryptoNote {
             tx.outputs.push(new TransactionOutputs.KeyOutput(output.amount, output.key));
         }
 
-        if (tx.extra.length > (this.config.maximumExtraSize || Config.maximumExtraSize)) {
+        if (tx.extra.length > (this.m_config.maximumExtraSize || Config.maximumExtraSize)) {
             throw new Error('Transaction extra exceeds the limit of [' +
-                (this.config.maximumExtraSize || Config.maximumExtraSize) + '] bytes');
+                (this.m_config.maximumExtraSize || Config.maximumExtraSize) + '] bytes');
         }
 
         return {
@@ -703,7 +731,7 @@ export class CryptoNote implements ICryptoNote {
         randomKey?: string
     ): Promise<Interfaces.PreparedTransaction> {
         const feePerByte =
-            this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
+            this.m_config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
 
         const prepared = await this.createTransactionStructure(
             outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData

@@ -17,6 +17,7 @@ var BlockTemplate_1 = require("./BlockTemplate");
 Object.defineProperty(exports, "BlockTemplate", { enumerable: true, get: function () { return BlockTemplate_1.BlockTemplate; } });
 var turtlecoin_crypto_2 = require("turtlecoin-crypto");
 Object.defineProperty(exports, "Crypto", { enumerable: true, get: function () { return turtlecoin_crypto_2.Crypto; } });
+Object.defineProperty(exports, "CryptoType", { enumerable: true, get: function () { return turtlecoin_crypto_2.CryptoType; } });
 var CryptoNote_1 = require("./CryptoNote");
 Object.defineProperty(exports, "CryptoNote", { enumerable: true, get: function () { return CryptoNote_1.CryptoNote; } });
 var LedgerDevice_1 = require("./LedgerDevice");

@@ -6,6 +6,8 @@ import { BigInteger, Interfaces } from '../Types';
 import { AddressPrefix } from '../AddressPrefix';
 import { Address } from '../Address';
 import { Transaction } from '../Transaction';
+import { ICoinConfig } from '../Config';
+import { ICryptoConfig } from 'turtlecoin-crypto';
 
 export namespace CryptoNoteInterfaces {
     export interface IKeyImage {
@@ -15,9 +17,19 @@ export namespace CryptoNoteInterfaces {
     }
 
     export abstract class ICryptoNote {
-        public abstract get address(): Address;
+        public abstract get config(): ICoinConfig;
+
+        public abstract set config(config: ICoinConfig);
+
+        public abstract get cryptoConfig(): ICryptoConfig;
+
+        public abstract set cryptoConfig(config: ICryptoConfig);
+
+        public abstract get address(): Address | undefined;
 
         public abstract async init(): Promise<void>;
+
+        public abstract async fetchKeys(): Promise<void>;
 
         public abstract absoluteToRelativeOffsets(offsets: BigInteger.BigInteger[] | string[] | number[]): number[];
 

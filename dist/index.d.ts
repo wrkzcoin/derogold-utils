@@ -4,7 +4,7 @@ export { Address } from './Address';
 export { AddressPrefix } from './AddressPrefix';
 export { Block } from './Block';
 export { BlockTemplate } from './BlockTemplate';
-export { Crypto, ICryptoConfig } from 'turtlecoin-crypto';
+export { Crypto, ICryptoConfig, CryptoType } from 'turtlecoin-crypto';
 export { CryptoNote } from './CryptoNote';
 export { Interfaces } from './Types/ITransaction';
 export { LedgerDevice, LedgerTransport } from './LedgerDevice';

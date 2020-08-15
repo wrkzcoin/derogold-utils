@@ -59,13 +59,6 @@ class Common {
         }
         return offsetsCopy;
     }
-    static bin2hex(bin) {
-        const result = [];
-        for (const b of bin) {
-            result.push(('0' + b.toString(16)).slice(-2));
-        }
-        return result.join('');
-    }
     static isHex(value) {
         if (value.length % 2 !== 0) {
             return false;
@@ -78,13 +71,6 @@ class Common {
     }
     static isHex128(value) {
         return (Common.isHex(value) && value.length === 128);
-    }
-    static str2bin(str) {
-        const result = new Uint8Array(str.length);
-        for (let i = 0; i < str.length; i++) {
-            result[i] = str.charCodeAt(i);
-        }
-        return result;
     }
     static varintLength(value) {
         if (typeof value === 'number') {

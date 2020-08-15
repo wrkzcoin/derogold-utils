@@ -7,12 +7,16 @@ import {
     AddressPrefix,
     Block,
     BlockTemplate,
+    Crypto,
+    CryptoNote,
+    CryptoType,
     KeyInput,
     KeyOutput,
-    Crypto,
-    Transaction,
+    LedgerDevice,
+    LedgerNote,
     LevinPacket,
-    CryptoNote
+    Transaction,
+    KeyPair
 } from '../src';
 import * as assert from 'assert';
 import { before, describe, it } from 'mocha';
@@ -1620,7 +1624,7 @@ describe('Blocks', async function () {
         });
     });
 
-    describe('Hashing', async function () {
+    describe('Hashing', async () => {
         interface IBlock {
             block: string;
             hash: string;
@@ -1806,5 +1810,178 @@ describe('Peer-to-Peer', async function () {
 
             assert(raw === packet.toString());
         });
+    });
+});
+
+describe('Test Ledger Integration', async function () {
+    let skipLedgerTests = TurtleCoinCrypto.type !== CryptoType.NODEADDON;
+    let TransportNodeHID: any;
+
+    let ledger: LedgerNote;
+    let device: LedgerDevice;
+    let spend_key: KeyPair;
+
+    before(async () => {
+        if (!skipLedgerTests) {
+            TransportNodeHID = (await import('@ledgerhq/hw-transport-node-hid')).default;
+
+            const devices = await TransportNodeHID.list();
+
+            if (devices.length === 0) {
+                skipLedgerTests = true;
+            }
+        }
+    });
+
+    it('Connect to Ledger', async function () {
+        if (skipLedgerTests) {
+            return this.skip();
+        }
+
+        try {
+            const transport = await TransportNodeHID.create(1000);
+
+            ledger = new LedgerNote(transport);
+
+            device = new LedgerDevice(transport);
+        } catch (e) {
+            skipLedgerTests = true;
+
+            return this.skip();
+        }
+    });
+
+    it('Initialize Ledger', async function () {
+        if (skipLedgerTests) {
+            return this.skip();
+        }
+
+        await ledger.init()
+            .catch(() => {
+                skipLedgerTests = true;
+
+                assert(false);
+            });
+    });
+
+    it('Fetch Keys', async function () {
+        if (skipLedgerTests) {
+            return this.skip();
+        }
+
+        await ledger.fetchKeys()
+            .catch(() => {
+                skipLedgerTests = false;
+
+                assert(false);
+            });
+    });
+
+    it('Fetch Private Spend Key', async function () {
+        if (skipLedgerTests) {
+            return this.skip();
+        }
+
+        await device.getPrivateSpendKey()
+            .then(key => { spend_key = key; })
+            .catch(() => assert(false));
+    });
+
+    it('Generate Key Image', async function () {
+        if (skipLedgerTests || !spend_key) {
+            return this.skip();
+        }
+
+        const keys = await TurtleCoinCrypto.generateKeys();
+
+        const derivation = await TurtleCoinCrypto.generateKeyDerivation(
+            ledger.address.view.publicKey, keys.private_key);
+
+        const public_ephemeral = await TurtleCoinCrypto.derivePublicKey(
+            derivation, 0, ledger.address.spend.publicKey);
+
+        const private_ephemeral = await TurtleCoinCrypto.deriveSecretKey(
+            derivation, 0, spend_key.privateKey);
+
+        const key_image = await TurtleCoinCrypto.generateKeyImage(public_ephemeral, private_ephemeral);
+
+        const ledger_key_image = await ledger.generateKeyImage(
+            keys.public_key, undefined, undefined, undefined, 0);
+
+        assert(ledger_key_image.keyImage === key_image);
+        assert(ledger_key_image.publicEphemeral === public_ephemeral);
+        assert(!ledger_key_image.privateEphemeral);
+    });
+
+    it('Generate Key Image Primitive', async function () {
+        if (skipLedgerTests || !spend_key) {
+            return this.skip();
+        }
+
+        const keys = await TurtleCoinCrypto.generateKeys();
+
+        const derivation = await TurtleCoinCrypto.generateKeyDerivation(
+            ledger.address.view.publicKey, keys.private_key);
+
+        const public_ephemeral = await TurtleCoinCrypto.derivePublicKey(
+            derivation, 0, ledger.address.spend.publicKey);
+
+        const private_ephemeral = await TurtleCoinCrypto.deriveSecretKey(
+            derivation, 0, spend_key.privateKey);
+
+        const key_image = await TurtleCoinCrypto.generateKeyImage(public_ephemeral, private_ephemeral);
+
+        const ledger_key_image = await ledger.generateKeyImagePrimitive(
+            keys.public_key, undefined, 0, derivation);
+
+        assert(ledger_key_image.keyImage === key_image);
+        assert(ledger_key_image.publicEphemeral === public_ephemeral);
+        assert(!ledger_key_image.privateEphemeral);
+    });
+
+    it('Sign a message', async function () {
+        if (skipLedgerTests) {
+            return this.skip();
+        }
+
+        const message = { ledger: 'TurtleCoin Rocks!' };
+
+        const signature = await ledger.signMessage(message, undefined);
+
+        assert(await cnUtil.verifyMessageSignature(message, ledger.address.spend.publicKey, signature));
+    });
+
+    it('Create a Transaction', async function () {
+        if (skipLedgerTests) {
+            return this.skip();
+        }
+
+        const outputs = await ledger.generateTransactionOutputs(await ledger.address.address(), 1000000);
+
+        const keys = await TurtleCoinCrypto.generateKeys();
+
+        const derivation = await TurtleCoinCrypto.generateKeyDerivation(
+            ledger.address.view.publicKey, keys.private_key);
+
+        const public_ephemeral = await TurtleCoinCrypto.derivePublicKey(
+            derivation, 0, ledger.address.spend.publicKey);
+
+        const fakeInput = { index: 0, key: public_ephemeral, amount: 2000000, globalIndex: 0 };
+
+        const inputs = [await ledger.isOurTransactionOutput(
+            keys.public_key, fakeInput, undefined, undefined, undefined)];
+
+        const random_outputs = [];
+
+        for (let i = 0; i < 3; i++) {
+            const random = await TurtleCoinCrypto.generateKeys();
+
+            random_outputs.push({
+                globalIndex: parseInt(random.private_key.slice(0, 4), 16),
+                key: random.public_key
+            });
+        }
+
+        await ledger.createTransaction(outputs, inputs, [random_outputs], 3);
     });
 });

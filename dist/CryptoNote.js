@@ -36,28 +36,53 @@ class CryptoNote {
      * @param cryptoConfig configuration to allow for overriding the provided cryptographic primitives
      */
     constructor(config, cryptoConfig) {
-        this.config = Config_1.Config;
+        this.m_config = Config_1.Config;
         if (config) {
-            this.config = Common_1.Common.mergeConfig(config);
+            this.m_config = Common_1.Common.mergeConfig(config);
         }
         if (cryptoConfig) {
             Types_1.TurtleCoinCrypto.userCryptoFunctions = cryptoConfig;
         }
     }
     /**
-     * Manually initializes the class if necessary
+     * This does nothing in this class
      */
     init() {
         return __awaiter(this, void 0, void 0, function* () {
-            // do nothing
+            return undefined;
         });
     }
     /**
-     * Provides the public wallet address of this instance
-     * THIS IS NOT IMPLEMENTED IN THIS CLASS
+     * This does nothing in this class
+     */
+    fetchKeys() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return undefined;
+        });
+    }
+    /**
+     * This does nothing in this class
      */
     get address() {
-        throw new Error('Not implemented on this object');
+        return undefined;
+    }
+    /**
+     * The current coin configuration
+     */
+    get config() {
+        return this.m_config;
+    }
+    set config(config) {
+        this.m_config = Common_1.Common.mergeConfig(config);
+    }
+    /**
+     * The current cryptographic primitives configuration
+     */
+    get cryptoConfig() {
+        return Types_1.TurtleCoinCrypto.userCryptoFunctions;
+    }
+    set cryptoConfig(config) {
+        Types_1.TurtleCoinCrypto.userCryptoFunctions = config;
     }
     /**
      * Converts absolute global index offsets to relative ones
@@ -80,6 +105,16 @@ class CryptoNote {
         const tmpOffsets = Common_1.Common.relativeToAbsoluteOffsets(offsets);
         tmpOffsets.forEach((offset) => result.push(offset.toJSNumber()));
         return result;
+    }
+    /**
+     * Generates a key derivation
+     * @param transactionPublicKey the transaction public key
+     * @param privateViewKey the private view key (ignored)
+     */
+    generateKeyDerivation(transactionPublicKey, privateViewKey) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return Types_1.TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, privateViewKey);
+        });
     }
     /**
      * Generates a key image from the supplied values
@@ -211,10 +246,10 @@ class CryptoNote {
      */
     calculateMinimumTransactionFee(txSize) {
         const chunks = Math.ceil(txSize /
-            (this.config.feePerByteChunkSize || Config_1.Config.feePerByteChunkSize));
+            (this.m_config.feePerByteChunkSize || Config_1.Config.feePerByteChunkSize));
         return chunks *
-            (this.config.feePerByteChunkSize || Config_1.Config.feePerByteChunkSize) *
-            (this.config.feePerByte || Config_1.Config.feePerByte);
+            (this.m_config.feePerByteChunkSize || Config_1.Config.feePerByteChunkSize) *
+            (this.m_config.feePerByte || Config_1.Config.feePerByte);
     }
     /**
      * Creates an integrated address using the supplied values
@@ -229,7 +264,7 @@ class CryptoNote {
                 prefix = new AddressPrefix_1.AddressPrefix(prefix);
             }
             if (!prefix) {
-                prefix = new AddressPrefix_1.AddressPrefix(this.config.addressPrefix || Config_1.Config.addressPrefix);
+                prefix = new AddressPrefix_1.AddressPrefix(this.m_config.addressPrefix || Config_1.Config.addressPrefix);
             }
             const addr = yield Address_1.Address.fromAddress(address);
             addr.paymentId = paymentId;
@@ -246,13 +281,13 @@ class CryptoNote {
      */
     formatMoney(amount) {
         let places = '';
-        for (let i = 0; i < (this.config.coinUnitPlaces || Config_1.Config.coinUnitPlaces); i++) {
+        for (let i = 0; i < (this.m_config.coinUnitPlaces || Config_1.Config.coinUnitPlaces); i++) {
             places += '0';
         }
         if (typeof amount !== 'number') {
             amount = amount.toJSNumber();
         }
-        return Numeral(amount / Math.pow(10, this.config.coinUnitPlaces || Config_1.Config.coinUnitPlaces)).format('0,0.' + places);
+        return Numeral(amount / Math.pow(10, this.m_config.coinUnitPlaces || Config_1.Config.coinUnitPlaces)).format('0,0.' + places);
     }
     /**
      * Generates an array of transaction outputs (new destinations) for the given address
@@ -271,14 +306,14 @@ class CryptoNote {
             const amountChars = amount.toString().split('').reverse();
             for (let i = 0; i < amountChars.length; i++) {
                 const amt = parseInt(amountChars[i], 10) * Math.pow(10, i);
-                if (amt > (this.config.maximumOutputAmount || Config_1.Config.maximumOutputAmount)) {
+                if (amt > (this.m_config.maximumOutputAmount || Config_1.Config.maximumOutputAmount)) {
                     let splitAmt = amt;
-                    while (splitAmt >= (this.config.maximumOutputAmount || Config_1.Config.maximumOutputAmount)) {
+                    while (splitAmt >= (this.m_config.maximumOutputAmount || Config_1.Config.maximumOutputAmount)) {
                         result.push({
-                            amount: this.config.maximumOutputAmount || Config_1.Config.maximumOutputAmount,
+                            amount: this.m_config.maximumOutputAmount || Config_1.Config.maximumOutputAmount,
                             destination: destination
                         });
-                        splitAmt -= this.config.maximumOutputAmount || Config_1.Config.maximumOutputAmount;
+                        splitAmt -= this.m_config.maximumOutputAmount || Config_1.Config.maximumOutputAmount;
                     }
                 }
                 else if (amt !== 0) {
@@ -343,7 +378,7 @@ class CryptoNote {
      */
     createTransaction(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData) {
         return __awaiter(this, void 0, void 0, function* () {
-            const feePerByte = this.config.activateFeePerByteTransactions || Config_1.Config.activateFeePerByteTransactions || false;
+            const feePerByte = this.m_config.activateFeePerByteTransactions || Config_1.Config.activateFeePerByteTransactions || false;
             const prepared = yield this.createTransactionStructure(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData);
             const txPrefixHash = yield prepared.transaction.prefixHash();
             const promises = [];
@@ -390,10 +425,10 @@ class CryptoNote {
     createTransactionStructure(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData) {
         return __awaiter(this, void 0, void 0, function* () {
             if (typeof feeAmount === 'undefined') {
-                feeAmount = this.config.defaultNetworkFee || Config_1.Config.defaultNetworkFee;
+                feeAmount = this.m_config.defaultNetworkFee || Config_1.Config.defaultNetworkFee;
             }
             unlockTime = unlockTime || 0;
-            const feePerByte = this.config.activateFeePerByteTransactions || Config_1.Config.activateFeePerByteTransactions || false;
+            const feePerByte = this.m_config.activateFeePerByteTransactions || Config_1.Config.activateFeePerByteTransactions || false;
             if (randomOutputs.length !== inputs.length && mixin !== 0) {
                 throw new Error('The sets of random outputs supplied does not match the number of inputs supplied');
             }
@@ -408,9 +443,9 @@ class CryptoNote {
                 if (output.amount <= 0) {
                     throw new RangeError('Cannot create an output with an amount <= 0');
                 }
-                if (output.amount > (this.config.maximumOutputAmount || Config_1.Config.maximumOutputAmount)) {
+                if (output.amount > (this.m_config.maximumOutputAmount || Config_1.Config.maximumOutputAmount)) {
                     throw new RangeError('Cannot create an output with an amount > ' +
-                        (this.config.maximumOutputAmount || Config_1.Config.maximumOutputAmount));
+                        (this.m_config.maximumOutputAmount || Config_1.Config.maximumOutputAmount));
                 }
                 neededMoney = neededMoney.add(output.amount);
                 if (neededMoney.greater(UINT64_MAX)) {
@@ -452,15 +487,15 @@ class CryptoNote {
             const transactionInputs = yield prepareTransactionInputs(inputs, randomOutputs, mixin);
             const transactionOutputs = yield prepareTransactionOutputs(outputs);
             if (transactionOutputs.outputs.length >
-                (this.config.maximumOutputsPerTransaction || Config_1.Config.maximumOutputsPerTransaction)) {
+                (this.m_config.maximumOutputsPerTransaction || Config_1.Config.maximumOutputsPerTransaction)) {
                 throw new RangeError('Tried to create a transaction with more outputs than permitted');
             }
             if (feeAmount === 0) {
                 if (transactionInputs.length < 12) {
                     throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of [' +
-                        (this.config.fusionMinInputCount || Config_1.Config.fusionMinInputCount) + '] inputs');
+                        (this.m_config.fusionMinInputCount || Config_1.Config.fusionMinInputCount) + '] inputs');
                 }
-                const ratio = this.config.fusionMinInOutCountRatio || Config_1.Config.fusionMinInOutCountRatio;
+                const ratio = this.m_config.fusionMinInOutCountRatio || Config_1.Config.fusionMinInOutCountRatio;
                 if ((transactionInputs.length / transactionOutputs.outputs.length) < ratio) {
                     throw new Error('Sending a [0] fee transaction (fusion) requires the ' +
                         'correct input:output ratio be met');
@@ -495,9 +530,9 @@ class CryptoNote {
             for (const output of transactionOutputs.outputs) {
                 tx.outputs.push(new Types_1.TransactionOutputs.KeyOutput(output.amount, output.key));
             }
-            if (tx.extra.length > (this.config.maximumExtraSize || Config_1.Config.maximumExtraSize)) {
+            if (tx.extra.length > (this.m_config.maximumExtraSize || Config_1.Config.maximumExtraSize)) {
                 throw new Error('Transaction extra exceeds the limit of [' +
-                    (this.config.maximumExtraSize || Config_1.Config.maximumExtraSize) + '] bytes');
+                    (this.m_config.maximumExtraSize || Config_1.Config.maximumExtraSize) + '] bytes');
             }
             return {
                 transaction: tx,
@@ -522,7 +557,7 @@ class CryptoNote {
      */
     prepareTransaction(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData, randomKey) {
         return __awaiter(this, void 0, void 0, function* () {
-            const feePerByte = this.config.activateFeePerByteTransactions || Config_1.Config.activateFeePerByteTransactions || false;
+            const feePerByte = this.m_config.activateFeePerByteTransactions || Config_1.Config.activateFeePerByteTransactions || false;
             const prepared = yield this.createTransactionStructure(outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData);
             const recipients = [];
             for (const output of outputs) {

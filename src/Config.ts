@@ -23,6 +23,7 @@ export interface ICoinConfig {
     maximumLedgerTransactionSize?: number;
     maximumLedgerAPDUPayloadSize?: number;
     minimumLedgerVersion?: string;
+    ledgerDebug: boolean
     [key: string]: any;
 }
 
@@ -45,6 +46,7 @@ export interface ICoinRunningConfig extends ICoinConfig {
     maximumLedgerTransactionSize: number;
     maximumLedgerAPDUPayloadSize: number;
     minimumLedgerVersion: string;
+    ledgerDebug: boolean
 }
 
 /** @ignore */
@@ -65,5 +67,6 @@ export const Config: ICoinRunningConfig = {
     feePerByteChunkSize: 256,
     maximumLedgerTransactionSize: 38400,
     maximumLedgerAPDUPayloadSize: 480,
-    minimumLedgerVersion: '1.2.0'
+    minimumLedgerVersion: '1.2.0',
+    ledgerDebug: false
 };

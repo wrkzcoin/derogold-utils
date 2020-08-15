@@ -41,7 +41,7 @@ const UINT64_MAX = BigInteger(2).pow(64);
  * on the network using a Ledger based hardware device
  */
 export class LedgerNote implements ICryptoNote {
-    protected config: ICoinRunningConfig = Config;
+    protected m_config: ICoinRunningConfig = Config;
     private readonly m_ledger: LedgerDevice;
     private m_address: Address = new Address();
     private m_fetched = false;
@@ -56,12 +56,34 @@ export class LedgerNote implements ICryptoNote {
         this.m_ledger = new LedgerDevice(transport);
 
         if (config) {
-            this.config = Common.mergeConfig(config);
+            this.m_config = Common.mergeConfig(config);
         }
 
         if (cryptoConfig) {
             TurtleCoinCrypto.userCryptoFunctions = cryptoConfig;
         }
+    }
+
+    /**
+     * The current coin configuration
+     */
+    public get config (): ICoinConfig {
+        return this.m_config;
+    }
+
+    public set config (config: ICoinConfig) {
+        this.m_config = Common.mergeConfig(config);
+    }
+
+    /**
+     * The current cryptographic primitives configuration
+     */
+    public get cryptoConfig (): ICryptoConfig {
+        return TurtleCoinCrypto.userCryptoFunctions;
+    }
+
+    public set cryptoConfig (config: ICryptoConfig) {
+        TurtleCoinCrypto.userCryptoFunctions = config;
     }
 
     /**
@@ -79,27 +101,25 @@ export class LedgerNote implements ICryptoNote {
      * Manually initializes the class if necessary
      */
     public async init (): Promise<void> {
-        await this.fetchKeys();
-    }
-
-    /**
-     * Fetches the public keys and private view key from the Ledger device
-     * and stores it locally for use later
-     */
-    private async fetchKeys (): Promise<void> {
-        if (!await this.m_ledger.checkVersion(this.config.minimumLedgerVersion)) {
+        if (!await this.m_ledger.checkVersion(this.m_config.minimumLedgerVersion)) {
             throw new Error('Ledger application does not meet minimum version');
         }
 
         if (!await this.m_ledger.checkIdent()) {
             throw new Error('Application running on the Ledger has the wrong identity');
         }
+    }
 
-        const keys = await this.m_ledger.getPublicKeys();
+    /**
+     * Fetches the public keys and private view key from the Ledger device
+     * and stores it locally for use later
+     */
+    public async fetchKeys (): Promise<void> {
+        const keys = await this.m_ledger.getPublicKeys(!this.m_config.ledgerDebug);
 
-        const view = await this.m_ledger.getPrivateViewKey();
+        const view = await this.m_ledger.getPrivateViewKey(!this.m_config.ledgerDebug);
 
-        const prefix = new AddressPrefix(this.config.addressPrefix || Config.addressPrefix);
+        const prefix = new AddressPrefix(this.m_config.addressPrefix || Config.addressPrefix);
 
         this.m_address = await Address.fromViewOnlyKeys(keys.spend.publicKey, view.privateKey, undefined, prefix);
 
@@ -219,7 +239,8 @@ export class LedgerNote implements ICryptoNote {
         const publicEphemeral = await TurtleCoinCrypto.derivePublicKey(
             derivation, outputIndex, this.address.spend.publicKey);
 
-        const result = await this.m_ledger.generateKeyImagePrimitive(derivation, outputIndex, publicEphemeral);
+        const result = await this.m_ledger.generateKeyImagePrimitive(
+            derivation, outputIndex, publicEphemeral, !this.m_config.ledgerDebug);
 
         return {
             publicEphemeral: publicEphemeral,
@@ -354,11 +375,11 @@ export class LedgerNote implements ICryptoNote {
     public calculateMinimumTransactionFee (txSize: number): number {
         const chunks = Math.ceil(
             txSize /
-            (this.config.feePerByteChunkSize || Config.feePerByteChunkSize));
+            (this.m_config.feePerByteChunkSize || Config.feePerByteChunkSize));
 
         return chunks *
-            (this.config.feePerByteChunkSize || Config.feePerByteChunkSize) *
-            (this.config.feePerByte || Config.feePerByte);
+            (this.m_config.feePerByteChunkSize || Config.feePerByteChunkSize) *
+            (this.m_config.feePerByte || Config.feePerByte);
     }
 
     /**
@@ -378,7 +399,7 @@ export class LedgerNote implements ICryptoNote {
         }
 
         if (!prefix) {
-            prefix = new AddressPrefix(this.config.addressPrefix || Config.addressPrefix);
+            prefix = new AddressPrefix(this.m_config.addressPrefix || Config.addressPrefix);
         }
 
         const addr = await Address.fromAddress(address);
@@ -400,7 +421,7 @@ export class LedgerNote implements ICryptoNote {
     public formatMoney (amount: BigInteger.BigInteger | number): string {
         let places = '';
 
-        for (let i = 0; i < (this.config.coinUnitPlaces || Config.coinUnitPlaces); i++) {
+        for (let i = 0; i < (this.m_config.coinUnitPlaces || Config.coinUnitPlaces); i++) {
             places += '0';
         }
 
@@ -409,7 +430,7 @@ export class LedgerNote implements ICryptoNote {
         }
 
         return Numeral(
-            amount / Math.pow(10, this.config.coinUnitPlaces || Config.coinUnitPlaces)
+            amount / Math.pow(10, this.m_config.coinUnitPlaces || Config.coinUnitPlaces)
         ).format('0,0.' + places);
     }
 
@@ -437,15 +458,15 @@ export class LedgerNote implements ICryptoNote {
         for (let i = 0; i < amountChars.length; i++) {
             const amt = parseInt(amountChars[i], 10) * Math.pow(10, i);
 
-            if (amt > (this.config.maximumOutputAmount || Config.maximumOutputAmount)) {
+            if (amt > (this.m_config.maximumOutputAmount || Config.maximumOutputAmount)) {
                 let splitAmt = amt;
 
-                while (splitAmt >= (this.config.maximumOutputAmount || Config.maximumOutputAmount)) {
+                while (splitAmt >= (this.m_config.maximumOutputAmount || Config.maximumOutputAmount)) {
                     result.push({
-                        amount: this.config.maximumOutputAmount || Config.maximumOutputAmount,
+                        amount: this.m_config.maximumOutputAmount || Config.maximumOutputAmount,
                         destination: destination
                     });
-                    splitAmt -= this.config.maximumOutputAmount || Config.maximumOutputAmount;
+                    splitAmt -= this.m_config.maximumOutputAmount || Config.maximumOutputAmount;
                 }
             } else if (amt !== 0) {
                 result.push({
@@ -476,7 +497,7 @@ export class LedgerNote implements ICryptoNote {
 
         const hash = await TurtleCoinCrypto.cn_fast_hash(hex.toString('hex'));
 
-        return this.m_ledger.generateSignature(hash);
+        return this.m_ledger.generateSignature(hash, !this.m_config.ledgerDebug);
     }
 
     /**
@@ -528,12 +549,12 @@ export class LedgerNote implements ICryptoNote {
         }
 
         if (typeof feeAmount === 'undefined') {
-            feeAmount = this.config.defaultNetworkFee || Config.defaultNetworkFee;
+            feeAmount = this.m_config.defaultNetworkFee || Config.defaultNetworkFee;
         }
         unlockTime = unlockTime || 0;
 
         const feePerByte =
-            this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
+            this.m_config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
 
         if (randomOutputs.length !== inputs.length && mixin !== 0) {
             throw new Error('The sets of random outputs supplied does not match the number of inputs supplied');
@@ -552,9 +573,9 @@ export class LedgerNote implements ICryptoNote {
             if (output.amount <= 0) {
                 throw new RangeError('Cannot create an output with an amount <= 0');
             }
-            if (output.amount > (this.config.maximumOutputAmount || Config.maximumOutputAmount)) {
+            if (output.amount > (this.m_config.maximumOutputAmount || Config.maximumOutputAmount)) {
                 throw new RangeError('Cannot create an output with an amount > ' +
-                    (this.config.maximumOutputAmount || Config.maximumOutputAmount));
+                    (this.m_config.maximumOutputAmount || Config.maximumOutputAmount));
             }
             neededMoney = neededMoney.add(output.amount);
             if (neededMoney.greater(UINT64_MAX)) {
@@ -607,16 +628,16 @@ export class LedgerNote implements ICryptoNote {
         const transactionOutputs = await prepareTransactionOutputs(tx_keys, outputs);
 
         if (transactionOutputs.outputs.length >
-            (this.config.maximumOutputsPerTransaction || Config.maximumOutputsPerTransaction)) {
+            (this.m_config.maximumOutputsPerTransaction || Config.maximumOutputsPerTransaction)) {
             throw new RangeError('Tried to create a transaction with more outputs than permitted');
         }
 
         if (feeAmount === 0) {
             if (transactionInputs.length < 12) {
                 throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of [' +
-                    (this.config.fusionMinInputCount || Config.fusionMinInputCount) + '] inputs');
+                    (this.m_config.fusionMinInputCount || Config.fusionMinInputCount) + '] inputs');
             }
-            const ratio = this.config.fusionMinInOutCountRatio || Config.fusionMinInOutCountRatio;
+            const ratio = this.m_config.fusionMinInOutCountRatio || Config.fusionMinInOutCountRatio;
             if ((transactionInputs.length / transactionOutputs.outputs.length) < ratio) {
                 throw new Error('Sending a [0] fee transaction (fusion) requires the ' +
                     'correct input:output ratio be met');
@@ -685,7 +706,7 @@ export class LedgerNote implements ICryptoNote {
                 throw new Error('Ledger did not properly finalize the transaction prefix.');
             }
 
-            const result = await this.m_ledger.signTransaction();
+            const result = await this.m_ledger.signTransaction(!this.m_config.ledgerDebug);
 
             if (await this.m_ledger.transactionState() !== TransactionState.COMPLETE) {
                 throw new Error('Ledger did not properly complete the transaction.');
@@ -732,12 +753,12 @@ export class LedgerNote implements ICryptoNote {
         extraData?: any
     ): Promise<Interfaces.IPreparedTransaction> {
         if (typeof feeAmount === 'undefined') {
-            feeAmount = this.config.defaultNetworkFee || Config.defaultNetworkFee;
+            feeAmount = this.m_config.defaultNetworkFee || Config.defaultNetworkFee;
         }
         unlockTime = unlockTime || 0;
 
         const feePerByte =
-            this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
+            this.m_config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
 
         if (randomOutputs.length !== inputs.length && mixin !== 0) {
             throw new Error('The sets of random outputs supplied does not match the number of inputs supplied');
@@ -756,9 +777,9 @@ export class LedgerNote implements ICryptoNote {
             if (output.amount <= 0) {
                 throw new RangeError('Cannot create an output with an amount <= 0');
             }
-            if (output.amount > (this.config.maximumOutputAmount || Config.maximumOutputAmount)) {
+            if (output.amount > (this.m_config.maximumOutputAmount || Config.maximumOutputAmount)) {
                 throw new RangeError('Cannot create an output with an amount > ' +
-                    (this.config.maximumOutputAmount || Config.maximumOutputAmount));
+                    (this.m_config.maximumOutputAmount || Config.maximumOutputAmount));
             }
             neededMoney = neededMoney.add(output.amount);
             if (neededMoney.greater(UINT64_MAX)) {
@@ -811,16 +832,16 @@ export class LedgerNote implements ICryptoNote {
         const transactionOutputs = await prepareTransactionOutputs(tx_keys, outputs);
 
         if (transactionOutputs.outputs.length >
-            (this.config.maximumOutputsPerTransaction || Config.maximumOutputsPerTransaction)) {
+            (this.m_config.maximumOutputsPerTransaction || Config.maximumOutputsPerTransaction)) {
             throw new RangeError('Tried to create a transaction with more outputs than permitted');
         }
 
         if (feeAmount === 0) {
             if (transactionInputs.length < 12) {
                 throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of [' +
-                    (this.config.fusionMinInputCount || Config.fusionMinInputCount) + '] inputs');
+                    (this.m_config.fusionMinInputCount || Config.fusionMinInputCount) + '] inputs');
             }
-            const ratio = this.config.fusionMinInOutCountRatio || Config.fusionMinInOutCountRatio;
+            const ratio = this.m_config.fusionMinInOutCountRatio || Config.fusionMinInOutCountRatio;
             if ((transactionInputs.length / transactionOutputs.outputs.length) < ratio) {
                 throw new Error('Sending a [0] fee transaction (fusion) requires the ' +
                     'correct input:output ratio be met');
@@ -865,9 +886,9 @@ export class LedgerNote implements ICryptoNote {
             tx.outputs.push(new TransactionOutputs.KeyOutput(output.amount, output.key));
         }
 
-        if (tx.extra.length > (this.config.maximumExtraSize || Config.maximumExtraSize)) {
+        if (tx.extra.length > (this.m_config.maximumExtraSize || Config.maximumExtraSize)) {
             throw new Error('Transaction extra exceeds the limit of [' +
-                (this.config.maximumExtraSize || Config.maximumExtraSize) + '] bytes');
+                (this.m_config.maximumExtraSize || Config.maximumExtraSize) + '] bytes');
         }
 
         return {
@@ -903,7 +924,7 @@ export class LedgerNote implements ICryptoNote {
         randomKey?: string
     ): Promise<Interfaces.PreparedTransaction> {
         const feePerByte =
-            this.config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
+            this.m_config.activateFeePerByteTransactions || Config.activateFeePerByteTransactions || false;
 
         const prepared = await this.createTransactionStructure(
             outputs, inputs, randomOutputs, mixin, feeAmount, paymentId, unlockTime, extraData
@@ -1032,7 +1053,8 @@ export class LedgerNote implements ICryptoNote {
                 meta.key,
                 tx.signatures[meta.index],
                 meta.realOutputIndex,
-                meta.index));
+                meta.index,
+                !this.m_config.ledgerDebug));
         }
 
         const results = await Promise.all(promises);
@@ -1266,10 +1288,11 @@ async function completeRingSignatures (
     key: string,
     signatures: string[],
     realOutputIndex: number,
-    index: number
+    index: number,
+    confirm: boolean
 ): Promise<Interfaces.GeneratedRingSignatures> {
     signatures[realOutputIndex] = await ledger.completeRingSignature(tx_public_key,
-        outputIndex, tx_output_key, key, signatures[realOutputIndex]);
+        outputIndex, tx_output_key, key, signatures[realOutputIndex], confirm);
 
     return { signatures, index };
 }

@@ -13,7 +13,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ED25519 = void 0;
-const Common_1 = require("../Common");
 const Config_1 = require("../Config");
 const Types_1 = require("../Types");
 const crypto_1 = require("crypto");
@@ -194,7 +193,7 @@ function rand(bytes = 32) {
 function simpleKdf(value, iterations) {
     return __awaiter(this, void 0, void 0, function* () {
         /** This is a very simple implementation of a pseudo PBKDF2 function */
-        let hex = Common_1.Common.bin2hex(Common_1.Common.str2bin(value));
+        let hex = Buffer.from(value).toString('hex');
         for (let i = 0; i < iterations; i++) {
             hex = yield Types_1.TurtleCoinCrypto.cn_fast_hash(hex);
         }

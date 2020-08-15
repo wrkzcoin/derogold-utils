@@ -19,8 +19,8 @@
     "style": "./node_modules/.bin/eslint src/**/*.ts src/*.ts test/*.ts",
     "fix-style": "./node_modules/.bin/eslint --fix src/**/*.ts src/*.ts test/*.ts",
     "test": "npm run style && npm run build && npm run test-node && npm run test-js",
-    "test-node": "./node_modules/.bin/mocha --timeout 30000 --require ts-node/register test/test.ts",
-    "test-js": "env FORCE_JS=1 ./node_modules/.bin/mocha --timeout 30000 --require ts-node/register test/test.ts"
+    "test-node": "./node_modules/.bin/mocha --exit --timeout 30000 --require ts-node/register test/test.ts",
+    "test-js": "env FORCE_JS=1 ./node_modules/.bin/mocha --exit --timeout 30000 --require ts-node/register test/test.ts"
   },
   "keywords": [
     "TurtleCoin",

@@ -57,6 +57,15 @@ export declare class LedgerDevice extends EventEmitter {
      */
     getIdent(): Promise<string>;
     /**
+     * Checks to make sure that the application running on the ledger
+     * at least claims to be the TurtleCoin ledger application
+     */
+    checkIdent(): Promise<boolean>;
+    /**
+     * Checks to
+     */
+    checkVersion(requiredVersion: string): Promise<boolean>;
+    /**
      * Checks to confirm that the key is a valid public key
      * @param key the key to check
      */

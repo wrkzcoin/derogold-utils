@@ -14,7 +14,7 @@ import ICryptoNote = CryptoNoteInterfaces.ICryptoNote;
  * on the network using a Ledger based hardware device
  */
 export declare class LedgerNote implements ICryptoNote {
-    protected config: ICoinRunningConfig;
+    protected m_config: ICoinRunningConfig;
     private readonly m_ledger;
     private m_address;
     private m_fetched;
@@ -25,6 +25,16 @@ export declare class LedgerNote implements ICryptoNote {
      * @param cryptoConfig configuration to allow for overriding the provided cryptographic primitives
      */
     constructor(transport: Transport, config?: ICoinConfig, cryptoConfig?: ICryptoConfig);
+    /**
+     * The current coin configuration
+     */
+    get config(): ICoinConfig;
+    set config(config: ICoinConfig);
+    /**
+     * The current cryptographic primitives configuration
+     */
+    get cryptoConfig(): ICryptoConfig;
+    set cryptoConfig(config: ICryptoConfig);
     /**
      * Provides the public wallet address of the ledger device
      */
@@ -37,7 +47,7 @@ export declare class LedgerNote implements ICryptoNote {
      * Fetches the public keys and private view key from the Ledger device
      * and stores it locally for use later
      */
-    private fetchKeys;
+    fetchKeys(): Promise<void>;
     /**
      * Indicates whether the keys have been fetched from the ledger device
      * and this instance of the class is ready for further interaction
@@ -55,6 +65,12 @@ export declare class LedgerNote implements ICryptoNote {
      * @returns the absolute offsets
      */
     relativeToAbsoluteOffsets(offsets: BigInteger.BigInteger[] | string[] | number[]): number[];
+    /**
+     * Generates a key derivation
+     * @param transactionPublicKey the transaction public key
+     * @param privateViewKey the private view key (ignored)
+     */
+    generateKeyDerivation(transactionPublicKey: string, privateViewKey: string | undefined): Promise<string>;
     /**
      * Generates a key image from the supplied values
      * @async

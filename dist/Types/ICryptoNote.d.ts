@@ -2,6 +2,8 @@ import { BigInteger, Interfaces } from '../Types';
 import { AddressPrefix } from '../AddressPrefix';
 import { Address } from '../Address';
 import { Transaction } from '../Transaction';
+import { ICoinConfig } from '../Config';
+import { ICryptoConfig } from 'turtlecoin-crypto';
 export declare namespace CryptoNoteInterfaces {
     interface IKeyImage {
         keyImage: string;
@@ -9,10 +11,16 @@ export declare namespace CryptoNoteInterfaces {
         privateEphemeral?: string;
     }
     abstract class ICryptoNote {
-        abstract get address(): Address;
+        abstract get config(): ICoinConfig;
+        abstract set config(config: ICoinConfig);
+        abstract get cryptoConfig(): ICryptoConfig;
+        abstract set cryptoConfig(config: ICryptoConfig);
+        abstract get address(): Address | undefined;
         abstract init(): Promise<void>;
+        abstract fetchKeys(): Promise<void>;
         abstract absoluteToRelativeOffsets(offsets: BigInteger.BigInteger[] | string[] | number[]): number[];
         abstract relativeToAbsoluteOffsets(offsets: BigInteger.BigInteger[] | string[] | number[]): number[];
+        abstract generateKeyDerivation(transactionPublicKey: string, privateViewKey: string): Promise<string>;
         abstract generateKeyImage(transactionPublicKey: string, privateViewKey: string, publicSpendKey: string, privateSpendKey: string, outputIndex: number): Promise<IKeyImage>;
         abstract generateKeyImagePrimitive(publicSpendKey: string, privateSpendKey: string, outputIndex: number, derivation: string): Promise<IKeyImage>;
         abstract privateKeyToPublicKey(privateKey: string): Promise<string>;

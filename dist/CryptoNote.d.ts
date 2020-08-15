@@ -1,4 +1,3 @@
-import { Address } from './Address';
 import { AddressPrefix } from './AddressPrefix';
 import { ICoinConfig, ICoinRunningConfig } from './Config';
 import { BigInteger, Interfaces, CryptoNoteInterfaces, ICryptoConfig } from './Types';
@@ -10,7 +9,7 @@ import ICryptoNote = CryptoNoteInterfaces.ICryptoNote;
  * of funds on the network
  */
 export declare class CryptoNote implements ICryptoNote {
-    protected config: ICoinRunningConfig;
+    protected m_config: ICoinRunningConfig;
     /**
      * Constructs a new instance of the object
      * If a configuration is supplied, it is also passed to the underlying
@@ -20,14 +19,27 @@ export declare class CryptoNote implements ICryptoNote {
      */
     constructor(config?: ICoinConfig, cryptoConfig?: ICryptoConfig);
     /**
-     * Manually initializes the class if necessary
+     * This does nothing in this class
      */
     init(): Promise<void>;
     /**
-     * Provides the public wallet address of this instance
-     * THIS IS NOT IMPLEMENTED IN THIS CLASS
+     * This does nothing in this class
      */
-    get address(): Address;
+    fetchKeys(): Promise<void>;
+    /**
+     * This does nothing in this class
+     */
+    get address(): undefined;
+    /**
+     * The current coin configuration
+     */
+    get config(): ICoinConfig;
+    set config(config: ICoinConfig);
+    /**
+     * The current cryptographic primitives configuration
+     */
+    get cryptoConfig(): ICryptoConfig;
+    set cryptoConfig(config: ICryptoConfig);
     /**
      * Converts absolute global index offsets to relative ones
      * @param offsets the absolute offsets
@@ -40,6 +52,12 @@ export declare class CryptoNote implements ICryptoNote {
      * @returns the absolute offsets
      */
     relativeToAbsoluteOffsets(offsets: BigInteger.BigInteger[] | string[] | number[]): number[];
+    /**
+     * Generates a key derivation
+     * @param transactionPublicKey the transaction public key
+     * @param privateViewKey the private view key (ignored)
+     */
+    generateKeyDerivation(transactionPublicKey: string, privateViewKey: string): Promise<string>;
     /**
      * Generates a key image from the supplied values
      * @async

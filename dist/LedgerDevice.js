@@ -21,6 +21,9 @@ const _1 = require("./");
 const Ledger_1 = require("./Types/Ledger");
 const Config_1 = require("./Config");
 const Common_1 = require("./Common");
+const semver = require("semver");
+/** @ignore */
+const IDENT = '547572746c65436f696e206973206e6f742061204d6f6e65726f20666f726b21';
 /**
  * An easy to use interface that uses a Ledger HW transport to communicate with
  * the TurtleCoin application running on a ledger device.
@@ -82,6 +85,32 @@ class LedgerDevice extends events_1.EventEmitter {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield this.exchange(Ledger_1.LedgerTypes.Command.IDENT);
             return result.unreadBuffer.toString('hex');
+        });
+    }
+    /**
+     * Checks to make sure that the application running on the ledger
+     * at least claims to be the TurtleCoin ledger application
+     */
+    checkIdent() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ident = yield this.getIdent();
+            return ident === IDENT;
+        });
+    }
+    /**
+     * Checks to
+     */
+    checkVersion(requiredVersion) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!semver.valid(requiredVersion)) {
+                throw new Error('Invalid required version supplied');
+            }
+            const l_version = yield this.getVersion();
+            const version = [l_version.major, l_version.minor, l_version.patch].join('.');
+            if (!semver.valid(version)) {
+                return false;
+            }
+            return semver.gte(version, requiredVersion);
         });
     }
     /**
