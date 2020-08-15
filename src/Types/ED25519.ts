@@ -2,7 +2,6 @@
 //
 // Please see the included LICENSE file for more information.
 
-import { Common } from '../Common';
 import { Config } from '../Config';
 import { TurtleCoinCrypto } from '../Types';
 import { randomBytes } from 'crypto';
@@ -207,7 +206,7 @@ function rand (bytes = 32): string {
 /** @ignore */
 async function simpleKdf (value: string, iterations: number): Promise<string> {
     /** This is a very simple implementation of a pseudo PBKDF2 function */
-    let hex = Common.bin2hex(Common.str2bin(value));
+    let hex = Buffer.from(value).toString('hex');
     for (let i = 0; i < iterations; i++) {
         hex = await TurtleCoinCrypto.cn_fast_hash(hex);
     }

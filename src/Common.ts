@@ -71,16 +71,6 @@ export class Common {
         return offsetsCopy;
     }
 
-    public static bin2hex (bin: Uint8Array): string {
-        const result = [];
-
-        for (const b of bin) {
-            result.push(('0' + b.toString(16)).slice(-2));
-        }
-
-        return result.join('');
-    }
-
     public static isHex (value: string): boolean {
         if (value.length % 2 !== 0) {
             return false;
@@ -97,15 +87,6 @@ export class Common {
 
     public static isHex128 (value: string): boolean {
         return (Common.isHex(value) && value.length === 128);
-    }
-
-    public static str2bin (str: string): Uint8Array {
-        const result = new Uint8Array(str.length);
-        for (let i = 0; i < str.length; i++) {
-            result[i] = str.charCodeAt(i);
-        }
-
-        return result;
     }
 
     public static varintLength (value: BigInteger.BigInteger | number): number {
