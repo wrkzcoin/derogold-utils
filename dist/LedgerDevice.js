@@ -178,8 +178,20 @@ class LedgerDevice extends events_1.EventEmitter {
      */
     getPrivateSpendKey(confirm = true) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.SPEND_ESECRET_KEY, confirm);
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.SPEND_SECRET_KEY, confirm);
             return _1.KeyPair.from(undefined, result.hash());
+        });
+    }
+    /**
+     * Retrieves the the public spend key and private view key from the
+     * ledger device which is essentially a view only wallet
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
+     */
+    getViewWallet(confirm = true) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.exchange(Ledger_1.LedgerTypes.Command.WALLET_KEYS, confirm);
+            return _1.Address.fromViewOnlyKeys(result.hash(), result.hash());
         });
     }
     /**

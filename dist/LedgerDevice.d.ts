@@ -98,6 +98,13 @@ export declare class LedgerDevice extends EventEmitter {
      */
     getPrivateSpendKey(confirm?: boolean): Promise<KeyPair>;
     /**
+     * Retrieves the the public spend key and private view key from the
+     * ledger device which is essentially a view only wallet
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
+     */
+    getViewWallet(confirm?: boolean): Promise<Address>;
+    /**
      * Calculates the public key for the given private key
      * @param private_key the private key
      */

@@ -202,9 +202,21 @@ export class LedgerDevice extends EventEmitter {
      *        (to disable, must be running a DEBUG build)
      */
     public async getPrivateSpendKey (confirm = true): Promise<KeyPair> {
-        const result = await this.exchange(LedgerTypes.Command.SPEND_ESECRET_KEY, confirm);
+        const result = await this.exchange(LedgerTypes.Command.SPEND_SECRET_KEY, confirm);
 
         return KeyPair.from(undefined, result.hash());
+    }
+
+    /**
+     * Retrieves the the public spend key and private view key from the
+     * ledger device which is essentially a view only wallet
+     * @param confirm whether the device will prompt the user to confirm their actions
+     *        (to disable, must be running a DEBUG build)
+     */
+    public async getViewWallet (confirm = true): Promise<Address> {
+        const result = await this.exchange(LedgerTypes.Command.WALLET_KEYS, confirm);
+
+        return Address.fromViewOnlyKeys(result.hash(), result.hash());
     }
 
     /**
