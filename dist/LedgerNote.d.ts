@@ -16,8 +16,6 @@ import ICryptoNote = CryptoNoteInterfaces.ICryptoNote;
 export declare class LedgerNote implements ICryptoNote {
     protected config: ICoinRunningConfig;
     private readonly m_ledger;
-    private m_spend;
-    private m_view;
     private m_address;
     private m_fetched;
     /**

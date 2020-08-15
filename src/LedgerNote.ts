@@ -44,8 +44,6 @@ const UINT64_MAX = BigInteger(2).pow(64);
 export class LedgerNote implements ICryptoNote {
     protected config: ICoinRunningConfig = Config;
     private readonly m_ledger: LedgerDevice;
-    private m_spend: KeyPair = new KeyPair();
-    private m_view: KeyPair = new KeyPair();
     private m_address: Address = new Address();
     private m_fetched = false;
 
@@ -92,17 +90,11 @@ export class LedgerNote implements ICryptoNote {
     private async fetchKeys (): Promise<void> {
         const keys = await this.m_ledger.getPublicKeys();
 
-        this.m_spend = keys.spend;
-
-        this.m_view = keys.view;
-
         const view = await this.m_ledger.getPrivateViewKey();
-
-        await this.m_view.setPrivateKey(view.privateKey);
 
         const prefix = new AddressPrefix(this.config.addressPrefix || Config.addressPrefix);
 
-        this.m_address = await Address.fromPublicKeys(keys.spend.publicKey, keys.view.publicKey, undefined, prefix);
+        this.m_address = await Address.fromViewOnlyKeys(keys.spend.publicKey, view.privateKey, undefined, prefix);
 
         this.m_fetched = true;
     }
@@ -170,7 +162,8 @@ export class LedgerNote implements ICryptoNote {
         UNUSED(publicSpendKey);
         UNUSED(privateSpendKey);
 
-        const derivation = await TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, this.m_view.privateKey);
+        const derivation = await TurtleCoinCrypto.generateKeyDerivation(
+            transactionPublicKey, this.address.view.privateKey);
 
         return this.generateKeyImagePrimitive(undefined, undefined, outputIndex, derivation);
     }
@@ -197,7 +190,8 @@ export class LedgerNote implements ICryptoNote {
         UNUSED(publicSpendKey);
         UNUSED(privateSpendKey);
 
-        const publicEphemeral = await TurtleCoinCrypto.derivePublicKey(derivation, outputIndex, this.m_spend.publicKey);
+        const publicEphemeral = await TurtleCoinCrypto.derivePublicKey(
+            derivation, outputIndex, this.address.spend.publicKey);
 
         const result = await this.m_ledger.generateKeyImagePrimitive(derivation, outputIndex, publicEphemeral);
 
@@ -296,10 +290,11 @@ export class LedgerNote implements ICryptoNote {
         UNUSED(publicSpendKey);
         UNUSED(privateSpendKey);
 
-        const derivedKey = await TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, this.m_view.privateKey);
+        const derivedKey = await TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey,
+            this.address.view.privateKey);
 
         const publicEphemeral = await TurtleCoinCrypto.derivePublicKey(
-            derivedKey, output.index, this.m_spend.publicKey);
+            derivedKey, output.index, this.address.spend.publicKey);
 
         if (publicEphemeral === output.key) {
             output.input = {

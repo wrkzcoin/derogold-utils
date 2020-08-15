@@ -24,8 +24,6 @@ const Transaction_1 = require("./Transaction");
 /** @ignore */
 var TransactionState = Types_1.LedgerTypes.TransactionState;
 /** @ignore */
-var KeyPair = Types_1.ED25519.KeyPair;
-/** @ignore */
 const NULL_KEY = ''.padEnd(64, '0');
 /** @ignore */
 const UINT64_MAX = Types_1.BigInteger(2).pow(64);
@@ -43,8 +41,6 @@ class LedgerNote {
      */
     constructor(transport, config, cryptoConfig) {
         this.config = Config_1.Config;
-        this.m_spend = new KeyPair();
-        this.m_view = new KeyPair();
         this.m_address = new Address_1.Address();
         this.m_fetched = false;
         this.m_ledger = new LedgerDevice_1.LedgerDevice(transport);
@@ -79,12 +75,9 @@ class LedgerNote {
     fetchKeys() {
         return __awaiter(this, void 0, void 0, function* () {
             const keys = yield this.m_ledger.getPublicKeys();
-            this.m_spend = keys.spend;
-            this.m_view = keys.view;
             const view = yield this.m_ledger.getPrivateViewKey();
-            yield this.m_view.setPrivateKey(view.privateKey);
             const prefix = new AddressPrefix_1.AddressPrefix(this.config.addressPrefix || Config_1.Config.addressPrefix);
-            this.m_address = yield Address_1.Address.fromPublicKeys(keys.spend.publicKey, keys.view.publicKey, undefined, prefix);
+            this.m_address = yield Address_1.Address.fromViewOnlyKeys(keys.spend.publicKey, view.privateKey, undefined, prefix);
             this.m_fetched = true;
         });
     }
@@ -135,7 +128,7 @@ class LedgerNote {
             UNUSED(privateViewKey);
             UNUSED(publicSpendKey);
             UNUSED(privateSpendKey);
-            const derivation = yield Types_1.TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, this.m_view.privateKey);
+            const derivation = yield Types_1.TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, this.address.view.privateKey);
             return this.generateKeyImagePrimitive(undefined, undefined, outputIndex, derivation);
         });
     }
@@ -155,7 +148,7 @@ class LedgerNote {
             }
             UNUSED(publicSpendKey);
             UNUSED(privateSpendKey);
-            const publicEphemeral = yield Types_1.TurtleCoinCrypto.derivePublicKey(derivation, outputIndex, this.m_spend.publicKey);
+            const publicEphemeral = yield Types_1.TurtleCoinCrypto.derivePublicKey(derivation, outputIndex, this.address.spend.publicKey);
             const result = yield this.m_ledger.generateKeyImagePrimitive(derivation, outputIndex, publicEphemeral);
             return {
                 publicEphemeral: publicEphemeral,
@@ -225,8 +218,8 @@ class LedgerNote {
             UNUSED(privateViewKey);
             UNUSED(publicSpendKey);
             UNUSED(privateSpendKey);
-            const derivedKey = yield Types_1.TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, this.m_view.privateKey);
-            const publicEphemeral = yield Types_1.TurtleCoinCrypto.derivePublicKey(derivedKey, output.index, this.m_spend.publicKey);
+            const derivedKey = yield Types_1.TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, this.address.view.privateKey);
+            const publicEphemeral = yield Types_1.TurtleCoinCrypto.derivePublicKey(derivedKey, output.index, this.address.spend.publicKey);
             if (publicEphemeral === output.key) {
                 output.input = {
                     publicEphemeral,
