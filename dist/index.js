@@ -38,6 +38,12 @@ var ParentBlock_1 = require("./ParentBlock");
 Object.defineProperty(exports, "ParentBlock", { enumerable: true, get: function () { return ParentBlock_1.ParentBlock; } });
 var Transaction_1 = require("./Transaction");
 Object.defineProperty(exports, "Transaction", { enumerable: true, get: function () { return Transaction_1.Transaction; } });
+var LegacyTurtleCoind_1 = require("./LegacyTurtleCoind");
+Object.defineProperty(exports, "LegacyTurtleCoind", { enumerable: true, get: function () { return LegacyTurtleCoind_1.LegacyTurtleCoind; } });
+var TurtleCoind_1 = require("./TurtleCoind");
+Object.defineProperty(exports, "TurtleCoind", { enumerable: true, get: function () { return TurtleCoind_1.TurtleCoind; } });
+var WalletAPI_1 = require("./WalletAPI");
+Object.defineProperty(exports, "WalletAPI", { enumerable: true, get: function () { return WalletAPI_1.WalletAPI; } });
 /** @ignore */
 var TransactionOutputs = Types.TransactionOutputs;
 exports.TransactionOutputs = TransactionOutputs;

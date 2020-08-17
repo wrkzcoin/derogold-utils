@@ -19,5 +19,8 @@ export * from './Types/ITransaction';
 export * from './Types/MultisigInterfaces';
 export * from './Types/ICryptoNote';
 export * from './Types/Ledger';
+export * from './Types/WalletAPI';
+export * from './Types/LegacyTurtleCoind';
+export * from './Types/TurtleCoind';
 export { PortableStorage, StorageType } from './Types/PortableStorage';
 export { BigInteger };
