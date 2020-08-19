@@ -633,8 +633,8 @@ export class CryptoNote {
             throw new RangeError('Tried to create a transaction with more outputs than permitted');
         }
 
-        let diff = this.config.TransactionPowDifficulty;
-        
+        let diff: number = this.config.TransactionPowDifficulty;
+
         if (feeAmount === 0) {
             if (transactionInputs.length < 12) {
                 throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of ['
