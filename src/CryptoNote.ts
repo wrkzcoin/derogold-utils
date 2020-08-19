@@ -675,7 +675,7 @@ export class CryptoNote {
         }
 
         
-        await tx.generateTxProofOfWork(diff);
+        await tx.generateTxProofOfWork();
 
         if (tx.extra.length > (this.config.maximumExtraSize || Config.maximumExtraSize)) {
             throw new Error('Transaction extra exceeds the limit of [' +
