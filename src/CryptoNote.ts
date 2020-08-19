@@ -633,7 +633,7 @@ export class CryptoNote {
             throw new RangeError('Tried to create a transaction with more outputs than permitted');
         }
 
-        let diff: number = this.config.TransactionPowDifficulty;
+        let diff: number = this.config.TransactionPowDifficulty | undefined;;
 
         if (feeAmount === 0) {
             if (transactionInputs.length < 12) {
