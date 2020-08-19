@@ -79,15 +79,6 @@ export class CryptoNote {
                     case 'feePerByte':
                         this.config.feePerByte = config[key];
                         break;
-                    case 'TransactionPowDifficulty':
-                        this.config.TransactionPowDifficulty = config[key];
-                        break;
-                    case 'FusionTransactionPowDifficulty':
-                        this.config.FusionTransactionPowDifficulty = config[key];
-                        break;
-                    case 'TransactionPowHeight':
-                        this.config.TransactionPowHeight = config[key];
-                        break;
                     case 'feePerByteChunkSize':
                         this.config.feePerByteChunkSize = config[key];
                         break;
@@ -633,8 +624,6 @@ export class CryptoNote {
             throw new RangeError('Tried to create a transaction with more outputs than permitted');
         }
 
-        let diff = Number(this.config.TransactionPowDifficulty || Config.TransactionPowDifficulty);
-
         if (feeAmount === 0) {
             if (transactionInputs.length < 12) {
                 throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of ['
@@ -645,7 +634,6 @@ export class CryptoNote {
                 throw new Error('Sending a [0] fee transaction (fusion) requires the ' +
                     'correct input:output ratio be met');
             }
-            diff = Number(this.config.FusionTransactionPowDifficulty || Config.FusionTransactionPowDifficulty);
         }
 
         const tx = new Transaction();

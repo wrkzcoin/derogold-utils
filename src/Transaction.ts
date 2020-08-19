@@ -484,7 +484,7 @@ export class Transaction {
         this.transactionKeys.publicKey = publicKey;
     }
 
-    public async generateTxProofOfWork(diff: number) {
+    public async generateTxProofOfWork() {
         if (this.readonly) {
             throw new Error('Transaction is read-only');
         }
@@ -514,7 +514,7 @@ export class Transaction {
          * will be deserialized into bytes taking up half the space */
         const unserializedOffset = nonceOffset / 2;
 
-        const nonce = TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset, diff);
+        const nonce = TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset);
 
         nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(nonce));
 
