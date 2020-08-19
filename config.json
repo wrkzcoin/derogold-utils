@@ -11,5 +11,8 @@
   "maximumExtraSize": 1024,
   "activateFeePerByteTransactions": false,
   "feePerByte": 1.953125,
-  "feePerByteChunkSize": 256
+  "feePerByteChunkSize": 256,
+  "TransactionPowDifficulty": 20000,
+  "FusionTransactionPowDifficulty": 60000,
+  "TransactionPowHeight": 1123000
 }
