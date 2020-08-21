@@ -79,6 +79,15 @@ export class CryptoNote {
                     case 'feePerByte':
                         this.config.feePerByte = config[key];
                         break;
+                    case 'TransactionPowDifficulty':
+                        this.config.TransactionPowDifficulty = config[key];
+                        break;
+                    case 'FusionTransactionPowDifficulty':
+                        this.config.FusionTransactionPowDifficulty = config[key];
+                        break;
+                    case 'TransactionPowHeight':
+                        this.config.TransactionPowHeight = config[key];
+                        break;
                     case 'feePerByteChunkSize':
                         this.config.feePerByteChunkSize = config[key];
                         break;
@@ -476,6 +485,7 @@ export class CryptoNote {
 
         for (let i = 0; i < prepared.inputs.length; i++) {
             const input = prepared.inputs[i];
+
             const srcKeys: string[] = [];
 
             if (!input.input.privateEphemeral) {
@@ -623,6 +633,8 @@ export class CryptoNote {
             throw new RangeError('Tried to create a transaction with more outputs than permitted');
         }
 
+        let diff = Number(this.config.TransactionPowDifficulty || Config.TransactionPowDifficulty);
+
         if (feeAmount === 0) {
             if (transactionInputs.length < 12) {
                 throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of ['
@@ -633,6 +645,7 @@ export class CryptoNote {
                 throw new Error('Sending a [0] fee transaction (fusion) requires the ' +
                     'correct input:output ratio be met');
             }
+            diff = Number(this.config.FusionTransactionPowDifficulty || Config.FusionTransactionPowDifficulty);
         }
 
         const tx = new Transaction();
@@ -672,6 +685,9 @@ export class CryptoNote {
         for (const output of transactionOutputs.outputs) {
             tx.outputs.push(new TransactionOutputs.KeyOutput(output.amount, output.key));
         }
+
+        
+        await tx.generateTxProofOfWork(diff);
 
         if (tx.extra.length > (this.config.maximumExtraSize || Config.maximumExtraSize)) {
             throw new Error('Transaction extra exceeds the limit of [' +
