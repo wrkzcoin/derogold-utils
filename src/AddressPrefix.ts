@@ -98,7 +98,7 @@ export class AddressPrefix {
     }
 
     protected m_base58?: string;
-    protected m_decimal: number = Config.addressPrefix || 3914525;
+    protected m_decimal: number = Config.addressPrefix || 999730;
 
     /**
      * Creates a new address prefix object

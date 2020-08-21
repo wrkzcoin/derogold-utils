@@ -18,6 +18,9 @@ export namespace Interfaces {
         activateFeePerByteTransactions?: boolean;
         feePerByte?: number;
         feePerByteChunkSize?: number;
+        TransactionPowDifficulty?: number;
+        FusionTransactionPowDifficulty?: number;
+        TransactionPowHeight?: number;
 
         underivePublicKey?: (derivation: string,
                              outputIndex: number,

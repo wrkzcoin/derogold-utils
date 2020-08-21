@@ -1,5 +1,5 @@
 {
-  "name": "turtlecoin-utils",
+  "name": "wrkzcoin-utils",
   "version": "2.0.0",
   "description": "A Node.js collection of utilities useful for TurtleCoin developers",
   "main": "dist/index.js",
@@ -29,11 +29,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/turtlecoin/turtlecoin-utils.git"
+    "url": "git+https://github.com/wrkzcoin/wrkzcoin-utils.git"
   },
-  "homepage": "https://utils.turtlecoin.dev",
+  "homepage": "https://www.wrkz.work",
   "bugs": {
-    "url": "https://github.com/turtlecoin/turtlecoin-utils/issues"
+    "url": "https://github.com/wrkzcoin/wrkzcoin-utils/issues"
   },
   "author": "Brandon Lehmann <brandonlehmann@gmail.com>",
   "contributors": [
@@ -48,13 +48,14 @@
     "numeral": "^2.0.6",
     "secure-random-string": "^1.1.3",
     "turtlecoin-base58": "^0.0.6",
-    "turtlecoin-crypto": "https://github.com/derogold/turtlecoin-crypto.git",
+    "turtlecoin-crypto": "https://github.com/wrkzcoin/turtlecoin-crypto#add_upx_tx_pow",
     "turtlecoin-mnemonics": "^0.0.6"
   },
   "devDependencies": {
     "@types/aes-js": "^3.1.1",
     "@types/node": "^13.13.6",
     "@types/numeral": "0.0.26",
+    "electron-rebuild": "^1.11.0",
     "mocha": "^7.1.2",
     "tslint": "^6.1.2",
     "typedoc": "^0.17.6",
