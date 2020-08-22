@@ -689,7 +689,7 @@ export class CryptoNote {
         try {
             await tx.generateTxProofOfWork(diff);
         } catch (error) {
-            await tx.generateTxProofOfWork(60000);
+            throw new Error('Can not generateTxProofOfWork()');
         }
 
         if (tx.extra.length > (this.config.maximumExtraSize || Config.maximumExtraSize)) {
