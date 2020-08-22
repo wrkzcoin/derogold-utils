@@ -484,7 +484,7 @@ export class Transaction {
         this.transactionKeys.publicKey = publicKey;
     }
 
-    public async generateTxProofOfWork(diff: number) {
+    public async generateTxProofOfWork() {
         if (this.readonly) {
             throw new Error('Transaction is read-only');
         }
@@ -515,7 +515,7 @@ export class Transaction {
              * will be deserialized into bytes taking up half the space */
             const unserializedOffset = nonceOffset / 2;
 
-            const nonce = TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset, diff);
+            const nonce = TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset, 20000);
 
             nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(nonce));
 
@@ -531,6 +531,56 @@ export class Transaction {
             this.m_extra.push(nonceTag);
         } catch (e) {
             throw new Error('Can not TurtleCoinCrypto.generateTransactionPow()');
+        }
+    }
+
+    public async generateTxProofOfWorkFusion() {
+        if (this.readonly) {
+            throw new Error('Transaction is read-only');
+        }
+
+        let nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(0));
+
+        let result: ExtraTag.IExtraTag[] = [];
+
+        for (const tag of this.m_extra) {
+            if (tag.tag !== nonceTag.tag) {
+                result.push(tag);
+            }
+        }
+
+        this.m_extra = result;
+        this.m_extra.push(nonceTag);
+
+        try {
+            const prefix = this.prefix;
+
+            /* Find the pow nonce tag and nonce hole */
+            const tagOffset = prefix.indexOf("040000000000000000");
+
+            /* Then add 2 to skip the tag. */
+            const nonceOffset = tagOffset + 2;
+
+            /* Actual offset is half the nonce offset, since this is hex, but it
+             * will be deserialized into bytes taking up half the space */
+            const unserializedOffset = nonceOffset / 2;
+
+            const nonce = TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset, 60000);
+
+            nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(nonce));
+
+            result = [];
+
+            for (const tag of this.m_extra) {
+                if (tag.tag !== nonceTag.tag) {
+                    result.push(tag);
+                }
+            }
+
+            this.m_extra = result;
+            this.m_extra.push(nonceTag);
+        } catch (e) {
+            throw new Error('Can not TurtleCoinCrypto.generateTransactionPowFusion()');
         }
     }
 

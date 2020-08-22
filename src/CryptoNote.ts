@@ -687,7 +687,12 @@ export class CryptoNote {
         }
 
         try {
-            await tx.generateTxProofOfWork(diff);
+            if (feeAmount === 0) {
+                await tx.generateTxProofOfWorkFusion();
+            } else {
+                await tx.generateTxProofOfWork();
+            }
+            
         } catch (error) {
             throw new Error('Can not generateTxProofOfWork() for diff: ' + diff);
         }
