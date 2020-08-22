@@ -3,18 +3,18 @@
 // Please see the included LICENSE file for more information.
 
 import { HTTPClient } from './Helpers/HTTPClient';
-import { LegacyTurtleCoindTypes as TurtleCoindInterfaces } from './Types/LegacyTurtleCoind';
+import { LegacyTurtleCoindTypes } from './Types/LegacyTurtleCoind';
 import * as BigInteger from 'big-integer';
 
 /**
  * A class interface that allows for easy interaction with Legacy TurtleCoind
  */
-export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfaces.ILegacyTurtleCoind {
+export class LegacyTurtleCoind extends HTTPClient implements LegacyTurtleCoindTypes.ILegacyTurtleCoind {
     /**
      * Retrieves details on a single block by hash
      * @param hash the hash of the block to retrieve
      */
-    public async block (hash: string): Promise<TurtleCoindInterfaces.IBlockSummary> {
+    public async block (hash: string): Promise<LegacyTurtleCoindTypes.IBlockSummary> {
         const response = await this.rpcPost('f_block_json', { hash });
 
         response.block.alreadyGeneratedCoins = BigInteger(response.block.alreadyGeneratedCoins);
@@ -35,7 +35,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
      * Retrieves the block header information by hash
      * @param hash the hash of the block to retrieve the header for
      */
-    public async blockHeaderByHash (hash: string): Promise<TurtleCoindInterfaces.IBlockHeader> {
+    public async blockHeaderByHash (hash: string): Promise<LegacyTurtleCoindTypes.IBlockHeader> {
         const response = await this.rpcPost('getblockheaderbyhash', { hash });
 
         return response.block_header;
@@ -45,7 +45,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
      * Retrieves the block header by the height
      * @param height the height of the block to retrieve the header for
      */
-    public async blockHeaderByHeight (height: number): Promise<TurtleCoindInterfaces.IBlockHeader> {
+    public async blockHeaderByHeight (height: number): Promise<LegacyTurtleCoindTypes.IBlockHeader> {
         const response = await this.rpcPost('getblockheaderbyheight', { height });
 
         return response.block_header;
@@ -68,7 +68,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
         timestamp = 0,
         blockHashes: string[] = [],
         blockCount = 100
-    ): Promise<TurtleCoindInterfaces.IBlocksDetailedResponse> {
+    ): Promise<LegacyTurtleCoindTypes.IBlocksDetailedResponse> {
         const result = await this.post('queryblocksdetailed', {
             blockIds: blockHashes,
             timestamp: timestamp,
@@ -90,7 +90,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
      * Retrieves abbreviated block information for the last 31 blocks before the specified height (inclusive)
      * @param height the height of the block to retrieve
      */
-    public async blockShortHeaders (height: number): Promise<TurtleCoindInterfaces.IBlockShortHeader[]> {
+    public async blockShortHeaders (height: number): Promise<LegacyTurtleCoindTypes.IBlockShortHeader[]> {
         const response = await this.rpcPost('f_blocks_list_json', { height });
 
         return response.blocks;
@@ -111,16 +111,16 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
     public async blocksLite (
         blockHashes: string[],
         timestamp = 0
-    ): Promise<TurtleCoindInterfaces.IBlockLiteResponse> {
+    ): Promise<LegacyTurtleCoindTypes.IBlockLiteResponse> {
         const response = await this.post('queryblockslite', {
             blockIds: blockHashes,
             timestamp: timestamp
         });
 
-        const tmp: TurtleCoindInterfaces.IBlockLite[] = [];
+        const tmp: LegacyTurtleCoindTypes.IBlockLite[] = [];
 
         for (const item of response.items) {
-            const transactions: TurtleCoindInterfaces.IBlockLiteTransaction[] = [];
+            const transactions: LegacyTurtleCoindTypes.IBlockLiteTransaction[] = [];
 
             for (const txn of item['blockShortInfo.txPrefixes']) {
                 transactions.push({
@@ -153,7 +153,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
     public async blockTemplate (
         walletAddress: string,
         reserveSize = 8
-    ): Promise<TurtleCoindInterfaces.IBlockTemplate> {
+    ): Promise<LegacyTurtleCoindTypes.IBlockTemplate> {
         return this.rpcPost('getblocktemplate', {
             reserve_size: reserveSize,
             wallet_address: walletAddress
@@ -163,7 +163,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
     /**
      * Retrieves the node donation fee information for the given node
      */
-    public async fee (): Promise<TurtleCoindInterfaces.IFeeResponse> {
+    public async fee (): Promise<LegacyTurtleCoindTypes.IFeeResponse> {
         const response = await this.get('fee');
 
         response.amount = BigInteger(response.amount);
@@ -196,7 +196,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
     public async globalIndexesForRange (
         startHeight: number,
         endHeight: number
-    ): Promise<TurtleCoindInterfaces.IGlobalIndexesResponse[]> {
+    ): Promise<LegacyTurtleCoindTypes.IGlobalIndexesResponse[]> {
         const response = await this.post('get_global_indexes_for_range', { startHeight, endHeight });
 
         if (!response.status || !response.indexes) { throw new Error('Missing indexes or status key'); }
@@ -208,21 +208,21 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
     /**
      * Retrieves the current daemon height statistics
      */
-    public async height (): Promise<TurtleCoindInterfaces.IHeightResponse> {
+    public async height (): Promise<LegacyTurtleCoindTypes.IHeightResponse> {
         return this.get('height');
     }
 
     /**
      * Retrieves the current daemon information statistics
      */
-    public async info (): Promise<TurtleCoindInterfaces.IInfoResponse> {
+    public async info (): Promise<LegacyTurtleCoindTypes.IInfoResponse> {
         return this.get('info');
     }
 
     /**
      * Retrieves the last block header information
      */
-    public async lastBlockHeader (): Promise<TurtleCoindInterfaces.IBlockHeader> {
+    public async lastBlockHeader (): Promise<LegacyTurtleCoindTypes.IBlockHeader> {
         const response = await this.rpcPost('getlastblockheader');
 
         return response.block_header;
@@ -231,7 +231,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
     /**
      * Retrieves information regarding the daemon's peerlist
      */
-    public async peers (): Promise<TurtleCoindInterfaces.IPeersResponse> {
+    public async peers (): Promise<LegacyTurtleCoindTypes.IPeersResponse> {
         return this.get('peers');
     }
 
@@ -243,7 +243,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
     public async poolChanges (
         tailBlockHash: string,
         knownTransactionHashes: string[] = []
-    ): Promise<TurtleCoindInterfaces.IPoolChanges> {
+    ): Promise<LegacyTurtleCoindTypes.IPoolChanges> {
         const body: any = {
             tailBlockId: tailBlockHash
         };
@@ -252,7 +252,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
 
         const response = await this.post('get_pool_changes_lite', body);
 
-        const tmp: TurtleCoindInterfaces.IBlockLiteTransaction[] = [];
+        const tmp: LegacyTurtleCoindTypes.IBlockLiteTransaction[] = [];
 
         for (const tx of response.addedTxs) {
             tmp.push({
@@ -278,7 +278,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
     public async randomOutputs (
         amounts: number[],
         mixin = 1
-    ): Promise<TurtleCoindInterfaces.IRandomOutputsResponse> {
+    ): Promise<LegacyTurtleCoindTypes.IRandomOutputsResponse> {
         return this.post('getrandom_outs', {
             amounts: amounts,
             outs_count: mixin
@@ -307,7 +307,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
         blockHashCheckpoints: string[] = [],
         skipCoinbaseTransactions = false,
         blockCount = 100
-    ): Promise<TurtleCoindInterfaces.IRawBlocksResponse> {
+    ): Promise<LegacyTurtleCoindTypes.IRawBlocksResponse> {
         return this.post('getrawblocks', {
             startHeight: startHeight,
             startTimestamp: startTimestamp,
@@ -323,7 +323,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
      */
     public async sendRawTransaction (
         transaction: string
-    ): Promise<TurtleCoindInterfaces.ISendRawTransactionResponse> {
+    ): Promise<LegacyTurtleCoindTypes.ISendRawTransactionResponse> {
         return this.post('sendrawtransaction', { tx_as_hex: transaction });
     }
 
@@ -341,7 +341,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
      * Retrieves a single transaction's information
      * @param hash the hash of the transaction to retrieve
      */
-    public async transaction (hash: string): Promise<TurtleCoindInterfaces.ITransactionResponse> {
+    public async transaction (hash: string): Promise<LegacyTurtleCoindTypes.ITransactionResponse> {
         const response = await this.rpcPost('f_transaction_json', { hash });
 
         if (response.tx && response.tx['']) { delete response.tx['']; }
@@ -354,7 +354,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
     /**
      * Retrieves summary information of the transactions currently in the mempool
      */
-    public async transactionPool (): Promise<TurtleCoindInterfaces.ITransactionSummary[]> {
+    public async transactionPool (): Promise<LegacyTurtleCoindTypes.ITransactionSummary[]> {
         const response = await this.rpcPost('f_on_transactions_pool_json');
 
         return response.transactions;
@@ -366,7 +366,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
      */
     public async transactionStatus (
         transactionHashes: string[]
-    ): Promise<TurtleCoindInterfaces.ITransactionStatusResponse> {
+    ): Promise<LegacyTurtleCoindTypes.ITransactionStatusResponse> {
         const response = await this.post('get_transactions_status', { transactionHashes });
 
         if (!response.status ||
@@ -404,7 +404,7 @@ export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfac
         blockHashCheckpoints: string[] = [],
         skipCoinbaseTransactions = false,
         blockCount = 100
-    ): Promise<TurtleCoindInterfaces.IWalletSyncData> {
+    ): Promise<LegacyTurtleCoindTypes.IWalletSyncData> {
         const response = await this.post('getwalletsyncdata', {
             startHeight: startHeight,
             startTimestamp: startTimestamp,
