@@ -506,7 +506,7 @@ export class Transaction {
             const prefix = this.prefix;
 
             /* Find the pow nonce tag and nonce hole */
-            const tagOffset = prefix.indexOf("040000000000000000");
+            const tagOffset = prefix.indexOf('040000000000000000');
 
             /* Then add 2 to skip the tag. */
             const nonceOffset = tagOffset + 2;
