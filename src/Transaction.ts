@@ -516,22 +516,21 @@ export class Transaction {
 
         try {
             const nonce = TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset, diff);
+            nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(nonce));
+
+            result = [];
+
+            for (const tag of this.m_extra) {
+                if (tag.tag !== nonceTag.tag) {
+                    result.push(tag);
+                }
+            }
+
+            this.m_extra = result;
+            this.m_extra.push(nonceTag);
         } catch (e) {
             throw new Error('Can not generateTransactionPow()');
         }
-
-        nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(nonce));
-
-        result = [];
-
-        for (const tag of this.m_extra) {
-            if (tag.tag !== nonceTag.tag) {
-                result.push(tag);
-            }
-        }
-
-        this.m_extra = result;
-        this.m_extra.push(nonceTag);
     }
 
     /**
