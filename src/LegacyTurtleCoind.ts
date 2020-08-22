@@ -9,7 +9,7 @@ import * as BigInteger from 'big-integer';
 /**
  * A class interface that allows for easy interaction with Legacy TurtleCoind
  */
-export class LegacyTurtleCoind extends HTTPClient {
+export class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfaces.ILegacyTurtleCoind {
     /**
      * Retrieves details on a single block by hash
      * @param hash the hash of the block to retrieve

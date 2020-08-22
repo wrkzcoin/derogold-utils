@@ -584,4 +584,31 @@ export declare namespace TurtleCoindTypes {
             height: number;
         };
     }
+    /**
+     * Defines the necessary methods that must be implemented by a TurtleCoind interface
+     */
+    abstract class ITurtleCoind {
+        abstract fee(): Promise<IFee>;
+        abstract height(): Promise<IHeight>;
+        abstract info(): Promise<IInfo>;
+        abstract peers(): Promise<IPeers>;
+        abstract blockCount(): Promise<number>;
+        abstract block(block: string | number): Promise<IBlock>;
+        abstract lastBlock(): Promise<IBlock>;
+        abstract blockHeaders(height: number): Promise<IBlock[]>;
+        abstract rawBlock(block: string | number): Promise<IRawBlock>;
+        abstract blockTemplate(address: string, reserveSize: number): Promise<IBlockTemplate>;
+        abstract submitBlock(block: string): Promise<string>;
+        abstract submitTransaction(transaction: string): Promise<string>;
+        abstract transaction(hash: string): Promise<ITransaction>;
+        abstract rawTransaction(hash: string): Promise<string>;
+        abstract transactionPool(): Promise<TransactionSummary[]>;
+        abstract rawTransactionPool(): Promise<string[]>;
+        abstract transactionPoolChanges(lastKnownBlock: string, transactions: string[]): Promise<ITransactionPoolDelta>;
+        abstract transactionsStatus(transactions: string[]): Promise<ITransactionsStatus>;
+        abstract randomIndexes(amounts: number[], count: number): Promise<IRandomOutput[]>;
+        abstract indexes(startHeight: number, endHeight: number): Promise<ITransactionIndexes[]>;
+        abstract sync(checkpoints: string[], height: number, timestamp: number, skipCoinbaseTransactions: boolean, count: number): Promise<ISync>;
+        abstract rawSync(checkpoints: string[], height: number, timestamp: number, skipCoinbaseTransactions: boolean, count: number): Promise<IRawSync>;
+    }
 }

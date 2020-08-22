@@ -9,11 +9,11 @@ import { TurtleCoindTypes } from './Types/TurtleCoind';
 /**
  * A class interface that allows for easy interaction with TurtleCoind
  */
-export class TurtleCoind extends HTTPClient {
+export class TurtleCoind extends HTTPClient implements TurtleCoindTypes.ITurtleCoind {
     /**
      * Retrieves the node fee information
      */
-    async fee (): Promise<TurtleCoindTypes.IFee> {
+    public async fee (): Promise<TurtleCoindTypes.IFee> {
         const response = await this.get('fee');
 
         response.amount = BigInteger(response.amount);
@@ -24,14 +24,14 @@ export class TurtleCoind extends HTTPClient {
     /**
      * Retrieves the node height information
      */
-    async height (): Promise<TurtleCoindTypes.IHeight> {
+    public async height (): Promise<TurtleCoindTypes.IHeight> {
         return this.get('height');
     }
 
     /**
      * Retrieves the node information
      */
-    async info (): Promise<TurtleCoindTypes.IInfo> {
+    public async info (): Promise<TurtleCoindTypes.IInfo> {
         const response = await this.get('info');
 
         response.startTime = new Date((response.startTime || response.start_time) * 1000);
@@ -51,7 +51,7 @@ export class TurtleCoind extends HTTPClient {
     /**
      * Retrieves the node peer information
      */
-    async peers (): Promise<TurtleCoindTypes.IPeers> {
+    public async peers (): Promise<TurtleCoindTypes.IPeers> {
         const response = await this.get('peers');
 
         const parse = (elem: string): { host: string, port: number } => {
@@ -70,7 +70,7 @@ export class TurtleCoind extends HTTPClient {
     /**
      * Retrieves the number of blocks the node has in its chain
      */
-    async blockCount (): Promise<number> {
+    public async blockCount (): Promise<number> {
         return this.get('block/count');
     }
 
@@ -79,7 +79,7 @@ export class TurtleCoind extends HTTPClient {
      * Requires the daemon to have the explorer enabled
      * @param block the block height or hash
      */
-    async block (block: string | number): Promise<TurtleCoindTypes.IBlock> {
+    public async block (block: string | number): Promise<TurtleCoindTypes.IBlock> {
         const response = await this.get('block/' + block);
 
         response.alreadyGeneratedCoins = BigInteger(response.alreadyGeneratedCoins);
@@ -92,7 +92,7 @@ export class TurtleCoind extends HTTPClient {
     /**
      * Retrieves the block information for the last block available
      */
-    async lastBlock (): Promise<TurtleCoindTypes.IBlock> {
+    public async lastBlock (): Promise<TurtleCoindTypes.IBlock> {
         const response = await this.get('block/last');
 
         response.alreadyGeneratedCoins = BigInteger(response.alreadyGeneratedCoins);
@@ -107,7 +107,7 @@ export class TurtleCoind extends HTTPClient {
      * Requires the daemon to have the explorer enabled
      * @param height the height to stop at
      */
-    async blockHeaders (height: number): Promise<TurtleCoindTypes.IBlock[]> {
+    public async blockHeaders (height: number): Promise<TurtleCoindTypes.IBlock[]> {
         const response: any[] = await this.get('block/headers/' + height);
 
         for (const item of response) {
@@ -124,7 +124,7 @@ export class TurtleCoind extends HTTPClient {
      * Requires the daemon to have the explorer enabled
      * @param block the block height or hash
      */
-    async rawBlock (block: string | number): Promise<TurtleCoindTypes.IRawBlock> {
+    public async rawBlock (block: string | number): Promise<TurtleCoindTypes.IRawBlock> {
         return this.get('block/' + block + '/raw');
     }
 
@@ -133,7 +133,7 @@ export class TurtleCoind extends HTTPClient {
      * @param address the wallet address that will receive the coinbase outputs
      * @param reserveSize the amount of data to reserve in the miner transaction
      */
-    async blockTemplate (
+    public async blockTemplate (
         address: string,
         reserveSize = 6
     ): Promise<TurtleCoindTypes.IBlockTemplate> {
@@ -144,7 +144,7 @@ export class TurtleCoind extends HTTPClient {
      * Submits a block to the node for processing
      * @param block the hex representation of the block
      */
-    async submitBlock (block: string): Promise<string> {
+    public async submitBlock (block: string): Promise<string> {
         return this.post('block', block);
     }
 
@@ -152,7 +152,7 @@ export class TurtleCoind extends HTTPClient {
      * Submits a transaction to the node for processing
      * @param transaction the hex representation of the transaction
      */
-    async submitTransaction (transaction: string): Promise<string> {
+    public async submitTransaction (transaction: string): Promise<string> {
         return this.post('transaction', transaction);
     }
 
@@ -161,7 +161,7 @@ export class TurtleCoind extends HTTPClient {
      * Requires the daemon to have the explorer enabled
      * @param hash the transaction hash
      */
-    async transaction (hash: string): Promise<TurtleCoindTypes.ITransaction> {
+    public async transaction (hash: string): Promise<TurtleCoindTypes.ITransaction> {
         const response = await this.get('transaction/' + hash);
 
         response.block.alreadyGeneratedCoins = BigInteger(response.block.alreadyGeneratedCoins);
@@ -178,7 +178,7 @@ export class TurtleCoind extends HTTPClient {
      * Requires the daemon to have the explorer enabled
      * @param hash the transaction hash
      */
-    async rawTransaction (hash: string): Promise<string> {
+    public async rawTransaction (hash: string): Promise<string> {
         return this.get('transaction/' + hash + '/raw');
     }
 
@@ -187,7 +187,7 @@ export class TurtleCoind extends HTTPClient {
      * Requires the daemon to have the explorer enabled
      * in the memory pool
      */
-    async transactionPool (): Promise<TurtleCoindTypes.TransactionSummary[]> {
+    public async transactionPool (): Promise<TurtleCoindTypes.TransactionSummary[]> {
         return this.get('transaction/pool');
     }
 
@@ -195,7 +195,7 @@ export class TurtleCoind extends HTTPClient {
      * Retrieves the RawTransactions currently in the memory pool
      * Requires the daemon to have the explorer enabled
      */
-    async rawTransactionPool (): Promise<string[]> {
+    public async rawTransactionPool (): Promise<string[]> {
         return this.get('transaction/pool/raw');
     }
 
@@ -205,7 +205,7 @@ export class TurtleCoind extends HTTPClient {
      * @param lastKnownBlock the last known block hash
      * @param transactions an array of transaction hashes we last saw in the memory pool
      */
-    async transactionPoolChanges (
+    public async transactionPoolChanges (
         lastKnownBlock: string,
         transactions: string[]
     ): Promise<TurtleCoindTypes.ITransactionPoolDelta> {
@@ -216,7 +216,7 @@ export class TurtleCoind extends HTTPClient {
      * Retrieves information on where the specified transactions are located
      * @param transactions an array of transaction hashes
      */
-    async transactionsStatus (
+    public async transactionsStatus (
         transactions: string[]
     ): Promise<TurtleCoindTypes.ITransactionsStatus> {
         return this.post('transaction/status', transactions);
@@ -228,7 +228,7 @@ export class TurtleCoind extends HTTPClient {
      * @param amounts an array of amounts for which we need random global indexes
      * @param count the number of global indexes to return for each amount
      */
-    async randomIndexes (
+    public async randomIndexes (
         amounts: number[],
         count = 3
     ): Promise<TurtleCoindTypes.IRandomOutput[]> {
@@ -240,7 +240,7 @@ export class TurtleCoind extends HTTPClient {
      * @param startHeight the starting block height
      * @param endHeight the ending block height
      */
-    async indexes (
+    public async indexes (
         startHeight: number,
         endHeight: number
     ): Promise<TurtleCoindTypes.ITransactionIndexes[]> {
@@ -255,7 +255,7 @@ export class TurtleCoind extends HTTPClient {
      * @param skipCoinbaseTransactions whether we should skip blocks that only include coinbase transactions
      * @param count the number of blocks to return
      */
-    async sync (
+    public async sync (
         checkpoints: string[] = [],
         height = 0,
         timestamp = 0,
@@ -294,7 +294,7 @@ export class TurtleCoind extends HTTPClient {
      * @param skipCoinbaseTransactions whether we should skip blocks that only include coinbase transactions
      * @param count the number of blocks to return
      */
-    async rawSync (
+    public async rawSync (
         checkpoints: string[] = [],
         height = 0,
         timestamp = 0,

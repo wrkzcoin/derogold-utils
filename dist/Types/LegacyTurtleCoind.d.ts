@@ -956,4 +956,33 @@ export declare namespace LegacyTurtleCoindTypes {
          */
         out_key: string;
     }
+    /**
+     * Defines the necessary methods that must be implemented by a Legacy TurtleCoind interface
+     */
+    abstract class ILegacyTurtleCoind {
+        abstract block(hash: string): Promise<IBlockSummary>;
+        abstract blockCount(): Promise<number>;
+        abstract blockHeaderByHash(hash: string): Promise<IBlockHeader>;
+        abstract blockHeaderByHeight(height: number): Promise<IBlockHeader>;
+        abstract blocksDetailed(timestamp: number, blockHashes: string[], blockCount: number): Promise<IBlocksDetailedResponse>;
+        abstract blockShortHeaders(height: number): Promise<IBlockShortHeader[]>;
+        abstract blocksLite(blockHashes: string[], timestamp: number): Promise<IBlockLiteResponse>;
+        abstract blockTemplate(walletAddress: string, reserveSize: number): Promise<IBlockTemplate>;
+        abstract fee(): Promise<IFeeResponse>;
+        abstract globalIndexes(transactionHash: string): Promise<number[]>;
+        abstract globalIndexesForRange(startHeight: number, endHeight: number): Promise<IGlobalIndexesResponse[]>;
+        abstract height(): Promise<IHeightResponse>;
+        abstract info(): Promise<IInfoResponse>;
+        abstract lastBlockHeader(): Promise<IBlockHeader>;
+        abstract peers(): Promise<IPeersResponse>;
+        abstract poolChanges(tailBlockHash: string, knownTransactionHashes: string[]): Promise<IPoolChanges>;
+        abstract randomOutputs(amounts: number[], mixin: number): Promise<IRandomOutputsResponse>;
+        abstract rawBlocks(startHeight: number, startTimestamp: number, blockHashCheckpoints: string[], skipCoinbaseTransactions: boolean, blockCount: number): Promise<IRawBlocksResponse>;
+        abstract sendRawTransaction(transaction: string): Promise<ISendRawTransactionResponse>;
+        abstract submitBlock(blockBlob: string): Promise<string>;
+        abstract transaction(hash: string): Promise<ITransactionResponse>;
+        abstract transactionPool(): Promise<ITransactionSummary[]>;
+        abstract transactionStatus(transactionHashes: string[]): Promise<ITransactionStatusResponse>;
+        abstract walletSyncData(startHeight: number, startTimestamp: number, blockHashCheckpoints: string[], skipCoinbaseTransactions: boolean, blockCount: number): Promise<IWalletSyncData>;
+    }
 }

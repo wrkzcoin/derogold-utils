@@ -3,7 +3,7 @@ import { TurtleCoindTypes } from './Types/TurtleCoind';
 /**
  * A class interface that allows for easy interaction with TurtleCoind
  */
-export declare class TurtleCoind extends HTTPClient {
+export declare class TurtleCoind extends HTTPClient implements TurtleCoindTypes.ITurtleCoind {
     /**
      * Retrieves the node fee information
      */

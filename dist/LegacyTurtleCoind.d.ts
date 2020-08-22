@@ -3,7 +3,7 @@ import { LegacyTurtleCoindTypes as TurtleCoindInterfaces } from './Types/LegacyT
 /**
  * A class interface that allows for easy interaction with Legacy TurtleCoind
  */
-export declare class LegacyTurtleCoind extends HTTPClient {
+export declare class LegacyTurtleCoind extends HTTPClient implements TurtleCoindInterfaces.ILegacyTurtleCoind {
     /**
      * Retrieves details on a single block by hash
      * @param hash the hash of the block to retrieve
