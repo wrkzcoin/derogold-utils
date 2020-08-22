@@ -514,7 +514,11 @@ export class Transaction {
          * will be deserialized into bytes taking up half the space */
         const unserializedOffset = nonceOffset / 2;
 
-        const nonce = TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset, diff);
+        try:
+            const nonce = TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset, diff);
+        } catch (e) {
+            throw new Error('Can not generateTransactionPow()');
+        }
 
         nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(nonce));
 
