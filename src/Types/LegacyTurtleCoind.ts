@@ -4,6 +4,7 @@
 
 import * as BigInteger from 'big-integer';
 
+/** @ignore */
 export namespace LegacyTurtleCoindTypes {
     export interface IBlockDetails {
         /**
@@ -476,7 +477,7 @@ export namespace LegacyTurtleCoindTypes {
         /**
          * list of greylisted peers
          */
-        gray_peers: string[];
+        peers_gray: string[];
         /**
          * list of candidate peers
          */
@@ -958,6 +959,21 @@ export namespace LegacyTurtleCoindTypes {
          * the response status
          */
         status: string;
+
+        /**
+         * Information regarding the top block of the block chain
+         */
+        topBlock?: {
+            /**
+             * The top block hash
+             */
+            hash: string;
+
+            /**
+             * The top block height
+             */
+            height: number;
+        }
     }
 
     export interface IRawBlock {

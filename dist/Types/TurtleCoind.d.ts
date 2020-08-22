@@ -46,7 +46,7 @@ export declare namespace TurtleCoindTypes {
         /**
          * Whether the daemon supports the block explorer calls
          */
-        explorer: boolean;
+        explorer?: boolean;
         /**
          * The number of peers in the node's greylist
          */

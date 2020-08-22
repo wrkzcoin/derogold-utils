@@ -3,7 +3,7 @@
 //
 // Please see the included LICENSE file for more information.
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.on = exports.TurtleCoindTypes = exports.LegacyTurtleCoindTypes = exports.LedgerErrorCode = exports.LedgerTransactionState = exports.LedgerError = exports.TransactionOutputs = exports.TransactionInputs = exports.Keys = exports.KeyPair = exports.KeyOutput = exports.KeyInput = exports.ICryptoNote = void 0;
+exports.on = exports.TurtleCoindTypes = exports.LedgerErrorCode = exports.LedgerTransactionState = exports.LedgerError = exports.TransactionOutputs = exports.TransactionInputs = exports.Keys = exports.KeyPair = exports.KeyOutput = exports.KeyInput = exports.ICryptoNote = void 0;
 const turtlecoin_crypto_1 = require("turtlecoin-crypto");
 /** @ignore */
 const Types = require("./Types");
@@ -71,13 +71,8 @@ exports.LedgerTransactionState = LedgerTransactionState;
 /** @ignore */
 var LedgerErrorCode = Types.LedgerTypes.ErrorCode;
 exports.LedgerErrorCode = LedgerErrorCode;
-/** @ignore */
 var ICryptoNote = Types.CryptoNoteInterfaces.ICryptoNote;
 exports.ICryptoNote = ICryptoNote;
-/** @ignore */
-var LegacyTurtleCoindTypes = Types.LegacyTurtleCoindTypes;
-exports.LegacyTurtleCoindTypes = LegacyTurtleCoindTypes;
-/** @ignore */
 var TurtleCoindTypes = Types.TurtleCoindTypes;
 exports.TurtleCoindTypes = TurtleCoindTypes;
 /**

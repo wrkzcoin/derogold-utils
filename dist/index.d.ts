@@ -37,16 +37,11 @@ import LedgerError = Types.LedgerTypes.LedgerError;
 import LedgerTransactionState = Types.LedgerTypes.TransactionState;
 /** @ignore */
 import LedgerErrorCode = Types.LedgerTypes.ErrorCode;
-/** @ignore */
 import ICryptoNote = Types.CryptoNoteInterfaces.ICryptoNote;
-/** @ignore */
-import LegacyTurtleCoindTypes = Types.LegacyTurtleCoindTypes;
-/** @ignore */
 import TurtleCoindTypes = Types.TurtleCoindTypes;
-/** @ignore */
 import WalletAPITypes = Types.WalletAPITypes;
 /** @ignore */
-export { ICryptoNote, KeyInput, KeyOutput, KeyPair, Keys, TransactionInputs, TransactionOutputs, LedgerError, LedgerTransactionState, LedgerErrorCode, LegacyTurtleCoindTypes, TurtleCoindTypes, WalletAPITypes };
+export { ICryptoNote, KeyInput, KeyOutput, KeyPair, Keys, TransactionInputs, TransactionOutputs, LedgerError, LedgerTransactionState, LedgerErrorCode, TurtleCoindTypes, WalletAPITypes };
 /**
  * Executes the callback method upon the given event
  * @param event

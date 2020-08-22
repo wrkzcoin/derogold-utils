@@ -422,6 +422,10 @@ export class Transaction {
         return this.m_readonly;
     }
 
+    public set readonly (value: boolean) {
+        this.m_readonly = value;
+    }
+
     /**
      * Constructs a new transaction from an existing transaction blob
      * @param data the transaction data blob

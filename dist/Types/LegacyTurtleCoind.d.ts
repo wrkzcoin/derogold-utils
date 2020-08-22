@@ -1,4 +1,5 @@
 import * as BigInteger from 'big-integer';
+/** @ignore */
 export declare namespace LegacyTurtleCoindTypes {
     interface IBlockDetails {
         /**
@@ -456,7 +457,7 @@ export declare namespace LegacyTurtleCoindTypes {
         /**
          * list of greylisted peers
          */
-        gray_peers: string[];
+        peers_gray: string[];
         /**
          * list of candidate peers
          */
@@ -915,6 +916,19 @@ export declare namespace LegacyTurtleCoindTypes {
          * the response status
          */
         status: string;
+        /**
+         * Information regarding the top block of the block chain
+         */
+        topBlock?: {
+            /**
+             * The top block hash
+             */
+            hash: string;
+            /**
+             * The top block height
+             */
+            height: number;
+        };
     }
     interface IRawBlock {
         /**

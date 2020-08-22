@@ -207,7 +207,7 @@ export class TurtleCoind extends HTTPClient implements TurtleCoindTypes.ITurtleC
      */
     public async transactionPoolChanges (
         lastKnownBlock: string,
-        transactions: string[]
+        transactions: string[] = []
     ): Promise<TurtleCoindTypes.ITransactionPoolDelta> {
         return this.post('transaction/pool/delta', { lastKnownBlock, transactions });
     }
@@ -244,7 +244,9 @@ export class TurtleCoind extends HTTPClient implements TurtleCoindTypes.ITurtleC
         startHeight: number,
         endHeight: number
     ): Promise<TurtleCoindTypes.ITransactionIndexes[]> {
-        return this.get('indexes/' + startHeight + '/' + endHeight);
+        return this.get('indexes/' + startHeight + '/' + endHeight)
+            .then((result: TurtleCoindTypes.ITransactionIndexes[]) =>
+                result.sort((a, b) => (a.hash > b.hash) ? 1 : -1));
     }
 
     /**

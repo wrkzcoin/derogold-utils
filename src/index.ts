@@ -44,13 +44,11 @@ import LedgerError = Types.LedgerTypes.LedgerError;
 import LedgerTransactionState = Types.LedgerTypes.TransactionState;
 /** @ignore */
 import LedgerErrorCode = Types.LedgerTypes.ErrorCode;
-/** @ignore */
+
 import ICryptoNote = Types.CryptoNoteInterfaces.ICryptoNote;
-/** @ignore */
-import LegacyTurtleCoindTypes = Types.LegacyTurtleCoindTypes;
-/** @ignore */
+
 import TurtleCoindTypes = Types.TurtleCoindTypes;
-/** @ignore */
+
 import WalletAPITypes = Types.WalletAPITypes;
 
 /** @ignore */
@@ -65,7 +63,6 @@ export {
     LedgerError,
     LedgerTransactionState,
     LedgerErrorCode,
-    LegacyTurtleCoindTypes,
     TurtleCoindTypes,
     WalletAPITypes
 };

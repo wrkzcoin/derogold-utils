@@ -202,7 +202,7 @@ class TurtleCoind extends HTTPClient_1.HTTPClient {
      * @param lastKnownBlock the last known block hash
      * @param transactions an array of transaction hashes we last saw in the memory pool
      */
-    transactionPoolChanges(lastKnownBlock, transactions) {
+    transactionPoolChanges(lastKnownBlock, transactions = []) {
         return __awaiter(this, void 0, void 0, function* () {
             return this.post('transaction/pool/delta', { lastKnownBlock, transactions });
         });
@@ -234,7 +234,8 @@ class TurtleCoind extends HTTPClient_1.HTTPClient {
      */
     indexes(startHeight, endHeight) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.get('indexes/' + startHeight + '/' + endHeight);
+            return this.get('indexes/' + startHeight + '/' + endHeight)
+                .then((result) => result.sort((a, b) => (a.hash > b.hash) ? 1 : -1));
         });
     }
     /**

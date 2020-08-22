@@ -358,6 +358,9 @@ class Transaction {
     get readonly() {
         return this.m_readonly;
     }
+    set readonly(value) {
+        this.m_readonly = value;
+    }
     /**
      * Constructs a new transaction from an existing transaction blob
      * @param data the transaction data blob

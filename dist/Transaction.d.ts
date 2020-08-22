@@ -121,6 +121,7 @@ export declare class Transaction {
      * invalidate the transaction signatures
      */
     get readonly(): boolean;
+    set readonly(value: boolean);
     /**
      * Constructs a new transaction from an existing transaction blob
      * @param data the transaction data blob

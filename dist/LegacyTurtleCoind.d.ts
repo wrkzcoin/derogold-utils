@@ -1,75 +1,158 @@
 import { HTTPClient } from './Helpers/HTTPClient';
-import { LegacyTurtleCoindTypes } from './Types/LegacyTurtleCoind';
+import { TurtleCoindTypes } from './Types/TurtleCoind';
 /**
  * A class interface that allows for easy interaction with Legacy TurtleCoind
+ * THIS OBJECT IS DEPRECATED AND SUBJECT TO REMOVAL WITH LITTLE NOTICE
  */
-export declare class LegacyTurtleCoind extends HTTPClient implements LegacyTurtleCoindTypes.ILegacyTurtleCoind {
+export declare class LegacyTurtleCoind extends HTTPClient implements TurtleCoindTypes.ITurtleCoind {
     /**
-     * Retrieves details on a single block by hash
-     * @param hash the hash of the block to retrieve
+     * Retrieves the node fee information
      */
-    block(hash: string): Promise<LegacyTurtleCoindTypes.IBlockSummary>;
+    fee(): Promise<TurtleCoindTypes.IFee>;
     /**
-     * Gets the daemon current block count
+     * Retrieves the node height information
+     */
+    height(): Promise<TurtleCoindTypes.IHeight>;
+    /**
+     * Retrieves the node information
+     */
+    info(): Promise<TurtleCoindTypes.IInfo>;
+    /**
+     * Retrieves the node peer information
+     */
+    peers(): Promise<TurtleCoindTypes.IPeers>;
+    /**
+     * Retrieves the number of blocks the node has in its chain
      */
     blockCount(): Promise<number>;
+    /**
+     * Retrieves the block information for the specified block
+     * Requires the daemon to have the explorer enabled
+     * @param block the block height or hash
+     */
+    block(block: string | number): Promise<TurtleCoindTypes.IBlock>;
+    /**
+     * Retrieves the block information for the last block available
+     */
+    lastBlock(): Promise<TurtleCoindTypes.IBlock>;
+    /**
+     * Retrieves the block information for the last 30 blocks up to the current height
+     * Requires the daemon to have the explorer enabled
+     * @param height the height to stop at
+     */
+    blockHeaders(height: number): Promise<TurtleCoindTypes.IBlock[]>;
+    /**
+     * Retrieves the RawBlock information from the node for the specified block
+     * Requires the daemon to have the explorer enabled
+     * @param block the block height or hash
+     */
+    rawBlock(block: string | number): Promise<TurtleCoindTypes.IRawBlock>;
+    /**
+     * Retrieves a mining block template using the specified address and reserve size
+     * @param address the wallet address that will receive the coinbase outputs
+     * @param reserveSize the amount of data to reserve in the miner transaction
+     */
+    blockTemplate(address: string, reserveSize?: number): Promise<TurtleCoindTypes.IBlockTemplate>;
+    /**
+     * Submits a block to the node for processing
+     * @param block the hex representation of the block
+     */
+    submitBlock(block: string): Promise<string>;
+    /**
+     * Submits a transaction to the node for processing
+     * @param transaction the hex representation of the transaction
+     */
+    submitTransaction(transaction: string): Promise<string>;
+    /**
+     * Retrieves the transaction information for the specified transaction
+     * Requires the daemon to have the explorer enabled
+     * @param hash the transaction hash
+     */
+    transaction(hash: string): Promise<TurtleCoindTypes.ITransaction>;
+    /**
+     * Retrieves the RawTransaction from the node for the specified transaction
+     * Requires the daemon to have the explorer enabled
+     * @param hash the transaction hash
+     */
+    rawTransaction(hash: string): Promise<string>;
+    /**
+     * Retrieves the transaction summary information for the transactions currently
+     * Requires the daemon to have the explorer enabled
+     * in the memory pool
+     */
+    transactionPool(): Promise<TurtleCoindTypes.TransactionSummary[]>;
+    /**
+     * Retrieves the RawTransactions currently in the memory pool
+     * Requires the daemon to have the explorer enabled
+     */
+    rawTransactionPool(): Promise<string[]>;
+    /**
+     * Gets the transaction memory pool changes given the last known block hash and
+     * the transactions we last knew to be in the memory pool
+     * @param lastKnownBlock the last known block hash
+     * @param transactions an array of transaction hashes we last saw in the memory pool
+     */
+    transactionPoolChanges(lastKnownBlock: string, transactions?: string[]): Promise<TurtleCoindTypes.ITransactionPoolDelta>;
+    /**
+     * Retrieves information on where the specified transactions are located
+     * @param transactions an array of transaction hashes
+     */
+    transactionsStatus(transactions: string[]): Promise<TurtleCoindTypes.ITransactionsStatus>;
+    /**
+     * Retrieves random global indexes typically used for mixing operations for the specified
+     * amounts and for the number requested (if available)
+     * @param amounts an array of amounts for which we need random global indexes
+     * @param count the number of global indexes to return for each amount
+     */
+    randomIndexes(amounts: number[], count: number): Promise<TurtleCoindTypes.IRandomOutput[]>;
+    /**
+     * Retrieves the global indexes for all transactions contained within the blocks heights specified (non-inclusive)
+     * @param startHeight the starting block height
+     * @param endHeight the ending block height
+     */
+    indexes(startHeight: number, endHeight: number): Promise<TurtleCoindTypes.ITransactionIndexes[]>;
+    /**
+     * Retrieves the information necessary for syncing a wallet (or other utility) against the node
+     * @param checkpoints a list of block hashes that we know about in descending height order
+     * @param height the height to start syncing from
+     * @param timestamp the timestamp to start syncing from
+     * @param skipCoinbaseTransactions whether we should skip blocks that only include coinbase transactions
+     * @param count the number of blocks to return
+     */
+    sync(checkpoints?: string[], height?: number, timestamp?: number, skipCoinbaseTransactions?: boolean, count?: number): Promise<TurtleCoindTypes.ISync>;
+    /**
+     * Retrieves the RawBlocks & RawTransactions for syncing a wallet (or other utility) against the node
+     * @param checkpoints a list of block hashes that we know about in descending height order
+     * @param height the height to start syncing from
+     * @param timestamp the timestamp to start syncing from
+     * @param skipCoinbaseTransactions whether we should skip blocks that only include coinbase transactions
+     * @param count the number of blocks to return
+     */
+    rawSync(checkpoints?: string[], height?: number, timestamp?: number, skipCoinbaseTransactions?: boolean, count?: number): Promise<TurtleCoindTypes.IRawSync>;
+    /**
+     * OLD LEGACY METHODS BELOW THIS MARK, SHOULD ALL BE PRIVATE
+     * THEY ONLY STILL EXIST HERE AS THEY USE THE OLD TYPES AND
+     * THUS MAKE IT EASIER TO TRANSFORM THE DATA TO THE NEW TYPES
+     */
+    /**
+     * Retrieves the last block header information
+     */
+    private _lastBlockHeader;
     /**
      * Retrieves the block header information by hash
      * @param hash the hash of the block to retrieve the header for
      */
-    blockHeaderByHash(hash: string): Promise<LegacyTurtleCoindTypes.IBlockHeader>;
+    private _blockHeaderByHash;
     /**
      * Retrieves the block header by the height
      * @param height the height of the block to retrieve the header for
      */
-    blockHeaderByHeight(height: number): Promise<LegacyTurtleCoindTypes.IBlockHeader>;
-    /**
-     * Retrieves up to 100 blocks. If block hashes are given, it will return beginning from the height of the
-     * first hash it finds, plus one. However, if timestamp is given, and this value is higher than any found
-     * in the array of blockHashes, it will start returning blocks from that height instead. The blockHashes
-     * array should be given the highest block height hashes first, then in descending order by height.
-     * First 10 block hashes go sequential, next in pow(2,n) offset (ie. 2, 4, 8, 16, 32, 64...), and the
-     * last block hash is always the genesis block.
-     * Typical usage: specify a start timestamp initially, and from then on, also provide the returned block
-     * hashes as mentioned above.
-     * @param timestamp the timestamp to start from
-     * @param blockHashes the array of block hashes
-     * @param blockCount the number of blocks to return
-     */
-    blocksDetailed(timestamp?: number, blockHashes?: string[], blockCount?: number): Promise<LegacyTurtleCoindTypes.IBlocksDetailedResponse>;
+    private _blockHeaderByHeight;
     /**
      * Retrieves abbreviated block information for the last 31 blocks before the specified height (inclusive)
      * @param height the height of the block to retrieve
      */
-    blockShortHeaders(height: number): Promise<LegacyTurtleCoindTypes.IBlockShortHeader[]>;
-    /**
-     * Retrieves up to 100 blocks. If block hashes are given, it will return beginning from the height of the
-     * first hash it finds, plus one. However, if timestamp is given, and this value is higher than any found
-     * in the array of blockHashes, it will start returning blocks from that height instead. The blockHashes
-     * array should be given the highest block height hashes first, then in descending order by height.
-     * First 10 block hashes go sequential, next in pow(2,n) offset (ie. 2, 4, 8, 16, 32, 64...), and the
-     * last block hash is always the genesis block.
-     * Typical usage: specify a start timestamp initially, and from then on, also provide the returned block
-     * hashes as mentioned above.
-     * @param blockHashes
-     * @param timestamp
-     */
-    blocksLite(blockHashes: string[], timestamp?: number): Promise<LegacyTurtleCoindTypes.IBlockLiteResponse>;
-    /**
-     * Retrieves a block template using the supplied parameters for the tip of the known chain
-     * @param walletAddress the wallet address to receive the coinbase transaction outputs
-     * @param reserveSize the amount of space in the blocktemplate to reserve for additional data
-     */
-    blockTemplate(walletAddress: string, reserveSize?: number): Promise<LegacyTurtleCoindTypes.IBlockTemplate>;
-    /**
-     * Retrieves the node donation fee information for the given node
-     */
-    fee(): Promise<LegacyTurtleCoindTypes.IFeeResponse>;
-    /**
-     * Retrieves the global output indexes of the given transaction
-     * @param transactionHash the hash of the transaction to retrieve
-     */
-    globalIndexes(transactionHash: string): Promise<number[]>;
+    private _blockShortHeaders;
     /**
      * Retrieves the global indexes for any transactions in the range [startHeight .. endHeight]. Generally, you
      * only want the global index for a specific transaction, however, this reveals that you probably are the
@@ -78,35 +161,19 @@ export declare class LegacyTurtleCoind extends HTTPClient implements LegacyTurtl
      * @param startHeight the height to begin returning indices from
      * @param endHeight the height to end returning indices from
      */
-    globalIndexesForRange(startHeight: number, endHeight: number): Promise<LegacyTurtleCoindTypes.IGlobalIndexesResponse[]>;
-    /**
-     * Retrieves the current daemon height statistics
-     */
-    height(): Promise<LegacyTurtleCoindTypes.IHeightResponse>;
-    /**
-     * Retrieves the current daemon information statistics
-     */
-    info(): Promise<LegacyTurtleCoindTypes.IInfoResponse>;
-    /**
-     * Retrieves the last block header information
-     */
-    lastBlockHeader(): Promise<LegacyTurtleCoindTypes.IBlockHeader>;
-    /**
-     * Retrieves information regarding the daemon's peerlist
-     */
-    peers(): Promise<LegacyTurtleCoindTypes.IPeersResponse>;
+    private _globalIndexesForRange;
     /**
      * Retrieves updates regarding the transaction mempool
      * @param tailBlockHash the last block hash that we know about
      * @param knownTransactionHashes an array of the transaction hashes we last knew were in the mempool
      */
-    poolChanges(tailBlockHash: string, knownTransactionHashes?: string[]): Promise<LegacyTurtleCoindTypes.IPoolChanges>;
+    private _poolChanges;
     /**
      * Retrieves random outputs from the chain for mixing purposes during the creation of a new transaction
      * @param amounts an array of the amounts for which we need random outputs
      * @param mixin the number of random outputs we need for each amount specified
      */
-    randomOutputs(amounts: number[], mixin?: number): Promise<LegacyTurtleCoindTypes.IRandomOutputsResponse>;
+    private _randomOutputs;
     /**
      * Retrieves the raw hex representation of each block and the transactions in the blocks versus returning
      * JSON or other encoded versions of the same.
@@ -123,31 +190,26 @@ export declare class LegacyTurtleCoind extends HTTPClient implements LegacyTurtl
      * @param skipCoinbaseTransactions whether to skip returning blocks with only coinbase transactions
      * @param blockCount the number of blocks to retrieve
      */
-    rawBlocks(startHeight?: number, startTimestamp?: number, blockHashCheckpoints?: string[], skipCoinbaseTransactions?: boolean, blockCount?: number): Promise<LegacyTurtleCoindTypes.IRawBlocksResponse>;
+    private _rawBlocks;
     /**
      * Submits a raw transaction to the daemon for processing relaying to the network
      * @param transaction the hex representation of the transaction
      */
-    sendRawTransaction(transaction: string): Promise<LegacyTurtleCoindTypes.ISendRawTransactionResponse>;
-    /**
-     * Submits a raw block to the daemon for processing and relaying to the network
-     * @param blockBlob the hex prepresentation of the block
-     */
-    submitBlock(blockBlob: string): Promise<string>;
+    private _sendRawTransaction;
     /**
      * Retrieves a single transaction's information
      * @param hash the hash of the transaction to retrieve
      */
-    transaction(hash: string): Promise<LegacyTurtleCoindTypes.ITransactionResponse>;
+    private _transaction;
     /**
      * Retrieves summary information of the transactions currently in the mempool
      */
-    transactionPool(): Promise<LegacyTurtleCoindTypes.ITransactionSummary[]>;
+    private _transactionPool;
     /**
      * Retrieves the status of the transaction hashes provided
      * @param transactionHashes an array of transaction hashes to check
      */
-    transactionStatus(transactionHashes: string[]): Promise<LegacyTurtleCoindTypes.ITransactionStatusResponse>;
+    private _transactionStatus;
     /**
      * The only the data necessary for wallet syncing purposes
      *
@@ -163,5 +225,5 @@ export declare class LegacyTurtleCoind extends HTTPClient implements LegacyTurtl
      * @param skipCoinbaseTransactions whether to skip returning blocks with only coinbase transactions
      * @param blockCount the number of blocks to request
      */
-    walletSyncData(startHeight?: number, startTimestamp?: number, blockHashCheckpoints?: string[], skipCoinbaseTransactions?: boolean, blockCount?: number): Promise<LegacyTurtleCoindTypes.IWalletSyncData>;
+    private _walletSyncData;
 }

@@ -91,7 +91,7 @@ export declare class TurtleCoind extends HTTPClient implements TurtleCoindTypes.
      * @param lastKnownBlock the last known block hash
      * @param transactions an array of transaction hashes we last saw in the memory pool
      */
-    transactionPoolChanges(lastKnownBlock: string, transactions: string[]): Promise<TurtleCoindTypes.ITransactionPoolDelta>;
+    transactionPoolChanges(lastKnownBlock: string, transactions?: string[]): Promise<TurtleCoindTypes.ITransactionPoolDelta>;
     /**
      * Retrieves information on where the specified transactions are located
      * @param transactions an array of transaction hashes
