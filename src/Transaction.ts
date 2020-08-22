@@ -530,7 +530,7 @@ export class Transaction {
             this.m_extra = result;
             this.m_extra.push(nonceTag);
         } catch (e) {
-            throw new Error('Can not TurtleCoinCrypto.generateTransactionPow()');
+            throw new Error('Can not TurtleCoinCrypto.generateTransactionPow() ' + e);
         }
     }
 
