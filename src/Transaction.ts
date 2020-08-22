@@ -489,20 +489,20 @@ export class Transaction {
             throw new Error('Transaction is read-only');
         }
 
-        try {
-            let nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(0));
+        let nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(0));
 
-            let result: ExtraTag.IExtraTag[] = [];
+        let result: ExtraTag.IExtraTag[] = [];
 
-            for (const tag of this.m_extra) {
-                if (tag.tag !== nonceTag.tag) {
-                    result.push(tag);
-                }
+        for (const tag of this.m_extra) {
+            if (tag.tag !== nonceTag.tag) {
+                result.push(tag);
             }
+        }
 
-            this.m_extra = result;
-            this.m_extra.push(nonceTag);
+        this.m_extra = result;
+        this.m_extra.push(nonceTag);
 
+        try {
             const prefix = this.prefix;
 
             /* Find the pow nonce tag and nonce hole */
@@ -515,7 +515,8 @@ export class Transaction {
              * will be deserialized into bytes taking up half the space */
             const unserializedOffset = nonceOffset / 2;
 
-            const nonce = TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset, diff);
+            const nonce = TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset, diff.toJSNumber);
+
             nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(nonce));
 
             result = [];
@@ -529,7 +530,7 @@ export class Transaction {
             this.m_extra = result;
             this.m_extra.push(nonceTag);
         } catch (e) {
-            throw new Error('Can not generateTransactionPow()');
+            throw new Error('Can not TurtleCoinCrypto.generateTransactionPow()');
         }
     }
 
