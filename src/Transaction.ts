@@ -535,7 +535,7 @@ export class Transaction {
     protected m_unlockTime: BigInteger.BigInteger = BigInteger.zero;
     protected m_rawExtra: Buffer = Buffer.alloc(0);
     protected m_readonly = false;
-    protected m_extra: ExtraTag.IExtraTag[] = [];
+    public m_extra: ExtraTag.IExtraTag[] = [];
     protected m_cached: Cache = { prefix: '', prefixHash: '', blob: '', hash: '' };
 
     /** @ignore */
@@ -660,6 +660,78 @@ export class Transaction {
         this.m_extra.sort((a, b) => (a.tag > b.tag) ? 1 : -1);
 
         await this.transactionKeys.setPrivateKey(privateKey);
+    }
+
+
+    /**
+     * Adds the private key for the transaction to the transaction extra field
+     * @param privateKey the private key of the transaction
+     */
+    public async addPrivateKey (privateKey: string): Promise<void> {
+        if (this.readonly) {
+            throw new Error('Transaction is read-only');
+        }
+
+        const tag = new ExtraTag.ExtraTransactionPrivateKey(privateKey);
+
+        this.m_extra = removeExtraTag(this.m_extra, tag.tag);
+
+        this.m_extra.push(tag);
+
+        this.m_extra.sort((a, b) => (a.tag > b.tag) ? 1 : -1);
+
+        await this.transactionKeys.setPrivateKey(privateKey);
+    }
+
+    /**
+     * generateTxProofOfWork
+     * @param diff difficulty for generateTxProofOfWork
+     */
+
+    public async generateTxProofOfWork(diff: number): Promise<number> {
+        if (this.readonly) {
+            throw new Error('Transaction is read-only');
+        }
+
+        let nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(0));
+
+        let result: ExtraTag.IExtraTag[] = [];
+
+        for (const tag of this.m_extra) {
+            if (tag.tag !== nonceTag.tag) {
+                result.push(tag);
+            }
+        }
+
+        this.m_extra = result;
+        this.m_extra.push(nonceTag);
+
+        const prefix = this.prefix;
+
+        /* Find the pow nonce tag and nonce hole */
+        const tagOffset = prefix.indexOf('040000000000000000');
+
+        /* Then add 2 to skip the tag. */
+        const nonceOffset = tagOffset + 2;
+
+        /* Actual offset is half the nonce offset, since this is hex, but it
+         * will be deserialized into bytes taking up half the space */
+        const unserializedOffset = nonceOffset / 2;
+
+        const nonce = await TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset, diff);
+
+        nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(nonce));
+
+        result = [];
+
+        for (const tag of this.m_extra) {
+            if (tag.tag !== nonceTag.tag) {
+                result.push(tag);
+            }
+        }
+
+        this.m_extra = result;
+        this.m_extra.push(nonceTag);
     }
 
     /**

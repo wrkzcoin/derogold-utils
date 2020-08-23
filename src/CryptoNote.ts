@@ -643,6 +643,7 @@ export class CryptoNote implements ICryptoNote {
             throw new RangeError('Tried to create a transaction with more outputs than permitted');
         }
 
+        let diff = this.m_config.TransactionPowDifficulty || Config.TransactionPowDifficulty;
         if (feeAmount === 0) {
             if (transactionInputs.length < 12) {
                 throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of [' +
@@ -653,6 +654,7 @@ export class CryptoNote implements ICryptoNote {
                 throw new Error('Sending a [0] fee transaction (fusion) requires the ' +
                     'correct input:output ratio be met');
             }
+            diff = this.m_config.FusionTransactionPowDifficulty || Config.FusionTransactionPowDifficulty;
         }
 
         const tx = new Transaction();
@@ -692,6 +694,8 @@ export class CryptoNote implements ICryptoNote {
         for (const output of transactionOutputs.outputs) {
             tx.outputs.push(new TransactionOutputs.KeyOutput(output.amount, output.key));
         }
+
+        await tx.generateTxProofOfWork(diff);
 
         if (tx.extra.length > (this.m_config.maximumExtraSize || Config.maximumExtraSize)) {
             throw new Error('Transaction extra exceeds the limit of [' +
