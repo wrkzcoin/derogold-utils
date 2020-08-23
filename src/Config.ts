@@ -71,7 +71,7 @@ export const Config: ICoinRunningConfig = {
     feePerByteChunkSize: 256,
     TransactionPowDifficulty: 20000,
     FusionTransactionPowDifficulty: 60000,
-    TransactionPowHeight: 1123000
+    TransactionPowHeight: 1123000,
     maximumLedgerTransactionSize: 38400,
     maximumLedgerAPDUPayloadSize: 480,
     minimumLedgerVersion: '1.2.0',
