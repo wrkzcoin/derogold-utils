@@ -55,7 +55,7 @@
     "numeral": "^2.0.6",
     "semver": "^7.3.2",
     "turtlecoin-base58": "0.0.8",
-    "turtlecoin-crypto": "^6.0.2",
+    "turtlecoin-crypto": "https://github.com/wrkzcoin/turtlecoin-crypto#dev",
     "turtlecoin-mnemonics": "0.0.9"
   },
   "devDependencies": {
