@@ -166,3 +166,4 @@ fabric.properties
 build
 jsbuild
 prebuilds
+yarn.lock

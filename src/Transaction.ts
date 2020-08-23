@@ -667,7 +667,7 @@ export class Transaction {
      * @param diff difficulty for generateTxProofOfWork
      */
 
-    public async generateTxProofOfWork(diff: number) {
+    public async generateTxProofOfWork (diff: number) {
         if (this.readonly) {
             throw new Error('Transaction is read-only');
         }

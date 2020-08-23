@@ -5,8 +5,7 @@
 import { Reader, Writer } from 'bytestream-helper';
 import { ExtraNonceTag } from '../Types';
 import { Common } from '../Common';
-import {BigInteger} from 'big-integer';
-
+import { BigInteger } from 'big-integer';
 
 /** @ignore */
 enum SIZES {
@@ -59,17 +58,16 @@ export namespace ExtraTag {
         public abstract toString(): string;
     }
 
-
     export class ExtraPowNonce implements IExtraTag {
-        public get tag(): ExtraTagType {
+        public get tag (): ExtraTagType {
             return this.m_tag;
         }
 
-        public get size(): number {
+        public get size (): number {
             return 9;
         }
 
-        public static from(data: Buffer | string): ExtraPowNonce {
+        public static from (data: Buffer | string): ExtraPowNonce {
             const reader = new Reader(data);
 
             if (reader.varint().toJSNumber() !== ExtraTagType.POW_NONCE) {
@@ -88,7 +86,7 @@ export namespace ExtraTag {
         private readonly m_tag: ExtraTagType = ExtraTagType.POW_NONCE;
         private m_nonce: BigInteger;
 
-        constructor(nonce: BigInteger) {
+        constructor (nonce: BigInteger) {
             this.m_nonce = nonce;
         }
 
@@ -96,7 +94,7 @@ export namespace ExtraTag {
          * Represents the field as a Buffer
          * @returns the Buffer representation of the object
          */
-        public toBuffer(): Buffer {
+        public toBuffer (): Buffer {
             const writer = new Writer();
 
             writer.varint(this.tag);
@@ -109,7 +107,7 @@ export namespace ExtraTag {
          * Represents the field as a hexadecimal string (blob)
          * @returns the hexadecimal (blob) representation of the object
          */
-        public toString(): string {
+        public toString (): string {
             return this.toBuffer().toString('hex');
         }
     }
