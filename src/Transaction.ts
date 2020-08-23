@@ -662,33 +662,12 @@ export class Transaction {
         await this.transactionKeys.setPrivateKey(privateKey);
     }
 
-
-    /**
-     * Adds the private key for the transaction to the transaction extra field
-     * @param privateKey the private key of the transaction
-     */
-    public async addPrivateKey (privateKey: string): Promise<void> {
-        if (this.readonly) {
-            throw new Error('Transaction is read-only');
-        }
-
-        const tag = new ExtraTag.ExtraTransactionPrivateKey(privateKey);
-
-        this.m_extra = removeExtraTag(this.m_extra, tag.tag);
-
-        this.m_extra.push(tag);
-
-        this.m_extra.sort((a, b) => (a.tag > b.tag) ? 1 : -1);
-
-        await this.transactionKeys.setPrivateKey(privateKey);
-    }
-
     /**
      * generateTxProofOfWork
      * @param diff difficulty for generateTxProofOfWork
      */
 
-    public async generateTxProofOfWork(diff: number): Promise<number> {
+    public async generateTxProofOfWork(diff: number) {
         if (this.readonly) {
             throw new Error('Transaction is read-only');
         }
