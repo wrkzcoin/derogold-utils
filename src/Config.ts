@@ -78,7 +78,7 @@ export const Config: ICoinRunningConfig = {
     FusionTransactionPowDifficulty: 60000,
     TransactionPowHeight: 1123000,
     TransactionPoWHeightDynV1: 1400000,
-    TransactionPoWDifficultyDynV1: 100000,
+    TransactionPoWDifficultyDynV1: 40000,
     MultiplierTransactionPoWDifficultyPerIOV1: 1000,
     MultiplierTransactionPoWDifficultyFactoredOutV1: 4,
     FusionTransactionPoWDifficultyV2: 300000,
