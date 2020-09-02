@@ -81,7 +81,7 @@ export const Config: ICoinRunningConfig = {
     TransactionPoWDifficultyDynV1: 40000,
     MultiplierTransactionPoWDifficultyPerIOV1: 1000,
     MultiplierTransactionPoWDifficultyFactoredOutV1: 4,
-    FusionTransactionPoWDifficultyV2: 300000,
+    FusionTransactionPoWDifficultyV2: 320000,
     maximumLedgerTransactionSize: 38400,
     maximumLedgerAPDUPayloadSize: 480,
     minimumLedgerVersion: '1.2.0',
