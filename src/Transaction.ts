@@ -203,6 +203,21 @@ export class Transaction {
     }
 
     /**
+     * Returns the tx pow tag found within the transaction
+     */
+    public get powNonce (): ExtraTag.ExtraPowNonce | undefined {
+        let result;
+
+        for (const tag of this.m_extra) {
+            if (tag.tag === ExtraTag.ExtraTagType.POW_NONCE) {
+                result = tag as ExtraTag.ExtraPowNonce;
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Returns the payment ID found within the transaction
      */
     public get paymentId (): string | undefined {
@@ -790,6 +805,7 @@ function readExtra (data: Buffer): ExtraTag.IExtraTag[] {
         publicKey: false,
         nonce: false,
         mergedMining: false,
+        powNonce: false,
         transactionPrivateKey: false,
         recipientPublicViewKey: false,
         recipientPublicSpendKey: false,
@@ -887,6 +903,19 @@ function readExtra (data: Buffer): ExtraTag.IExtraTag[] {
                     try {
                         tags.push(ExtraTag.ExtraMergedMining.from(reader.bytes(totalLength)));
                         seen.mergedMining = true;
+                    } catch (e) {
+                        reader.skip();
+                    }
+                } else {
+                    reader.skip();
+                }
+                break;
+            case ExtraTag.ExtraTagType.POW_NONCE:
+                if (!seen.powNonce && reader.unreadBytes >= 1) {
+                    try {
+                        totalLength += 8;
+                        tags.push(ExtraTag.ExtraPowNonce.from(reader.bytes(totalLength)));
+                        seen.powNonce = true;
                     } catch (e) {
                         reader.skip();
                     }
