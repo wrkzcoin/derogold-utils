@@ -911,9 +911,9 @@ function readExtra (data: Buffer): ExtraTag.IExtraTag[] {
                 }
                 break;
             case ExtraTag.ExtraTagType.POW_NONCE:
-                if (!seen.powNonce && reader.unreadBytes >= 1) {
+                totalLength += 8;
+                if (!seen.powNonce && reader.unreadBytes >= totalLength) {
                     try {
-                        totalLength += 8;
                         tags.push(ExtraTag.ExtraPowNonce.from(reader.bytes(totalLength)));
                         seen.powNonce = true;
                     } catch (e) {
