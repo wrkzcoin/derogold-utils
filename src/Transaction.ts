@@ -203,21 +203,6 @@ export class Transaction {
     }
 
     /**
-     * Returns the tx pow tag found within the transaction
-     */
-    public get powNonce (): ExtraTag.ExtraPowNonce | undefined {
-        let result;
-
-        for (const tag of this.m_extra) {
-            if (tag.tag === ExtraTag.ExtraTagType.POW_NONCE) {
-                result = tag as ExtraTag.ExtraPowNonce;
-            }
-        }
-
-        return result;
-    }
-
-    /**
      * Returns the payment ID found within the transaction
      */
     public get paymentId (): string | undefined {
