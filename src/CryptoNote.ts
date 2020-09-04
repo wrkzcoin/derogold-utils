@@ -217,18 +217,15 @@ export class CryptoNote implements ICryptoNote {
         const promises = [];
 
         for (const output of outputs) {
-            try {
-                promises.push(
-                    this.isOurTransactionOutput(
-                        transactionPublicKey,
-                        output,
-                        privateViewKey,
-                        publicSpendKey,
-                        privateSpendKey,
-                        generatePartial).catch()
-                );
-            } catch (e) {
-            }
+            promises.push(
+                this.isOurTransactionOutput(
+                    transactionPublicKey,
+                    output,
+                    privateViewKey,
+                    publicSpendKey,
+                    privateSpendKey,
+                    generatePartial).catch()
+            );
         }
 
         const results = await Promise.all(promises);
