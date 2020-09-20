@@ -7,7 +7,7 @@ import { AddressPrefix } from '../AddressPrefix';
 import { Address } from '../Address';
 import { Transaction } from '../Transaction';
 import { ICoinConfig } from '../Config';
-import { ICryptoConfig } from 'turtlecoin-crypto';
+import { ICryptoConfig } from 'wrkzcoin-crypto';
 
 export namespace CryptoNoteInterfaces {
     export interface IKeyImage {
