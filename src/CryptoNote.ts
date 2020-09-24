@@ -261,46 +261,50 @@ export class CryptoNote implements ICryptoNote {
         privateSpendKey?: string,
         generatePartial?: boolean
     ): Promise<Interfaces.Output> {
-        const derivedKey = await TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, privateViewKey);
+        try {
+            const derivedKey = await TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, privateViewKey);
 
-        const publicEphemeral = await TurtleCoinCrypto.derivePublicKey(derivedKey, output.index, publicSpendKey);
+            const publicEphemeral = await TurtleCoinCrypto.derivePublicKey(derivedKey, output.index, publicSpendKey);
 
-        if (publicEphemeral === output.key) {
-            output.input = {
-                publicEphemeral,
-                transactionKeys: {
-                    publicKey: transactionPublicKey,
-                    derivedKey,
-                    outputIndex: output.index
+            if (publicEphemeral === output.key) {
+                output.input = {
+                    publicEphemeral,
+                    transactionKeys: {
+                        publicKey: transactionPublicKey,
+                        derivedKey,
+                        outputIndex: output.index
+                    }
+                };
+
+                if (privateSpendKey) {
+                    /*  If we are forcing the generation of a partial key image then we
+                        use the supplied private spend key in the key generation instead of
+                        the privateEphemeral that we don't have
+                     */
+                    const privateEphemeral = (generatePartial)
+                        ? privateSpendKey
+                        : await TurtleCoinCrypto.deriveSecretKey(
+                            derivedKey, output.index, privateSpendKey);
+
+                    const derivedPublicEphemeral = await TurtleCoinCrypto.secretKeyToPublicKey(privateEphemeral);
+
+                    if (derivedPublicEphemeral !== publicEphemeral && !generatePartial) {
+                        throw new Error('Incorrect private spend key supplied');
+                    }
+
+                    const keyImage = await TurtleCoinCrypto.generateKeyImage(publicEphemeral, privateEphemeral);
+
+                    output.input.privateEphemeral = privateEphemeral;
+
+                    output.keyImage = keyImage;
+
+                    output.isPartialKeyImage = (generatePartial) || false;
                 }
-            };
 
-            if (privateSpendKey) {
-                /*  If we are forcing the generation of a partial key image then we
-                    use the supplied private spend key in the key generation instead of
-                    the privateEphemeral that we don't have
-                 */
-                const privateEphemeral = (generatePartial)
-                    ? privateSpendKey
-                    : await TurtleCoinCrypto.deriveSecretKey(
-                        derivedKey, output.index, privateSpendKey);
-
-                const derivedPublicEphemeral = await TurtleCoinCrypto.secretKeyToPublicKey(privateEphemeral);
-
-                if (derivedPublicEphemeral !== publicEphemeral && !generatePartial) {
-                    throw new Error('Incorrect private spend key supplied');
-                }
-
-                const keyImage = await TurtleCoinCrypto.generateKeyImage(publicEphemeral, privateEphemeral);
-
-                output.input.privateEphemeral = privateEphemeral;
-
-                output.keyImage = keyImage;
-
-                output.isPartialKeyImage = (generatePartial) || false;
+                return output;
             }
-
-            return output;
+        } catch (e) {
+            throw new Error('Not our output');
         }
 
         throw new Error('Not our output');
