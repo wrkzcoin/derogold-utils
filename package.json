@@ -14,7 +14,7 @@
   "scripts": {
     "build": "./node_modules/.bin/tsc",
     "docs": "./node_modules/.bin/typedoc && touch docs/.nojekyll && git restore docs/CNAME",
-    "prepare": "npm run build",
+    "prepare": "npm --scripts-prepend-node-path run build",
     "prepublishOnly": "npm test && npm run docs",
     "style": "./node_modules/.bin/eslint src/**/*.ts src/*.ts test/*.ts",
     "fix-style": "./node_modules/.bin/eslint --fix src/**/*.ts src/*.ts test/*.ts",
