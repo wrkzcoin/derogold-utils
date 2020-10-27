@@ -14,11 +14,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BigInteger = exports.PortableStorageConstants = exports.TurtleCoinCrypto = void 0;
-const turtlecoin_crypto_1 = require("turtlecoin-crypto");
+const wrkzcoin_crypto_1 = require("wrkzcoin-crypto");
 const BigInteger = require("big-integer");
 exports.BigInteger = BigInteger;
 /** @ignore */
-const TurtleCoinCrypto = new turtlecoin_crypto_1.Crypto();
+const TurtleCoinCrypto = new wrkzcoin_crypto_1.Crypto();
 exports.TurtleCoinCrypto = TurtleCoinCrypto;
 /** @ignore */
 var PortableStorageConstants;

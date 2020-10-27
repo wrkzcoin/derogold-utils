@@ -542,6 +542,44 @@ class Transaction {
         });
     }
     /**
+     * generateTxProofOfWork
+     * @param diff difficulty for generateTxProofOfWork
+     */
+    generateTxProofOfWork(diff) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.readonly) {
+                throw new Error('Transaction is read-only');
+            }
+            let nonceTag = new Types_1.ExtraTag.ExtraPowNonce(Types_1.BigInteger(0));
+            let result = [];
+            for (const tag of this.m_extra) {
+                if (tag.tag !== nonceTag.tag) {
+                    result.push(tag);
+                }
+            }
+            this.m_extra = result;
+            this.m_extra.push(nonceTag);
+            const prefix = this.prefix;
+            /* Find the pow nonce tag and nonce hole */
+            const tagOffset = prefix.indexOf('040000000000000000');
+            /* Then add 2 to skip the tag. */
+            const nonceOffset = tagOffset + 2;
+            /* Actual offset is half the nonce offset, since this is hex, but it
+             * will be deserialized into bytes taking up half the space */
+            const unserializedOffset = nonceOffset / 2;
+            const nonce = yield Types_1.TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset, diff);
+            nonceTag = new Types_1.ExtraTag.ExtraPowNonce(Types_1.BigInteger(nonce));
+            result = [];
+            for (const tag of this.m_extra) {
+                if (tag.tag !== nonceTag.tag) {
+                    result.push(tag);
+                }
+            }
+            this.m_extra = result;
+            this.m_extra.push(nonceTag);
+        });
+    }
+    /**
      * Returns a buffer representation of the transaction object
      * @param [headerOnly] whether we should return just the prefix or not
      * @returns the buffer representation
@@ -607,6 +645,7 @@ function readExtra(data) {
         publicKey: false,
         nonce: false,
         mergedMining: false,
+        powNonce: false,
         transactionPrivateKey: false,
         recipientPublicViewKey: false,
         recipientPublicSpendKey: false,
@@ -702,6 +741,21 @@ function readExtra(data) {
                     try {
                         tags.push(Types_1.ExtraTag.ExtraMergedMining.from(reader.bytes(totalLength)));
                         seen.mergedMining = true;
+                    }
+                    catch (e) {
+                        reader.skip();
+                    }
+                }
+                else {
+                    reader.skip();
+                }
+                break;
+            case Types_1.ExtraTag.ExtraTagType.POW_NONCE:
+                totalLength += 8;
+                if (!seen.powNonce && reader.unreadBytes >= totalLength) {
+                    try {
+                        tags.push(Types_1.ExtraTag.ExtraPowNonce.from(reader.bytes(totalLength)));
+                        seen.powNonce = true;
                     }
                     catch (e) {
                         reader.skip();

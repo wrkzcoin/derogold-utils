@@ -137,7 +137,7 @@ export declare class Transaction {
     protected m_unlockTime: BigInteger.BigInteger;
     protected m_rawExtra: Buffer;
     protected m_readonly: boolean;
-    protected m_extra: ExtraTag.IExtraTag[];
+    m_extra: ExtraTag.IExtraTag[];
     protected m_cached: Cache;
     /** @ignore */
     parseExtra(extra: Buffer): Promise<void>;
@@ -167,6 +167,11 @@ export declare class Transaction {
      * @param privateKey the private key of the transaction
      */
     addPrivateKey(privateKey: string): Promise<void>;
+    /**
+     * generateTxProofOfWork
+     * @param diff difficulty for generateTxProofOfWork
+     */
+    generateTxProofOfWork(diff: number): Promise<void>;
     /**
      * Returns a buffer representation of the transaction object
      * @param [headerOnly] whether we should return just the prefix or not

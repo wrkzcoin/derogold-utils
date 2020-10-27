@@ -23,10 +23,11 @@ var ExtraTag;
         ExtraTagType[ExtraTagType["PUBKEY"] = 1] = "PUBKEY";
         ExtraTagType[ExtraTagType["NONCE"] = 2] = "NONCE";
         ExtraTagType[ExtraTagType["MERGED_MINING"] = 3] = "MERGED_MINING";
-        ExtraTagType[ExtraTagType["RECIPIENT_PUBLIC_VIEW_KEY"] = 4] = "RECIPIENT_PUBLIC_VIEW_KEY";
-        ExtraTagType[ExtraTagType["RECIPIENT_PUBLIC_SPEND_KEY"] = 5] = "RECIPIENT_PUBLIC_SPEND_KEY";
-        ExtraTagType[ExtraTagType["TRANSACTION_PRIVATE_KEY"] = 6] = "TRANSACTION_PRIVATE_KEY";
-        ExtraTagType[ExtraTagType["POOL_NONCE"] = 7] = "POOL_NONCE";
+        ExtraTagType[ExtraTagType["POW_NONCE"] = 4] = "POW_NONCE";
+        ExtraTagType[ExtraTagType["RECIPIENT_PUBLIC_VIEW_KEY"] = 5] = "RECIPIENT_PUBLIC_VIEW_KEY";
+        ExtraTagType[ExtraTagType["RECIPIENT_PUBLIC_SPEND_KEY"] = 6] = "RECIPIENT_PUBLIC_SPEND_KEY";
+        ExtraTagType[ExtraTagType["TRANSACTION_PRIVATE_KEY"] = 7] = "TRANSACTION_PRIVATE_KEY";
+        ExtraTagType[ExtraTagType["POOL_NONCE"] = 8] = "POOL_NONCE";
     })(ExtraTagType = ExtraTag.ExtraTagType || (ExtraTag.ExtraTagType = {}));
     /**
      * Abstract interface for structured data in the transaction extra field
@@ -34,6 +35,47 @@ var ExtraTag;
     class IExtraTag {
     }
     ExtraTag.IExtraTag = IExtraTag;
+    class ExtraPowNonce {
+        constructor(nonce) {
+            this.m_tag = ExtraTagType.POW_NONCE;
+            this.m_nonce = nonce;
+        }
+        get tag() {
+            return this.m_tag;
+        }
+        get size() {
+            return 9;
+        }
+        static from(data) {
+            const reader = new bytestream_helper_1.Reader(data);
+            if (reader.varint().toJSNumber() !== ExtraTagType.POW_NONCE) {
+                throw new Error('Not a pow nonce field');
+            }
+            if (reader.unreadBytes !== SIZES.KEY) {
+                throw new RangeError('Not enough data available for reading');
+            }
+            const nonce = reader.uint64_t();
+            return new ExtraPowNonce(nonce);
+        }
+        /**
+         * Represents the field as a Buffer
+         * @returns the Buffer representation of the object
+         */
+        toBuffer() {
+            const writer = new bytestream_helper_1.Writer();
+            writer.varint(this.tag);
+            writer.uint64_t(this.m_nonce);
+            return writer.buffer;
+        }
+        /**
+         * Represents the field as a hexadecimal string (blob)
+         * @returns the hexadecimal (blob) representation of the object
+         */
+        toString() {
+            return this.toBuffer().toString('hex');
+        }
+    }
+    ExtraTag.ExtraPowNonce = ExtraPowNonce;
     /**
      * Represents a structured padding field used in the transaction extra field
      */

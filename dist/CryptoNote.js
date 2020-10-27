@@ -206,35 +206,40 @@ class CryptoNote {
      */
     isOurTransactionOutput(transactionPublicKey, output, privateViewKey, publicSpendKey, privateSpendKey, generatePartial) {
         return __awaiter(this, void 0, void 0, function* () {
-            const derivedKey = yield Types_1.TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, privateViewKey);
-            const publicEphemeral = yield Types_1.TurtleCoinCrypto.derivePublicKey(derivedKey, output.index, publicSpendKey);
-            if (publicEphemeral === output.key) {
-                output.input = {
-                    publicEphemeral,
-                    transactionKeys: {
-                        publicKey: transactionPublicKey,
-                        derivedKey,
-                        outputIndex: output.index
+            try {
+                const derivedKey = yield Types_1.TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, privateViewKey);
+                const publicEphemeral = yield Types_1.TurtleCoinCrypto.derivePublicKey(derivedKey, output.index, publicSpendKey);
+                if (publicEphemeral === output.key) {
+                    output.input = {
+                        publicEphemeral,
+                        transactionKeys: {
+                            publicKey: transactionPublicKey,
+                            derivedKey,
+                            outputIndex: output.index
+                        }
+                    };
+                    if (privateSpendKey) {
+                        /*  If we are forcing the generation of a partial key image then we
+                            use the supplied private spend key in the key generation instead of
+                            the privateEphemeral that we don't have
+                         */
+                        const privateEphemeral = (generatePartial)
+                            ? privateSpendKey
+                            : yield Types_1.TurtleCoinCrypto.deriveSecretKey(derivedKey, output.index, privateSpendKey);
+                        const derivedPublicEphemeral = yield Types_1.TurtleCoinCrypto.secretKeyToPublicKey(privateEphemeral);
+                        if (derivedPublicEphemeral !== publicEphemeral && !generatePartial) {
+                            throw new Error('Incorrect private spend key supplied');
+                        }
+                        const keyImage = yield Types_1.TurtleCoinCrypto.generateKeyImage(publicEphemeral, privateEphemeral);
+                        output.input.privateEphemeral = privateEphemeral;
+                        output.keyImage = keyImage;
+                        output.isPartialKeyImage = (generatePartial) || false;
                     }
-                };
-                if (privateSpendKey) {
-                    /*  If we are forcing the generation of a partial key image then we
-                        use the supplied private spend key in the key generation instead of
-                        the privateEphemeral that we don't have
-                     */
-                    const privateEphemeral = (generatePartial)
-                        ? privateSpendKey
-                        : yield Types_1.TurtleCoinCrypto.deriveSecretKey(derivedKey, output.index, privateSpendKey);
-                    const derivedPublicEphemeral = yield Types_1.TurtleCoinCrypto.secretKeyToPublicKey(privateEphemeral);
-                    if (derivedPublicEphemeral !== publicEphemeral && !generatePartial) {
-                        throw new Error('Incorrect private spend key supplied');
-                    }
-                    const keyImage = yield Types_1.TurtleCoinCrypto.generateKeyImage(publicEphemeral, privateEphemeral);
-                    output.input.privateEphemeral = privateEphemeral;
-                    output.keyImage = keyImage;
-                    output.isPartialKeyImage = (generatePartial) || false;
+                    return output;
                 }
-                return output;
+            }
+            catch (e) {
+                throw new Error('Not our output');
             }
             throw new Error('Not our output');
         });
@@ -490,6 +495,7 @@ class CryptoNote {
                 (this.m_config.maximumOutputsPerTransaction || Config_1.Config.maximumOutputsPerTransaction)) {
                 throw new RangeError('Tried to create a transaction with more outputs than permitted');
             }
+            let diff = this.m_config.TransactionPowDifficulty || Config_1.Config.TransactionPowDifficulty;
             if (feeAmount === 0) {
                 if (transactionInputs.length < 12) {
                     throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of [' +
@@ -500,6 +506,17 @@ class CryptoNote {
                     throw new Error('Sending a [0] fee transaction (fusion) requires the ' +
                         'correct input:output ratio be met');
                 }
+                diff = this.m_config.FusionTransactionPoWDifficultyV2 || Config_1.Config.FusionTransactionPoWDifficultyV2;
+            }
+            else {
+                const factored_out = this.m_config.MultiplierTransactionPoWDifficultyFactoredOutV1 ||
+                    Config_1.Config.MultiplierTransactionPoWDifficultyFactoredOutV1;
+                const based_diff = this.m_config.TransactionPoWDifficultyDynV1 ||
+                    Config_1.Config.TransactionPoWDifficultyDynV1;
+                const per_io_diff = this.m_config.MultiplierTransactionPoWDifficultyPerIOV1 ||
+                    Config_1.Config.MultiplierTransactionPoWDifficultyPerIOV1;
+                diff = based_diff + (transactionInputs.length + transactionOutputs.outputs.length * factored_out) *
+                    per_io_diff;
             }
             const tx = new Transaction_1.Transaction();
             tx.unlockTime = Types_1.BigInteger(unlockTime);
@@ -530,6 +547,7 @@ class CryptoNote {
             for (const output of transactionOutputs.outputs) {
                 tx.outputs.push(new Types_1.TransactionOutputs.KeyOutput(output.amount, output.key));
             }
+            yield tx.generateTxProofOfWork(diff);
             if (tx.extra.length > (this.m_config.maximumExtraSize || Config_1.Config.maximumExtraSize)) {
                 throw new Error('Transaction extra exceeds the limit of [' +
                     (this.m_config.maximumExtraSize || Config_1.Config.maximumExtraSize) + '] bytes');

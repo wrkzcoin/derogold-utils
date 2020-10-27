@@ -1,5 +1,6 @@
 /// <reference types="node" />
 import { ExtraNonceTag } from '../Types';
+import { BigInteger } from 'big-integer';
 export declare namespace ExtraTag {
     /** @ignore */
     import IExtraNonce = ExtraNonceTag.IExtraNonce;
@@ -11,10 +12,11 @@ export declare namespace ExtraTag {
         PUBKEY = 1,
         NONCE = 2,
         MERGED_MINING = 3,
-        RECIPIENT_PUBLIC_VIEW_KEY = 4,
-        RECIPIENT_PUBLIC_SPEND_KEY = 5,
-        TRANSACTION_PRIVATE_KEY = 6,
-        POOL_NONCE = 7
+        POW_NONCE = 4,
+        RECIPIENT_PUBLIC_VIEW_KEY = 5,
+        RECIPIENT_PUBLIC_SPEND_KEY = 6,
+        TRANSACTION_PRIVATE_KEY = 7,
+        POOL_NONCE = 8
     }
     /**
      * Abstract interface for structured data in the transaction extra field
@@ -38,6 +40,24 @@ export declare namespace ExtraTag {
          * @returns the hexadecimal (blob) representation of the object
          */
         abstract toString(): string;
+    }
+    class ExtraPowNonce implements IExtraTag {
+        get tag(): ExtraTagType;
+        get size(): number;
+        static from(data: Buffer | string): ExtraPowNonce;
+        private readonly m_tag;
+        private m_nonce;
+        constructor(nonce: BigInteger);
+        /**
+         * Represents the field as a Buffer
+         * @returns the Buffer representation of the object
+         */
+        toBuffer(): Buffer;
+        /**
+         * Represents the field as a hexadecimal string (blob)
+         * @returns the hexadecimal (blob) representation of the object
+         */
+        toString(): string;
     }
     /**
      * Represents a structured padding field used in the transaction extra field

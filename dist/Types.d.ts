@@ -1,4 +1,4 @@
-import { Crypto } from 'turtlecoin-crypto';
+import { Crypto } from 'wrkzcoin-crypto';
 import * as BigInteger from 'big-integer';
 /** @ignore */
 declare const TurtleCoinCrypto: Crypto;
@@ -9,7 +9,7 @@ export declare enum PortableStorageConstants {
     SIGNATURE_B = 16908545,
     VERSION = 1
 }
-export { ICryptoConfig } from 'turtlecoin-crypto';
+export { ICryptoConfig } from 'wrkzcoin-crypto';
 export * from './Types/IExtraNonce';
 export * from './Types/IExtraTag';
 export * from './Types/ITransactionInput';

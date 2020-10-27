@@ -1,7 +1,7 @@
 {
-  "name": "turtlecoin-utils",
+  "name": "wrkzcoin-utils",
   "version": "3.0.3",
-  "description": "A Typescript/CommonJS collection of utilities useful for TurtleCoin developers",
+  "description": "A Typescript/CommonJS collection of utilities useful for WrkzCoin developers",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -14,7 +14,7 @@
   "scripts": {
     "build": "./node_modules/.bin/tsc",
     "docs": "./node_modules/.bin/typedoc && touch docs/.nojekyll && git restore docs/CNAME",
-    "prepare": "npm --scripts-prepend-node-path run build",
+    "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run docs",
     "style": "./node_modules/.bin/eslint src/**/*.ts src/*.ts test/*.ts",
     "fix-style": "./node_modules/.bin/eslint --fix src/**/*.ts src/*.ts test/*.ts",
@@ -23,16 +23,16 @@
     "test-js": "env FORCE_JS=1 ./node_modules/.bin/mocha --exit --timeout 30000 --require ts-node/register test/test.ts"
   },
   "keywords": [
-    "TurtleCoin",
+    "WrkzCoin",
     "Utilities"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/turtlecoin/turtlecoin-utils.git"
+    "url": "git+https://github.com/wrkzcoin/wrkzcoin-utils.git"
   },
-  "homepage": "https://utils.turtlecoin.dev",
+  "homepage": "https://wrkzcoin-utils.wrkz.work",
   "bugs": {
-    "url": "https://github.com/turtlecoin/turtlecoin-utils/issues"
+    "url": "https://github.com/wrkzcoin/wrkzcoin-utils/issues"
   },
   "author": "Brandon Lehmann <brandonlehmann@gmail.com>",
   "contributors": [
