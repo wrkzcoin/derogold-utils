@@ -6,7 +6,7 @@ export {Address} from './Address';
 export {AddressPrefix} from './AddressPrefix';
 export {Block} from './Block';
 export {BlockTemplate} from './BlockTemplate';
-export {Crypto} from 'turtlecoin-crypto';
+export {Crypto} from 'wrkzcoin-crypto';
 export {CryptoNote} from './CryptoNote';
 export {Interfaces} from './Types/ITransaction';
 export {LevinPacket, LevinProtocol} from './LevinPacket';
