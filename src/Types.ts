@@ -2,7 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 
-import {Crypto} from 'wrkzcoin-crypto';
+import {Crypto} from 'turtlecoin-crypto';
 import * as BigInteger from 'big-integer';
 
 /** @ignore */
