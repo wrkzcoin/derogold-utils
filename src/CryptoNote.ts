@@ -658,16 +658,6 @@ export class CryptoNote implements ICryptoNote {
                 throw new Error('Sending a [0] fee transaction (fusion) requires the ' +
                     'correct input:output ratio be met');
             }
-            diff = this.m_config.FusionTransactionPoWDifficultyV2 || Config.FusionTransactionPoWDifficultyV2;
-        } else {
-            const factored_out = this.m_config.MultiplierTransactionPoWDifficultyFactoredOutV1 ||
-                                 Config.MultiplierTransactionPoWDifficultyFactoredOutV1;
-            const based_diff = this.m_config.TransactionPoWDifficultyDynV1 ||
-                               Config.TransactionPoWDifficultyDynV1;
-            const per_io_diff = this.m_config.MultiplierTransactionPoWDifficultyPerIOV1 ||
-                                Config.MultiplierTransactionPoWDifficultyPerIOV1;
-            diff = based_diff + (transactionInputs.length + transactionOutputs.outputs.length * factored_out) *
-                 per_io_diff;
         }
 
         const tx = new Transaction();
