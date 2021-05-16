@@ -2,11 +2,9 @@
 //
 // Please see the included LICENSE file for more information.
 
-
-import {Reader, Writer} from 'bytestream-helper';
-import {ExtraNonceTag, TurtleCoinCrypto} from '../Types';
-import {Common} from '../Common';
-import {BigInteger} from 'big-integer';
+import { Reader, Writer } from '@turtlecoin/bytestream';
+import { ExtraNonceTag } from '../Types';
+import { Common } from '../Common';
 
 /** @ignore */
 enum SIZES {
@@ -25,7 +23,6 @@ export namespace ExtraTag {
         PUBKEY,
         NONCE,
         MERGED_MINING,
-        POW_NONCE,
         RECIPIENT_PUBLIC_VIEW_KEY,
         RECIPIENT_PUBLIC_SPEND_KEY,
         TRANSACTION_PRIVATE_KEY,
@@ -57,60 +54,6 @@ export namespace ExtraTag {
          * @returns the hexadecimal (blob) representation of the object
          */
         public abstract toString(): string;
-    }
-
-    export class ExtraPowNonce implements IExtraTag {
-        public get tag (): ExtraTagType {
-            return this.m_tag;
-        }
-
-        public get size (): number {
-            return 9;
-        }
-
-        public static from(data: Buffer | string): ExtraPowNonce {
-            const reader = new Reader(data);
-
-            if (reader.varint().toJSNumber() !== ExtraTagType.POW_NONCE) {
-                throw new Error('Not a pow nonce field');
-            }
-
-            if (reader.unreadBytes !== SIZES.KEY) {
-                throw new RangeError('Not enough data available for reading');
-            }
-
-            const nonce = reader.uint64_t();
-
-            return new ExtraPowNonce(nonce);
-        }
-
-        private readonly m_tag: ExtraTagType = ExtraTagType.POW_NONCE;
-        private m_nonce: BigInteger;
-
-        constructor(nonce: BigInteger) {
-            this.m_nonce = nonce;
-        }
-
-        /**
-         * Represents the field as a Buffer
-         * @returns the Buffer representation of the object
-         */
-        public toBuffer(): Buffer {
-            const writer = new Writer();
-
-            writer.varint(this.tag);
-            writer.uint64_t(this.m_nonce);
-
-            return writer.buffer;
-        }
-
-        /**
-         * Represents the field as a hexadecimal string (blob)
-         * @returns the hexadecimal (blob) representation of the object
-         */
-        public toString(): string {
-            return this.toBuffer().toString('hex');
-        }
     }
 
     /**

@@ -18,9 +18,6 @@ export interface ICoinConfig {
     activateFeePerByteTransactions?: boolean;
     feePerByte?: number;
     feePerByteChunkSize?: number;
-    TransactionPowDifficulty?: number;
-    FusionTransactionPowDifficulty?: number;
-    TransactionPowHeight?: number;
     maximumLedgerTransactionSize?: number;
     maximumLedgerAPDUPayloadSize?: number;
     minimumLedgerVersion?: string;
@@ -44,32 +41,28 @@ export interface ICoinRunningConfig extends ICoinConfig {
     activateFeePerByteTransactions: boolean;
     feePerByte: number;
     feePerByteChunkSize: number;
-    TransactionPowDifficulty: number;
-    TransactionPowHeight: number;
     maximumLedgerTransactionSize: number;
     maximumLedgerAPDUPayloadSize: number;
     minimumLedgerVersion: string;
     ledgerDebug: boolean
 }
 
-/** @ignore TODO: Update fork height TransactionPoWHeightDynV1 */
+/** @ignore */
 export const Config: ICoinRunningConfig = {
     activateParentBlockVersion: 2,
     coinUnitPlaces: 2,
-    addressPrefix: 8411,
+    addressPrefix: 3914525,
     keccakIterations: 1,
-    defaultNetworkFee: 1000000,
+    defaultNetworkFee: 10,
     fusionMinInputCount: 12,
     fusionMinInOutCountRatio: 4,
     mmMiningBlockVersion: 2,
-    maximumOutputAmount: 100000000000000,
+    maximumOutputAmount: 100000000000,
     maximumOutputsPerTransaction: 90,
     maximumExtraSize: 1024,
-    activateFeePerByteTransactions: false,
+    activateFeePerByteTransactions: true,
     feePerByte: 1.953125,
     feePerByteChunkSize: 256,
-    TransactionPowDifficulty: 17000,
-    TransactionPowHeight: 2370000,
     maximumLedgerTransactionSize: 38400,
     maximumLedgerAPDUPayloadSize: 480,
     minimumLedgerVersion: '1.2.0',

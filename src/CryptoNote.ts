@@ -17,6 +17,7 @@ import {
     ICryptoConfig
 } from './Types';
 import { Transaction } from './Transaction';
+import { EventEmitter } from 'events';
 import * as Numeral from 'numeral';
 import ICryptoNote = CryptoNoteInterfaces.ICryptoNote;
 
@@ -28,7 +29,7 @@ const UINT64_MAX = BigInteger(2).pow(64);
  * various other cryptographic items during the receipt or transfer
  * of funds on the network
  */
-export class CryptoNote implements ICryptoNote {
+export class CryptoNote extends EventEmitter implements ICryptoNote {
     protected m_config: ICoinRunningConfig = Config;
 
     /**
@@ -39,6 +40,8 @@ export class CryptoNote implements ICryptoNote {
      * @param cryptoConfig configuration to allow for overriding the provided cryptographic primitives
      */
     constructor (config?: ICoinConfig, cryptoConfig?: ICryptoConfig) {
+        super();
+
         if (config) {
             this.m_config = Common.mergeConfig(config);
         }
@@ -46,6 +49,33 @@ export class CryptoNote implements ICryptoNote {
         if (cryptoConfig) {
             TurtleCoinCrypto.userCryptoFunctions = cryptoConfig;
         }
+    }
+
+    /**
+     * Emits an event if we have sent a command to the cryptographic library that is likely awaiting
+     * manual user confirmation on the device
+     * @param event
+     * @param listener
+     */
+    public on(event: 'user_confirm', listener: () => void): this;
+
+    /**
+     * Emits an event when the underlying cryptographic library receives data
+     * @param event
+     * @param listener
+     */
+    public on(event: 'transport_receive', listener: (data: string) => void): this;
+
+    /**
+     * Emits an event when the underlying cryptographic library sends data
+     * @param event
+     * @param listener
+     */
+    public on(event: 'transport_send', listener: (data: string) => void): this;
+
+    /** @ignore */
+    public on (event: any, listener: (...args: any[]) => void): this {
+        return super.on(event, listener);
     }
 
     /**
@@ -261,50 +291,46 @@ export class CryptoNote implements ICryptoNote {
         privateSpendKey?: string,
         generatePartial?: boolean
     ): Promise<Interfaces.Output> {
-        try {
-            const derivedKey = await TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, privateViewKey);
+        const derivedKey = await TurtleCoinCrypto.generateKeyDerivation(transactionPublicKey, privateViewKey);
 
-            const publicEphemeral = await TurtleCoinCrypto.derivePublicKey(derivedKey, output.index, publicSpendKey);
+        const publicEphemeral = await TurtleCoinCrypto.derivePublicKey(derivedKey, output.index, publicSpendKey);
 
-            if (publicEphemeral === output.key) {
-                output.input = {
-                    publicEphemeral,
-                    transactionKeys: {
-                        publicKey: transactionPublicKey,
-                        derivedKey,
-                        outputIndex: output.index
-                    }
-                };
+        if (publicEphemeral === output.key) {
+            output.input = {
+                publicEphemeral,
+                transactionKeys: {
+                    publicKey: transactionPublicKey,
+                    derivedKey,
+                    outputIndex: output.index
+                }
+            };
 
-                if (privateSpendKey) {
-                    /*  If we are forcing the generation of a partial key image then we
-                        use the supplied private spend key in the key generation instead of
-                        the privateEphemeral that we don't have
-                     */
-                    const privateEphemeral = (generatePartial)
-                        ? privateSpendKey
-                        : await TurtleCoinCrypto.deriveSecretKey(
-                            derivedKey, output.index, privateSpendKey);
+            if (privateSpendKey) {
+                /*  If we are forcing the generation of a partial key image then we
+                    use the supplied private spend key in the key generation instead of
+                    the privateEphemeral that we don't have
+                 */
+                const privateEphemeral = (generatePartial)
+                    ? privateSpendKey
+                    : await TurtleCoinCrypto.deriveSecretKey(
+                        derivedKey, output.index, privateSpendKey);
 
-                    const derivedPublicEphemeral = await TurtleCoinCrypto.secretKeyToPublicKey(privateEphemeral);
+                const derivedPublicEphemeral = await TurtleCoinCrypto.secretKeyToPublicKey(privateEphemeral);
 
-                    if (derivedPublicEphemeral !== publicEphemeral && !generatePartial) {
-                        throw new Error('Incorrect private spend key supplied');
-                    }
-
-                    const keyImage = await TurtleCoinCrypto.generateKeyImage(publicEphemeral, privateEphemeral);
-
-                    output.input.privateEphemeral = privateEphemeral;
-
-                    output.keyImage = keyImage;
-
-                    output.isPartialKeyImage = (generatePartial) || false;
+                if (derivedPublicEphemeral !== publicEphemeral && !generatePartial) {
+                    throw new Error('Incorrect private spend key supplied');
                 }
 
-                return output;
+                const keyImage = await TurtleCoinCrypto.generateKeyImage(publicEphemeral, privateEphemeral);
+
+                output.input.privateEphemeral = privateEphemeral;
+
+                output.keyImage = keyImage;
+
+                output.isPartialKeyImage = (generatePartial) || false;
             }
-        } catch (e) {
-            throw new Error('Not our output');
+
+            return output;
         }
 
         throw new Error('Not our output');
@@ -500,7 +526,6 @@ export class CryptoNote implements ICryptoNote {
 
         for (let i = 0; i < prepared.inputs.length; i++) {
             const input = prepared.inputs[i];
-
             const srcKeys: string[] = [];
 
             if (!input.input.privateEphemeral) {
@@ -648,7 +673,6 @@ export class CryptoNote implements ICryptoNote {
             throw new RangeError('Tried to create a transaction with more outputs than permitted');
         }
 
-        let diff = this.m_config.TransactionPowDifficulty || Config.TransactionPowDifficulty;
         if (feeAmount === 0) {
             if (transactionInputs.length < 12) {
                 throw new Error('Sending a [0] fee transaction (fusion) requires a minimum of [' +
@@ -675,7 +699,8 @@ export class CryptoNote implements ICryptoNote {
         if (extraData) {
             if (!(extraData instanceof Buffer)) {
                 extraData = (typeof extraData === 'string')
-                    ? Buffer.from(extraData) : Buffer.from(JSON.stringify(extraData));
+                    ? Buffer.from(extraData)
+                    : Buffer.from(JSON.stringify(extraData));
             }
 
             tx.addData(extraData);
@@ -698,10 +723,8 @@ export class CryptoNote implements ICryptoNote {
         for (const output of transactionOutputs.outputs) {
             tx.outputs.push(new TransactionOutputs.KeyOutput(output.amount, output.key));
         }
-        /*
-        await tx.generateTxProofOfWork(diff);
-        */
-        if (tx.extra.length > (this.config.maximumExtraSize || Config.maximumExtraSize)) {
+
+        if (tx.extra.length > (this.m_config.maximumExtraSize || Config.maximumExtraSize)) {
             throw new Error('Transaction extra exceeds the limit of [' +
                 (this.m_config.maximumExtraSize || Config.maximumExtraSize) + '] bytes');
         }

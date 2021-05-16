@@ -13,7 +13,7 @@ import {
     TransactionOutputs,
     TurtleCoinCrypto
 } from './Types';
-import { Reader, Writer } from 'bytestream-helper';
+import { Reader, Writer } from '@turtlecoin/bytestream';
 
 /** @ignore */
 const TransactionVersion2Suffix = 'bc36789e7a1e281436464229828f817d6612f7b477d66591ff96a9e064bcc98a' +
@@ -535,7 +535,7 @@ export class Transaction {
     protected m_unlockTime: BigInteger.BigInteger = BigInteger.zero;
     protected m_rawExtra: Buffer = Buffer.alloc(0);
     protected m_readonly = false;
-    public m_extra: ExtraTag.IExtraTag[] = [];
+    protected m_extra: ExtraTag.IExtraTag[] = [];
     protected m_cached: Cache = { prefix: '', prefixHash: '', blob: '', hash: '' };
 
     /** @ignore */
@@ -663,103 +663,6 @@ export class Transaction {
     }
 
     /**
-     * generateTxProofOfWork
-     * @param diff difficulty for generateTxProofOfWork
-     */
-
-    public async generateTxProofOfWork (diff: number) {
-        if (this.readonly) {
-            throw new Error('Transaction is read-only');
-        }
-
-        let nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(0));
-
-        let result: ExtraTag.IExtraTag[] = [];
-
-        for (const tag of this.m_extra) {
-            if (tag.tag !== nonceTag.tag) {
-                result.push(tag);
-            }
-        }
-
-        this.m_extra = result;
-        this.m_extra.push(nonceTag);
-
-        const prefix = this.prefix;
-
-        /* Find the pow nonce tag and nonce hole */
-        const tagOffset = prefix.indexOf('040000000000000000');
-
-        /* Then add 2 to skip the tag. */
-        const nonceOffset = tagOffset + 2;
-
-        /* Actual offset is half the nonce offset, since this is hex, but it
-         * will be deserialized into bytes taking up half the space */
-        const unserializedOffset = nonceOffset / 2;
-
-        const nonce = await TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset, diff);
-
-        nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(nonce));
-
-        result = [];
-
-        for (const tag of this.m_extra) {
-            if (tag.tag !== nonceTag.tag) {
-                result.push(tag);
-            }
-        }
-
-        this.m_extra = result;
-        this.m_extra.push(nonceTag);
-    }
-
-    public async generateTxProofOfWork() {
-        if (this.readonly) {
-            throw new Error('Transaction is read-only');
-        }
-
-        let nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(0));
-
-        let result: ExtraTag.IExtraTag[] = [];
-
-        for (const tag of this.m_extra) {
-            if (tag.tag !== nonceTag.tag) {
-                result.push(tag);
-            }
-        }
-
-        this.m_extra = result;
-        this.m_extra.push(nonceTag);
-
-        const prefix = this.prefix;
-
-        /* Find the pow nonce tag and nonce hole */
-        const tagOffset = prefix.indexOf("040000000000000000");
-
-        /* Then add 2 to skip the tag. */
-        const nonceOffset = tagOffset + 2;
-
-        /* Actual offset is half the nonce offset, since this is hex, but it
-         * will be deserialized into bytes taking up half the space */
-        const unserializedOffset = nonceOffset / 2;
-
-        const nonce = TurtleCoinCrypto.generateTransactionPow(prefix, unserializedOffset);
-
-        nonceTag = new ExtraTag.ExtraPowNonce(BigInteger(nonce));
-
-        result = [];
-
-        for (const tag of this.m_extra) {
-            if (tag.tag !== nonceTag.tag) {
-                result.push(tag);
-            }
-        }
-
-        this.m_extra = result;
-        this.m_extra.push(nonceTag);
-    }
-
-    /**
      * Returns a buffer representation of the transaction object
      * @param [headerOnly] whether we should return just the prefix or not
      * @returns the buffer representation
@@ -836,7 +739,6 @@ function readExtra (data: Buffer): ExtraTag.IExtraTag[] {
         publicKey: false,
         nonce: false,
         mergedMining: false,
-        powNonce: false,
         transactionPrivateKey: false,
         recipientPublicViewKey: false,
         recipientPublicSpendKey: false,
@@ -934,19 +836,6 @@ function readExtra (data: Buffer): ExtraTag.IExtraTag[] {
                     try {
                         tags.push(ExtraTag.ExtraMergedMining.from(reader.bytes(totalLength)));
                         seen.mergedMining = true;
-                    } catch (e) {
-                        reader.skip();
-                    }
-                } else {
-                    reader.skip();
-                }
-                break;
-            case ExtraTag.ExtraTagType.POW_NONCE:
-                totalLength += 8;
-                if (!seen.powNonce && reader.unreadBytes >= totalLength) {
-                    try {
-                        tags.push(ExtraTag.ExtraPowNonce.from(reader.bytes(totalLength)));
-                        seen.powNonce = true;
                     } catch (e) {
                         reader.skip();
                     }
