@@ -2,7 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 
-import { Crypto } from 'wrkzcoin-crypto';
+import { Crypto } from 'turtlecoin-crypto';
 import * as BigInteger from 'big-integer';
 
 /** @ignore */
@@ -17,7 +17,9 @@ export enum PortableStorageConstants {
     VERSION = 1,
 }
 
-export { ICryptoConfig } from 'wrkzcoin-crypto';
+export * from './Types/PortableStorageValue';
+
+export { ICryptoConfig } from 'turtlecoin-crypto';
 
 export * from './Types/IExtraNonce';
 
