@@ -2,8 +2,8 @@
   "name": "wrkzcoin-utils",
   "version": "3.0.9",
   "description": "A Typescript/CommonJS collection of utilities useful for WrkzCoin developers",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/*",
     "config.json"
