@@ -40,7 +40,13 @@ export interface ICoinRunningConfig extends ICoinConfig {
     feePerByte: number;
     feePerByteChunkSize: number;
     TransactionPowDifficulty: number;
+    FusionTransactionPowDifficulty: number;
     TransactionPowHeight: number;
+    TransactionPoWHeightDynV1: number;
+    TransactionPoWDifficultyDynV1: number;
+    MultiplierTransactionPoWDifficultyPerIOV1: number;
+    MultiplierTransactionPoWDifficultyFactoredOutV1: number;
+    FusionTransactionPoWDifficultyV2: number;
     maximumLedgerTransactionSize: number;
     maximumLedgerAPDUPayloadSize: number;
     minimumLedgerVersion: string;

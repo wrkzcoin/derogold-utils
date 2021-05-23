@@ -6,7 +6,7 @@ import { Config, ICoinConfig, ICoinRunningConfig } from './Config';
 import { Transaction } from './Transaction';
 import { ParentBlock } from './ParentBlock';
 import { TransactionInputs, TransactionOutputs, TurtleCoinCrypto } from './Types';
-import { Reader, Writer } from '@turtlecoin/bytestream';
+import { Reader, Writer } from 'bytestream-helper';
 import { Common } from './Common';
 
 /** @ignore */
@@ -308,8 +308,7 @@ export class Block {
             }
 
             const blockchainBranchDepth = (block.m_parentBlock.minerTransaction.mergedMining)
-                ? block.m_parentBlock.minerTransaction.mergedMining.depth
-                : 0;
+                ? block.m_parentBlock.minerTransaction.mergedMining.depth : 0;
 
             for (let i = 0; i < blockchainBranchDepth; i++) {
                 block.m_parentBlock.blockchainBranch.push(reader.hash());

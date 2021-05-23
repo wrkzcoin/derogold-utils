@@ -3,7 +3,7 @@
 // Please see the included LICENSE file for more information.
 
 import { BigInteger } from '../Types';
-import { Writer } from '@turtlecoin/bytestream';
+import { Writer } from 'bytestream-helper';
 
 export namespace TransactionOutputs {
 
