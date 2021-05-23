@@ -21,7 +21,6 @@ import { AddressPrefix } from './AddressPrefix';
 import { Address } from './Address';
 import * as Numeral from 'numeral';
 import { Transaction } from './Transaction';
-import { EventEmitter } from 'events';
 
 /** @ignore */
 import ICryptoNote = CryptoNoteInterfaces.ICryptoNote;
@@ -41,7 +40,7 @@ const UINT64_MAX = BigInteger(2).pow(64);
  * various other cryptographic items during the receipt or transfer of funds
  * on the network using a Ledger based hardware device
  */
-export class LedgerNote extends EventEmitter implements ICryptoNote {
+export class LedgerNote implements ICryptoNote {
     protected m_config: ICoinRunningConfig = Config;
     private readonly m_ledger: LedgerDevice;
     private m_address: Address = new Address();
@@ -54,15 +53,7 @@ export class LedgerNote extends EventEmitter implements ICryptoNote {
      * @param cryptoConfig configuration to allow for overriding the provided cryptographic primitives
      */
     constructor (transport: Transport, config?: ICoinConfig, cryptoConfig?: ICryptoConfig) {
-        super();
-
         this.m_ledger = new LedgerDevice(transport, config);
-
-        this.m_ledger.on('user_confirm', () => this.emit('user_confirm'));
-
-        this.m_ledger.on('receive', (data: string) => this.emit('transport_receive', data));
-
-        this.m_ledger.on('send', (data: string) => this.emit('transport_send', data));
 
         if (config) {
             this.m_config = Common.mergeConfig(config);
@@ -71,33 +62,6 @@ export class LedgerNote extends EventEmitter implements ICryptoNote {
         if (cryptoConfig) {
             TurtleCoinCrypto.userCryptoFunctions = cryptoConfig;
         }
-    }
-
-    /**
-     * Emits an event if we have sent a command to the cryptographic library that is likely awaiting
-     * manual user confirmation on the device
-     * @param event
-     * @param listener
-     */
-    public on(event: 'user_confirm', listener: () => void): this;
-
-    /**
-     * Emits an event when the underlying cryptographic library receives data
-     * @param event
-     * @param listener
-     */
-    public on(event: 'transport_receive', listener: (data: string) => void): this;
-
-    /**
-     * Emits an event when the underlying cryptographic library sends data
-     * @param event
-     * @param listener
-     */
-    public on(event: 'transport_send', listener: (data: string) => void): this;
-
-    /** @ignore */
-    public on (event: any, listener: (...args: any[]) => void): this {
-        return super.on(event, listener);
     }
 
     /**
@@ -892,8 +856,7 @@ export class LedgerNote extends EventEmitter implements ICryptoNote {
         if (extraData) {
             if (!(extraData instanceof Buffer)) {
                 extraData = (typeof extraData === 'string')
-                    ? Buffer.from(extraData)
-                    : Buffer.from(JSON.stringify(extraData));
+                    ? Buffer.from(extraData) : Buffer.from(JSON.stringify(extraData));
             }
 
             tx.addData(extraData);

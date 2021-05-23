@@ -383,21 +383,19 @@ export namespace TurtleCoindTypes {
         blob: string;
     }
 
-    export interface ITransactionInput {
+    export interface ITransactionInputCoinbase {
+        /**
+         * The block height of the coinbase input
+         */
+        height: number;
+
         /**
          * The input type
          */
         type: string;
     }
 
-    export interface ITransactionInputCoinbase extends ITransactionInput {
-        /**
-         * The block height of the coinbase input
-         */
-        height: number;
-    }
-
-    export interface ITransactionInputKey extends ITransactionInput {
+    export interface ITransactionInputKey {
         /**
          * The amount of the transaction input
          */
@@ -412,16 +410,14 @@ export namespace TurtleCoindTypes {
          * The global index offsets used in the input signature(s)
          */
         offsets: number[];
-    }
 
-    export interface ITransactionOutput {
         /**
-         * The output type
+         * The input type
          */
         type: string;
     }
 
-    export interface ITransactionOutputKey extends ITransactionOutput {
+    export interface ITransactionOutputKey {
         /**
          * The amount of the transaction output
          */
@@ -431,11 +427,12 @@ export namespace TurtleCoindTypes {
          * The destination key of the transaction output
          */
         key: string;
+
+        /**
+         * The output type
+         */
+        type: string;
     }
-
-    export type ITransactionPrefixInput = ITransactionInputCoinbase | ITransactionInputKey;
-
-    export type ITransactionPrefixOutput = ITransactionOutputKey;
 
     export interface ITransactionPrefix {
         /**
@@ -446,12 +443,12 @@ export namespace TurtleCoindTypes {
         /**
          * The transaction input(s)
          */
-        inputs: ITransactionPrefixInput[];
+        inputs: ITransactionInputCoinbase[] | ITransactionInputKey[];
 
         /**
          * The transaction output(s)
          */
-        outputs: ITransactionPrefixOutput[];
+        outputs: ITransactionOutputKey[];
 
         /**
          * The unlock time of the transaction
@@ -552,58 +549,6 @@ export namespace TurtleCoindTypes {
         indexes: number[];
     }
 
-    export interface ISyncTransaction {
-        /**
-         * The transaction hash
-         */
-        hash: string;
-
-        /**
-         * An array of the transaction inputs
-         */
-        inputs: {
-            /**
-             * The amount of the input
-             */
-            amount: number;
-
-            /**
-             * The key image used for the input
-             */
-            keyImage: string;
-        }[];
-
-        /**
-         * An array of the transaction outputs
-         */
-        outputs: {
-            /**
-             * The amount of the output
-             */
-            amount: number;
-
-            /**
-             * The output key
-             */
-            key: string;
-        }[];
-
-        /**
-         * The payment ID of the transaction
-         */
-        paymentId: string;
-
-        /**
-         * The one-time public key of the transaction
-         */
-        publicKey: string;
-
-        /**
-         * The unlock time of the transaction
-         */
-        unlockTime: BigInteger.BigInteger;
-    }
-
     export interface ISyncBlock {
         /**
          * The block hash
@@ -658,6 +603,58 @@ export namespace TurtleCoindTypes {
          * An array of transactions in the block
          */
         transactions: ISyncTransaction[]
+    }
+
+    export interface ISyncTransaction {
+        /**
+         * The transaction hash
+         */
+        hash: string;
+
+        /**
+         * An array of the transaction inputs
+         */
+        inputs: {
+            /**
+             * The amount of the input
+             */
+            amount: number;
+
+            /**
+             * The key image used for the input
+             */
+            keyImage: string;
+        }[];
+
+        /**
+         * An array of the transaction outputs
+         */
+        outputs: {
+            /**
+             * The amount of the output
+             */
+            amount: number;
+
+            /**
+             * The output key
+             */
+            key: string;
+        }[];
+
+        /**
+         * The payment ID of the transaction
+         */
+        paymentId: string;
+
+        /**
+         * The one-time public key of the transaction
+         */
+        publicKey: string;
+
+        /**
+         * The unlock time of the transaction
+         */
+        unlockTime: BigInteger.BigInteger;
     }
 
     export interface ISync {
@@ -718,56 +715,56 @@ export namespace TurtleCoindTypes {
      * Defines the necessary methods that must be implemented by a TurtleCoind interface
      */
     export abstract class ITurtleCoind {
-        public abstract fee(): Promise<IFee>;
+        public abstract async fee(): Promise<IFee>;
 
-        public abstract height(): Promise<IHeight>;
+        public abstract async height(): Promise<IHeight>;
 
-        public abstract info(): Promise<IInfo>;
+        public abstract async info(): Promise<IInfo>;
 
-        public abstract peers(): Promise<IPeers>;
+        public abstract async peers(): Promise<IPeers>;
 
-        public abstract blockCount(): Promise<number>;
+        public abstract async blockCount(): Promise<number>;
 
-        public abstract block(block: string | number): Promise<IBlock>;
+        public abstract async block(block: string | number): Promise<IBlock>;
 
-        public abstract lastBlock(): Promise<IBlock>;
+        public abstract async lastBlock(): Promise<IBlock>;
 
-        public abstract blockHeaders(height: number): Promise<IBlock[]>;
+        public abstract async blockHeaders(height: number): Promise<IBlock[]>;
 
-        public abstract rawBlock(block: string | number): Promise<IRawBlock>;
+        public abstract async rawBlock(block: string | number): Promise<IRawBlock>;
 
-        public abstract blockTemplate(address: string, reserveSize: number): Promise<IBlockTemplate>;
+        public abstract async blockTemplate(address: string, reserveSize: number): Promise<IBlockTemplate>;
 
-        public abstract submitBlock(block: string): Promise<string>;
+        public abstract async submitBlock(block: string): Promise<string>;
 
-        public abstract submitTransaction(transaction: string): Promise<string>;
+        public abstract async submitTransaction(transaction: string): Promise<string>;
 
-        public abstract transaction(hash: string): Promise<ITransaction>;
+        public abstract async transaction(hash: string): Promise<ITransaction>;
 
-        public abstract rawTransaction(hash: string): Promise<string>;
+        public abstract async rawTransaction(hash: string): Promise<string>;
 
-        public abstract transactionPool(): Promise<TransactionSummary[]>;
+        public abstract async transactionPool(): Promise<TransactionSummary[]>;
 
-        public abstract rawTransactionPool(): Promise<string[]>;
+        public abstract async rawTransactionPool(): Promise<string[]>;
 
-        public abstract transactionPoolChanges(
+        public abstract async transactionPoolChanges(
             lastKnownBlock: string,
             transactions: string[]): Promise<ITransactionPoolDelta>;
 
-        public abstract transactionsStatus(transactions: string[]): Promise<ITransactionsStatus>;
+        public abstract async transactionsStatus(transactions: string[]): Promise<ITransactionsStatus>;
 
-        public abstract randomIndexes(amounts: number[], count: number): Promise<IRandomOutput[]>;
+        public abstract async randomIndexes(amounts: number[], count: number): Promise<IRandomOutput[]>;
 
-        public abstract indexes(startHeight: number, endHeight: number): Promise<ITransactionIndexes[]>;
+        public abstract async indexes(startHeight: number, endHeight: number): Promise<ITransactionIndexes[]>;
 
-        public abstract sync(
+        public abstract async sync(
             checkpoints: string[],
             height: number,
             timestamp: number,
             skipCoinbaseTransactions: boolean,
             count: number): Promise<ISync>;
 
-        public abstract rawSync(
+        public abstract async rawSync(
             checkpoints: string[],
             height: number,
             timestamp: number,

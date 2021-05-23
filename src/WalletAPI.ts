@@ -473,14 +473,13 @@ t     * Deletes a previous prepared transaction
     ): Promise<WalletAPITypes.ISendTransactionResult> {
         amount = toAtomicUnits(amount, this.m_decimalDivisor);
 
-        const request: WalletAPITypes.IBasicRequest = {
+        const request = {
             destination: address,
-            amount: amount
+            amount: amount,
+            paymentID: paymentId || false
         };
 
-        if (paymentId) {
-            request.paymentID = paymentId;
-        }
+        if (!request.paymentID) delete request.paymentID;
 
         const response = await this.post('transactions/prepare/basic', request);
 
@@ -599,14 +598,13 @@ t     * Deletes a previous prepared transaction
     ): Promise<WalletAPITypes.ISendTransactionResult> {
         amount = toAtomicUnits(amount, this.m_decimalDivisor);
 
-        const request: WalletAPITypes.IBasicRequest = {
+        const request = {
             destination: address,
-            amount: amount
+            amount: amount,
+            paymentID: paymentId || false
         };
 
-        if (paymentId) {
-            request.paymentID = paymentId;
-        }
+        if (!request.paymentID) delete request.paymentID;
 
         const response = await this.post('transactions/send/basic', request);
 
@@ -861,6 +859,6 @@ function toAtomicUnits (amount: number, decimalDivisor: number): number {
 
 /** @ignore */
 function isHex (str: string): boolean {
-    const regex = /^[0-9a-fA-F]+$/;
+    const regex = new RegExp('^[0-9a-fA-F]+$');
     return regex.test(str);
 }

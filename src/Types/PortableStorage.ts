@@ -2,8 +2,18 @@
 //
 // Please see the included LICENSE file for more information.
 
-import { Reader, Writer } from '@turtlecoin/bytestream';
-import { PortableStorageConstants, PortableStoreValue } from '../Types';
+import { Reader, Writer } from 'bytestream-helper';
+import { BigInteger, PortableStorageConstants } from '../Types';
+
+/** @ignore */
+type PortableStoreValue =
+    BigInteger.BigInteger |
+    Buffer |
+    PortableStorage |
+    PortableStorage[] |
+    string |
+    string[] |
+    boolean;
 
 /** @ignore */
 export enum StorageType {

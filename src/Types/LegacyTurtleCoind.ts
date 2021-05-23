@@ -6,187 +6,6 @@ import * as BigInteger from 'big-integer';
 
 /** @ignore */
 export namespace LegacyTurtleCoindTypes {
-    export interface ITransactionOutput {
-        /**
-         * the amount of the output
-         */
-        amount: number;
-        target: {
-            data: {
-                /**
-                 * the one-time output key
-                 */
-                key: string;
-            },
-            /**
-             * the type of the output
-             */
-            type: string;
-        }
-    }
-
-    export interface ITransactionDetailOutput {
-        /**
-         * the global index of the output
-         */
-        globalIndex: number;
-        /**
-         * the output data
-         */
-        output: ITransactionOutput;
-    }
-
-    export interface ITransactionExtraDetail {
-        /**
-         * The transaction nonce
-         */
-        nonce?: number[];
-        /**
-         * The transaction public key
-         */
-        publicKey: string;
-        /**
-         * The hex representation of the raw extra in the transaction
-         */
-        raw: string;
-    }
-
-    export interface ITransactionDetailInputCoinbase {
-        /**
-         * The input amount
-         */
-        amount: number;
-        input: {
-            /**
-             * The height for which this input was generated
-             */
-            height: number;
-        }
-    }
-
-    export interface ITransactionDetailInputKeyInput {
-        /**
-         * the amount of the input
-         */
-        amount: number;
-        /**
-         * the key image of the input
-         */
-        k_image: string;
-        /**
-         * The output offsets used in mixing for this input
-         */
-        key_offsets: number[];
-    }
-
-    export interface ITransactionDetailInputKeyOutput {
-        /**
-         * the number (index) of the output
-         */
-        number: number;
-        /**
-         * The transaction hash of the output
-         */
-        transactionHash: string;
-    }
-
-    export interface ITransactionDetailInputKey {
-        /**
-         * The input data
-         */
-        input: ITransactionDetailInputKeyInput;
-        /**
-         * The number of mixins used for this input
-         */
-        mixin: number;
-        /**
-         * output information of this input
-         */
-        output: ITransactionDetailInputKeyOutput;
-    }
-
-    export interface ITransactionDetailInput {
-        /**
-         * The transaction input data
-         */
-        data: ITransactionDetailInputCoinbase | ITransactionDetailInputKey;
-        /**
-         * The transaction input type
-         */
-        type: string;
-    }
-
-    export interface ITransactionDetail {
-        /**
-         * The hash of the block the transaction is in
-         */
-        blockHash: string;
-        /**
-         * The index of the block the transaction is in
-         */
-        blockIndex: number;
-        /**
-         * The extra data contained in the transaction
-         */
-        extra: ITransactionExtraDetail;
-        /**
-         * The Transaction fee
-         */
-        fee: number;
-        /**
-         * The transaction hash
-         */
-        hash: string;
-        /**
-         * Whether the transaction is in the blockchain or not
-         */
-        inBlockchain: boolean;
-        /**
-         * The inputs of the transaction
-         */
-        inputs: ITransactionDetailInput[];
-        /**
-         * The number of mixins used in the transaction's ring signatures
-         */
-        mixin: number;
-        /**
-         * The outputs of the transaction
-         */
-        outputs: ITransactionDetailOutput[];
-        /**
-         * The paymentId of the transaction
-         */
-        paymentId: string;
-        /**
-         * The ring signatures of the inputs of the transaction
-         */
-        signatures: string[];
-        /**
-         * The size in bytes of the transaction signatures
-         */
-        signaturesSize: number;
-        /**
-         * The size in bytes of the transaction
-         */
-        size: number;
-        /**
-         * The timestamp of the transaction (inferred from block timestamp)
-         */
-        timestamp: number;
-        /**
-         * The total amount of the transaction inputs
-         */
-        totalInputsAmount: number;
-        /**
-         * The total amount of the transaction outputs
-         */
-        totalOutputsAmount: number;
-        /**
-         * The unlock time of the transaction
-         */
-        unlockTime: BigInteger.BigInteger;
-    }
-
     export interface IBlockDetails {
         /**
          * The number of already generated coins in the blockchain (aka. circulation)
@@ -262,6 +81,157 @@ export namespace LegacyTurtleCoindTypes {
         transactionsCumulativeSize: number;
     }
 
+    export interface ITransactionDetail {
+        /**
+         * The hash of the block the transaction is in
+         */
+        blockHash: string;
+        /**
+         * The index of the block the transaction is in
+         */
+        blockIndex: number;
+        /**
+         * The extra data contained in the transaction
+         */
+        extra: ITransactionExtraDetail;
+        /**
+         * The Transaction fee
+         */
+        fee: number;
+        /**
+         * The transaction hash
+         */
+        hash: string;
+        /**
+         * Whether the transaction is in the blockchain or not
+         */
+        inBlockchain: boolean;
+        /**
+         * The inputs of the transaction
+         */
+        inputs: ITransactionDetailInput[];
+        /**
+         * The number of mixins used in the transaction's ring signatures
+         */
+        mixin: number;
+        /**
+         * The outputs of the transaction
+         */
+        outputs: ITransactionDetailOutput[];
+        /**
+         * The paymentId of the transaction
+         */
+        paymentId: string;
+        /**
+         * The ring signatures of the inputs of the transaction
+         */
+        signatures: string[];
+        /**
+         * The size in bytes of the transaction signatures
+         */
+        signaturesSize: number;
+        /**
+         * The size in bytes of the transaction
+         */
+        size: number;
+        /**
+         * The timestamp of the transaction (inferred from block timestamp)
+         */
+        timestamp: number;
+        /**
+         * The total amount of the transaction inputs
+         */
+        totalInputsAmount: number;
+        /**
+         * The total amount of the transaction outputs
+         */
+        totalOutputsAmount: number;
+        /**
+         * The unlock time of the transaction
+         */
+        unlockTime: BigInteger.BigInteger;
+    }
+
+    export interface ITransactionDetailInput {
+        /**
+         * The transaction input data
+         */
+        data: ITransactionDetailInputCoinbase | ITransactionDetailInputKey;
+        /**
+         * The transaction input type
+         */
+        type: string;
+    }
+
+    export interface ITransactionDetailInputCoinbase {
+        /**
+         * The input amount
+         */
+        amount: number;
+        input: {
+            /**
+             * The height for which this input was generated
+             */
+            height: number;
+        }
+    }
+
+    export interface ITransactionDetailInputKey {
+        /**
+         * The input data
+         */
+        input: ITransactionDetailInputKeyInput;
+        /**
+         * The number of mixins used for this input
+         */
+        mixin: number;
+        /**
+         * output information of this input
+         */
+        output: ITransactionDetailInputKeyOutput;
+    }
+
+    export interface ITransactionDetailInputKeyInput {
+        /**
+         * the amount of the input
+         */
+        amount: number;
+        /**
+         * the key image of the input
+         */
+        k_image: string;
+        /**
+         * The output offsets used in mixing for this input
+         */
+        key_offsets: number[];
+    }
+
+    export interface ITransactionDetailInputKeyOutput {
+        /**
+         * the number (index) of the output
+         */
+        number: number;
+        /**
+         * The transaction hash of the output
+         */
+        transactionHash: string;
+    }
+
+    export interface ITransactionExtraDetail {
+        /**
+         * The transaction nonce
+         */
+        nonce?: number[];
+        /**
+         * The transaction public key
+         */
+        publicKey: string;
+        /**
+         * The hex representation of the raw extra in the transaction
+         */
+        raw: string;
+    }
+
     export interface IBlocksDetailedResponse {
         /**
          * an array of blocks
@@ -285,23 +255,34 @@ export namespace LegacyTurtleCoindTypes {
         status: string;
     }
 
-    export interface ITransactionSummary {
+    export interface ITransactionDetailOutput {
         /**
-         * the transaction hash
+         * the global index of the output
          */
-        hash: string;
+        globalIndex: number;
         /**
-         * the fee of the transaction
+         * the output data
          */
-        fee: number;
+        output: ITransactionOutput;
+    }
+
+    export interface ITransactionOutput {
         /**
-         * the total amount of the outputs of the transaction
+         * the amount of the output
          */
-        amount_out: number;
-        /**
-         * the size of the transaction in bytes
-         */
-        size: number;
+        amount: number;
+        target: {
+            data: {
+                /**
+                 * the one-time output key
+                 */
+                key: string;
+            },
+            /**
+             * the type of the output
+             */
+            type: string;
+        }
     }
 
     export interface IBlockSummary {
@@ -389,6 +370,25 @@ export namespace LegacyTurtleCoindTypes {
          * the total size of the transactions included in the block in bytes
          */
         transactionsCumulativeSize: number;
+    }
+
+    export interface ITransactionSummary {
+        /**
+         * the transaction hash
+         */
+        hash: string;
+        /**
+         * the fee of the transaction
+         */
+        fee: number;
+        /**
+         * the total amount of the outputs of the transaction
+         */
+        amount_out: number;
+        /**
+         * the size of the transaction in bytes
+         */
+        size: number;
     }
 
     export interface IBlockHeader {
@@ -639,6 +639,78 @@ export namespace LegacyTurtleCoindTypes {
         transactionsUnknown: string[];
     }
 
+    export interface IBlockLite {
+        /**
+         * the hexrepsentation of the block
+         */
+        block: string;
+        /**
+         * the block hash
+         */
+        hash: string;
+        /**
+         * the transactions included in the block
+         */
+        transactions: IBlockLiteTransaction[];
+    }
+
+    export interface IBlockLiteResponse {
+        /**
+         * the current height of the daemon
+         */
+        currentHeight: number;
+        /**
+         * the offset of the response
+         */
+        fullOffset: number;
+        /**
+         * the blocks
+         */
+        items: IBlockLite[];
+        /**
+         * the starting height of the blocks included in this response
+         */
+        startHeight: number;
+        /**
+         * the response status
+         */
+        status: string;
+    }
+
+    export interface IBlockLiteTransaction {
+        /**
+         * the transaction hash
+         */
+        hash: string;
+        /**
+         * the transaction prefix
+         */
+        prefix: ITransactionPrefix;
+    }
+
+    export interface ITransactionPrefix {
+        /**
+         * the extra data included in the transaction
+         */
+        extra: string;
+        /**
+         * the unlock time of the transaction
+         */
+        unlock_time: BigInteger.BigInteger;
+        /**
+         * the transaction version number
+         */
+        version: number;
+        /**
+         * the transaction inputs
+         */
+        vin: IInputCoinbase[] | IInputKey[];
+        /**
+         * the transaction outputs
+         */
+        vout: IOutputKey[];
+    }
+
     export interface IInputCoinbase {
         /**
          * the input type
@@ -690,78 +762,6 @@ export namespace LegacyTurtleCoindTypes {
              */
             type: string;
         };
-    }
-
-    export interface ITransactionPrefix {
-        /**
-         * the extra data included in the transaction
-         */
-        extra: string;
-        /**
-         * the unlock time of the transaction
-         */
-        unlock_time: BigInteger.BigInteger;
-        /**
-         * the transaction version number
-         */
-        version: number;
-        /**
-         * the transaction inputs
-         */
-        vin: IInputCoinbase[] | IInputKey[];
-        /**
-         * the transaction outputs
-         */
-        vout: IOutputKey[];
-    }
-
-    export interface IBlockLiteTransaction {
-        /**
-         * the transaction hash
-         */
-        hash: string;
-        /**
-         * the transaction prefix
-         */
-        prefix: ITransactionPrefix;
-    }
-
-    export interface IBlockLite {
-        /**
-         * the hexrepsentation of the block
-         */
-        block: string;
-        /**
-         * the block hash
-         */
-        hash: string;
-        /**
-         * the transactions included in the block
-         */
-        transactions: IBlockLiteTransaction[];
-    }
-
-    export interface IBlockLiteResponse {
-        /**
-         * the current height of the daemon
-         */
-        currentHeight: number;
-        /**
-         * the offset of the response
-         */
-        fullOffset: number;
-        /**
-         * the blocks
-         */
-        items: IBlockLite[];
-        /**
-         * the starting height of the blocks included in this response
-         */
-        startHeight: number;
-        /**
-         * the response status
-         */
-        status: string;
     }
 
     export interface ISendRawTransactionResponse {
@@ -862,63 +862,6 @@ export namespace LegacyTurtleCoindTypes {
         status: string;
     }
 
-    export interface IWalletSyncDataTransactionOutput {
-        /**
-         * the output amount
-         */
-        amount: number;
-        /**
-         * the one-time output key
-         */
-        key: string;
-    }
-
-    export interface IWalletSyncDataTransaction {
-        /**
-         * the transaction hash
-         */
-        hash: string;
-        /**
-         * the public key of the transaction
-         */
-        txPublicKey: string;
-        /**
-         * the unlock time of the transaction
-         */
-        unlockTime: BigInteger.BigInteger;
-        /**
-         * the transaction inputs
-         */
-        inputs?: ITransactionDetailInputKeyInput[];
-        /**
-         * the transaction outputs
-         */
-        outputs: IWalletSyncDataTransactionOutput[];
-    }
-
-    export interface IWalletSyncDataBlock {
-        /**
-         * the block hash
-         */
-        blockHash: string;
-        /**
-         * the block height
-         */
-        blockHeight: number;
-        /**
-         * the block timestamp
-         */
-        blockTimestamp: number;
-        /**
-         * the coinbase transaction
-         */
-        coinbaseTX?: IWalletSyncDataTransaction;
-        /**
-         * the transactions contained within the block
-         */
-        transactions: IWalletSyncDataTransaction[];
-    }
-
     export interface IWalletSyncData {
         /**
          * the blocks
@@ -945,15 +888,61 @@ export namespace LegacyTurtleCoindTypes {
         }
     }
 
-    export interface IRawBlock {
+    export interface IWalletSyncDataBlock {
         /**
-         * the hex representation fo the block
+         * the block hash
          */
-        block: string;
+        blockHash: string;
         /**
-         * an array of hex representations of the transactions included in the block
+         * the block height
          */
-        transactions: string[];
+        blockHeight: number;
+        /**
+         * the block timestamp
+         */
+        blockTimestamp: number;
+        /**
+         * the coinbase transaction
+         */
+        coinbaseTX?: IWalletSyncDataTransaction;
+        /**
+         * the transactions contained within the block
+         */
+        transactions: IWalletSyncDataTransaction[];
+    }
+
+    export interface IWalletSyncDataTransaction {
+        /**
+         * the transaction hash
+         */
+        hash: string;
+        /**
+         * the public key of the transaction
+         */
+        txPublicKey: string;
+        /**
+         * the unlock time of the transaction
+         */
+        unlockTime: BigInteger.BigInteger;
+        /**
+         * the transaction inputs
+         */
+        inputs?: ITransactionDetailInputKeyInput[];
+        /**
+         * the transaction outputs
+         */
+        outputs: IWalletSyncDataTransactionOutput[];
+    }
+
+    export interface IWalletSyncDataTransactionOutput {
+        /**
+         * the output amount
+         */
+        amount: number;
+        /**
+         * the one-time output key
+         */
+        key: string;
     }
 
     export interface IRawBlocksResponse {
@@ -987,26 +976,15 @@ export namespace LegacyTurtleCoindTypes {
         }
     }
 
-    export interface IRandomOutput {
+    export interface IRawBlock {
         /**
-         * the output global index value
+         * the hex representation fo the block
          */
-        global_amount_index: number;
+        block: string;
         /**
-         * the output one-time key
+         * an array of hex representations of the transactions included in the block
          */
-        out_key: string;
-    }
-
-    export interface IRandomOuts {
-        /**
-         * the amount of the random output
-         */
-        amount: number;
-        /**
-         * the random outputs data
-         */
-        outs: IRandomOutput[];
+        transactions: string[];
     }
 
     export interface IRandomOutputsResponse {
@@ -1020,69 +998,91 @@ export namespace LegacyTurtleCoindTypes {
         status: string;
     }
 
+    export interface IRandomOuts {
+        /**
+         * the amount of the random output
+         */
+        amount: number;
+        /**
+         * the random outputs data
+         */
+        outs: IRandomOutput[];
+    }
+
+    export interface IRandomOutput {
+        /**
+         * the output global index value
+         */
+        global_amount_index: number;
+        /**
+         * the output one-time key
+         */
+        out_key: string;
+    }
+
     /**
      * Defines the necessary methods that must be implemented by a Legacy TurtleCoind interface
      */
     export abstract class ILegacyTurtleCoind {
-        public abstract block(hash: string): Promise<IBlockSummary>;
+        public abstract async block(hash: string): Promise<IBlockSummary>;
 
-        public abstract blockCount(): Promise<number>;
+        public abstract async blockCount(): Promise<number>;
 
-        public abstract blockHeaderByHash(hash: string): Promise<IBlockHeader>;
+        public abstract async blockHeaderByHash(hash: string): Promise<IBlockHeader>;
 
-        public abstract blockHeaderByHeight(height: number): Promise<IBlockHeader>;
+        public abstract async blockHeaderByHeight(height: number): Promise<IBlockHeader>;
 
-        public abstract blocksDetailed(
+        public abstract async blocksDetailed(
             timestamp: number,
             blockHashes: string[],
             blockCount: number): Promise<IBlocksDetailedResponse>;
 
-        public abstract blockShortHeaders(height: number): Promise<IBlockShortHeader[]>;
+        public abstract async blockShortHeaders(height: number): Promise<IBlockShortHeader[]>;
 
-        public abstract blocksLite(blockHashes: string[], timestamp: number): Promise<IBlockLiteResponse>;
+        public abstract async blocksLite(blockHashes: string[], timestamp: number): Promise<IBlockLiteResponse>;
 
-        public abstract blockTemplate(walletAddress: string, reserveSize: number): Promise<IBlockTemplate>;
+        public abstract async blockTemplate(walletAddress: string, reserveSize: number): Promise<IBlockTemplate>;
 
-        public abstract fee(): Promise<IFeeResponse>;
+        public abstract async fee(): Promise<IFeeResponse>;
 
-        public abstract globalIndexes(transactionHash: string): Promise<number[]>;
+        public abstract async globalIndexes(transactionHash: string): Promise<number[]>;
 
-        public abstract globalIndexesForRange(
+        public abstract async globalIndexesForRange(
             startHeight: number,
             endHeight: number): Promise<IGlobalIndexesResponse[]>;
 
-        public abstract height(): Promise<IHeightResponse>;
+        public abstract async height(): Promise<IHeightResponse>;
 
-        public abstract info(): Promise<IInfoResponse>;
+        public abstract async info(): Promise<IInfoResponse>;
 
-        public abstract lastBlockHeader(): Promise<IBlockHeader>;
+        public abstract async lastBlockHeader(): Promise<IBlockHeader>;
 
-        public abstract peers(): Promise<IPeersResponse>;
+        public abstract async peers(): Promise<IPeersResponse>;
 
-        public abstract poolChanges(
+        public abstract async poolChanges(
             tailBlockHash: string,
             knownTransactionHashes: string[]): Promise<IPoolChanges>;
 
-        public abstract randomOutputs(amounts: number[], mixin: number): Promise<IRandomOutputsResponse>;
+        public abstract async randomOutputs(amounts: number[], mixin: number): Promise<IRandomOutputsResponse>;
 
-        public abstract rawBlocks(
+        public abstract async rawBlocks(
             startHeight: number,
             startTimestamp: number,
             blockHashCheckpoints: string[],
             skipCoinbaseTransactions: boolean,
             blockCount: number): Promise<IRawBlocksResponse>;
 
-        public abstract sendRawTransaction(transaction: string): Promise<ISendRawTransactionResponse>;
+        public abstract async sendRawTransaction(transaction: string): Promise<ISendRawTransactionResponse>;
 
-        public abstract submitBlock(blockBlob: string): Promise<string>;
+        public abstract async submitBlock(blockBlob: string): Promise<string>;
 
-        public abstract transaction(hash: string): Promise<ITransactionResponse>;
+        public abstract async transaction(hash: string): Promise<ITransactionResponse>;
 
-        public abstract transactionPool(): Promise<ITransactionSummary[]>;
+        public abstract async transactionPool(): Promise<ITransactionSummary[]>;
 
-        public abstract transactionStatus(transactionHashes: string[]): Promise<ITransactionStatusResponse>;
+        public abstract async transactionStatus(transactionHashes: string[]): Promise<ITransactionStatusResponse>;
 
-        public abstract walletSyncData(
+        public abstract async walletSyncData(
             startHeight: number,
             startTimestamp: number,
             blockHashCheckpoints: string[],
