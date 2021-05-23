@@ -500,7 +500,6 @@ export class CryptoNote implements ICryptoNote {
 
         for (let i = 0; i < prepared.inputs.length; i++) {
             const input = prepared.inputs[i];
-
             const srcKeys: string[] = [];
 
             if (!input.input.privateEphemeral) {
@@ -698,10 +697,10 @@ export class CryptoNote implements ICryptoNote {
         for (const output of transactionOutputs.outputs) {
             tx.outputs.push(new TransactionOutputs.KeyOutput(output.amount, output.key));
         }
-        /*
+
         await tx.generateTxProofOfWork(diff);
-        */
-        if (tx.extra.length > (this.config.maximumExtraSize || Config.maximumExtraSize)) {
+
+        if (tx.extra.length > (this.m_config.maximumExtraSize || Config.maximumExtraSize)) {
             throw new Error('Transaction extra exceeds the limit of [' +
                 (this.m_config.maximumExtraSize || Config.maximumExtraSize) + '] bytes');
         }
