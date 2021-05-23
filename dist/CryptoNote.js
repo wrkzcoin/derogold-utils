@@ -536,7 +536,8 @@ class CryptoNote {
             for (const output of transactionOutputs.outputs) {
                 tx.outputs.push(new Types_1.TransactionOutputs.KeyOutput(output.amount, output.key));
             }
-            yield tx.generateTxProofOfWork(diff);
+            // Disable
+            // await tx.generateTxProofOfWork(diff);
             if (tx.extra.length > (this.m_config.maximumExtraSize || Config_1.Config.maximumExtraSize)) {
                 throw new Error('Transaction extra exceeds the limit of [' +
                     (this.m_config.maximumExtraSize || Config_1.Config.maximumExtraSize) + '] bytes');
